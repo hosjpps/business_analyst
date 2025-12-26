@@ -94,16 +94,19 @@ export function parseJSONResponse<T>(content: string): T {
   // Удаляем markdown блоки кода
   cleaned = cleaned.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/m, '');
 
-  // Удаляем markdown заголовки в начале (# заголовки)
-  cleaned = cleaned.replace(/^#+\s+.*?\n+/gm, '');
+  // Удаляем markdown заголовки (# заголовки)
+  cleaned = cleaned.replace(/^#+\s+.*$/gm, '');
   
-  // Удаляем текст до первого {
+  // Находим первый { - это начало JSON
   const firstBrace = cleaned.indexOf('{');
-  if (firstBrace > 0) {
-    cleaned = cleaned.substring(firstBrace);
+  if (firstBrace === -1) {
+    throw new Error('No JSON object found in response');
   }
+  
+  // Удаляем все до первой {
+  cleaned = cleaned.substring(firstBrace);
 
-  // Находим последнюю закрывающую скобку, проверяя баланс скобок
+  // Находим последнюю закрывающую скобку корневого объекта, проверяя баланс скобок
   let braceCount = 0;
   let lastBrace = -1;
   
@@ -120,12 +123,15 @@ export function parseJSONResponse<T>(content: string): T {
   }
 
   if (lastBrace !== -1) {
+    // Удаляем все после закрывающей скобки корневого объекта
     cleaned = cleaned.substring(0, lastBrace + 1);
   } else {
     // Fallback: используем последнюю }
     const fallbackLastBrace = cleaned.lastIndexOf('}');
     if (fallbackLastBrace !== -1) {
       cleaned = cleaned.substring(0, fallbackLastBrace + 1);
+    } else {
+      throw new Error('No closing brace found in JSON');
     }
   }
 
@@ -134,21 +140,26 @@ export function parseJSONResponse<T>(content: string): T {
   try {
     return JSON.parse(cleaned);
   } catch (error) {
-    // Последняя попытка: ищем любой JSON объект в тексте
-    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        return JSON.parse(jsonMatch[0]);
-      } catch (e) {
-        // Не получилось
+    // Последняя попытка: ищем все JSON объекты в тексте и берем самый большой
+    const jsonMatches = cleaned.match(/\{[\s\S]*?\}/g);
+    if (jsonMatches && jsonMatches.length > 0) {
+      // Сортируем по размеру и пробуем парсить от большего к меньшему
+      const sortedMatches = jsonMatches.sort((a, b) => b.length - a.length);
+      for (const match of sortedMatches) {
+        try {
+          return JSON.parse(match);
+        } catch (e) {
+          // Пробуем следующий
+        }
       }
     }
 
     console.error('JSON Parse Error:', error);
     console.error('Content length:', content.length);
     console.error('Cleaned length:', cleaned.length);
-    console.error('Content preview (first 500 chars):', content.slice(0, 500));
-    console.error('Cleaned preview (first 500 chars):', cleaned.slice(0, 500));
+    console.error('Content preview (first 1000 chars):', content.slice(0, 1000));
+    console.error('Content preview (last 500 chars):', content.slice(-500));
+    console.error('Cleaned preview:', cleaned.slice(0, 1000));
     
     throw new Error(`Failed to parse LLM response as JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
