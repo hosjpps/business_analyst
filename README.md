@@ -9,7 +9,11 @@
 - **ZIP-архивы** — автоматическая распаковка и фильтрация
 - **Умный анализ** — определение стадии, tech stack, проблем
 - **Генерация задач** — конкретные шаги на неделю
-- **Follow-up чат** — история вопросов с копированием
+- **Follow-up чат** — streaming ответы, история с копированием
+- **Экспорт** — JSON и Markdown
+- **Кэширование** — повторный анализ того же коммита мгновенный
+- **Большие репо** — умный отбор файлов, приоритизация
+- **Персистентность** — сохранение в localStorage
 - **GitHub Dark тема** — современный UI
 
 ## Быстрый старт
@@ -124,6 +128,11 @@ SaaS платформа для управления задачами коман�
 
 ## API Reference
 
+### Rate Limiting
+
+- **5 запросов в минуту** на IP
+- Заголовки: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+
 ### POST /api/analyze
 
 Основной endpoint для анализа репозитория.
@@ -168,9 +177,12 @@ SaaS платформа для управления задачами коман�
   },
   "metadata": {
     "files_analyzed": 23,
+    "files_total": 150,
+    "files_truncated": 2,
     "total_lines": 1500,
     "tokens_used": 15000,
-    "analysis_duration_ms": 8500
+    "analysis_duration_ms": 8500,
+    "cached": false
   }
 }
 ```
@@ -196,6 +208,18 @@ Follow-up вопросы после анализа.
 }
 ```
 
+### POST /api/chat/stream
+
+Streaming версия чата (SSE).
+
+**Response:** Server-Sent Events
+```
+data: {"content": "Чтобы "}
+data: {"content": "сделать "}
+data: {"content": "первую задачу..."}
+data: [DONE]
+```
+
 ## Стадии проекта
 
 | Стадия | Признаки | Фокус рекомендаций |
@@ -211,7 +235,8 @@ Follow-up вопросы после анализа.
 - **LLM:** Claude через OpenRouter
 - **GitHub API:** Octokit.js
 - **ZIP:** JSZip (client-side extraction)
-- **Validation:** Zod
+- **Validation:** Zod (запросы + ответы LLM)
+- **Markdown:** react-markdown + react-syntax-highlighter
 - **UI:** GitHub Dark theme (CSS Variables)
 - **Deploy:** Vercel
 
@@ -246,25 +271,43 @@ npm run lint
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── analyze/route.ts   # POST /api/analyze
-│   │   │   └── chat/route.ts      # POST /api/chat
-│   │   ├── page.tsx               # Главная + Legend + AnalysisView
-│   │   ├── layout.tsx             # Root layout
-│   │   └── globals.css            # GitHub Dark theme
+│   │   │   ├── analyze/route.ts      # POST /api/analyze
+│   │   │   └── chat/
+│   │   │       ├── route.ts          # POST /api/chat
+│   │   │       └── stream/route.ts   # POST /api/chat/stream (SSE)
+│   │   ├── page.tsx                  # Главная страница
+│   │   ├── layout.tsx                # Root layout
+│   │   └── globals.css               # GitHub Dark theme
+│   ├── components/                   # React компоненты
+│   │   ├── AnalysisView.tsx          # Результаты анализа
+│   │   ├── ChatSection.tsx           # Чат со streaming
+│   │   ├── ExportButtons.tsx         # Экспорт JSON/MD
+│   │   ├── Legend.tsx                # Легенда цветов
+│   │   ├── MarkdownRenderer.tsx      # Markdown + подсветка
+│   │   ├── ProgressIndicator.tsx     # Индикатор прогресса
+│   │   └── UploadForm.tsx            # Загрузка файлов
+│   ├── hooks/
+│   │   └── useLocalStorage.ts        # Персистентность
 │   ├── lib/
-│   │   ├── github/fetcher.ts      # GitHub API
+│   │   ├── github/fetcher.ts         # GitHub API
 │   │   ├── llm/
-│   │   │   ├── client.ts          # OpenRouter (lazy init)
-│   │   │   └── prompts.ts         # Промпты
-│   │   └── analyzers/structure.ts # Анализаторы
+│   │   │   ├── client.ts             # OpenRouter + Zod
+│   │   │   └── prompts.ts            # Промпты
+│   │   ├── analyzers/
+│   │   │   ├── structure.ts          # Анализ структуры
+│   │   │   └── file-selector.ts      # Умный отбор файлов
+│   │   └── utils/
+│   │       ├── rate-limiter.ts       # Rate limiting
+│   │       ├── retry.ts              # Retry с backoff
+│   │       └── cache.ts              # LRU кэш
 │   └── types/index.ts
 ├── docs/
-│   ├── architecture.md            # Архитектура системы
-│   ├── changelog.md               # История изменений
-│   ├── project-status.md          # Статус проекта
-│   └── testing.md                 # Инструкция по тестированию
+│   ├── architecture.md               # Архитектура
+│   ├── changelog.md                  # История изменений
+│   ├── project-status.md             # Статус проекта
+│   └── testing.md                    # Тестирование
 ├── .env.example
-└── Claude.md                      # Исходное ТЗ
+└── Claude.md                         # Исходное ТЗ
 ```
 
 ## Лицензия
