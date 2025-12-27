@@ -256,7 +256,9 @@ export async function POST(request: NextRequest) {
         total_lines: totalLines,
         model_used: llmResponse.model,
         tokens_used: llmResponse.tokens_used,
-        analysis_duration_ms: Date.now() - startTime
+        analysis_duration_ms: Date.now() - startTime,
+        commit_sha: commitSha || undefined,
+        repo_url: repo_url || undefined
       }
     };
 

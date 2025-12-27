@@ -88,6 +88,8 @@ export interface Metadata {
   tokens_used: number;
   analysis_duration_ms: number;
   cached?: boolean;
+  commit_sha?: string;
+  repo_url?: string;
 }
 
 // ===========================================

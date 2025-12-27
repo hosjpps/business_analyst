@@ -13,6 +13,7 @@ import {
   usePersistedResult,
   clearAllAnalyzerData,
 } from '@/hooks/useLocalStorage';
+import { useAnalysisCache } from '@/hooks/useAnalysisCache';
 
 export default function Home() {
   // Persisted state (localStorage)
@@ -26,18 +27,22 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [analysisStep, setAnalysisStep] = useState<AnalysisStep>('idle');
 
+  // Client-side cache for GitHub repos
+  const { getCached, setCache, isCacheValid, clearAllCaches } = useAnalysisCache();
+
   // Cast persisted result to proper type
   const result = persistedResult as AnalyzeResponse | null;
 
   // Clear all saved data
   const handleClearAll = useCallback(() => {
     clearAllAnalyzerData();
+    clearAllCaches();
     setUploadedFiles([]);
     setError(null);
     setAnalysisStep('idle');
     // Force re-render by resetting state
     window.location.reload();
-  }, []);
+  }, [clearAllCaches]);
 
   // Analyze
   const handleAnalyze = async () => {
@@ -63,6 +68,31 @@ export default function Home() {
     }
 
     try {
+      // Check client-side cache for GitHub repos
+      if (repoUrl && uploadedFiles.length === 0) {
+        setAnalysisStep('fetching');
+        const { valid, currentSha } = await isCacheValid(repoUrl);
+
+        if (valid && currentSha) {
+          const cached = getCached(repoUrl);
+          if (cached) {
+            // Use cached result
+            const cachedResponse: AnalyzeResponse = {
+              ...cached.response,
+              metadata: {
+                ...cached.response.metadata,
+                cached: true,
+                analysis_duration_ms: 0
+              }
+            };
+            setPersistedResult(cachedResponse);
+            setAnalysisStep('complete');
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
       // Simulate progress steps
       setTimeout(() => setAnalysisStep('analyzing'), 500);
 
@@ -84,6 +114,10 @@ export default function Home() {
         setError(data.error || 'Ошибка анализа');
         setAnalysisStep('error');
       } else {
+        // Save to client cache if it's a GitHub repo
+        if (repoUrl && data.metadata.commit_sha) {
+          setCache(repoUrl, data, data.metadata.commit_sha);
+        }
         setPersistedResult(data);
         setAnalysisStep('complete');
       }
