@@ -9,10 +9,13 @@ import type {
   PartialAnalysis,
   Question
 } from '@/types';
-import { fetchRepoFiles } from '@/lib/github/fetcher';
+import { fetchRepoFiles, getLatestCommitSha } from '@/lib/github/fetcher';
 import { analyzeStructure, detectTechStack, detectStage, countTotalLines } from '@/lib/analyzers/structure';
+import { selectFilesForAnalysis, getExcludedFilesSummary } from '@/lib/analyzers/file-selector';
 import { buildAnalysisPrompt } from '@/lib/llm/prompts';
-import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
+import { sendToLLM, parseAndValidateAnalysisResponse, type LLMAnalysisResponse } from '@/lib/llm/client';
+import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
+import { analysisCache, AnalysisCache } from '@/lib/utils/cache';
 
 // ===========================================
 // Request Validation
@@ -40,16 +43,7 @@ const AnalyzeRequestSchema = z.object({
   { message: 'Either files or repo_url must be provided' }
 );
 
-// ===========================================
-// LLM Response Type
-// ===========================================
-
-interface LLMAnalysisResponse {
-  needs_clarification: boolean;
-  questions?: Question[];
-  partial_analysis?: PartialAnalysis;
-  analysis?: Analysis;
-}
+// LLMAnalysisResponse type is imported from '@/lib/llm/client'
 
 // ===========================================
 // POST /api/analyze
@@ -57,6 +51,34 @@ interface LLMAnalysisResponse {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
+
+  // Rate limiting
+  const clientIP = getClientIP(request);
+  const rateLimit = checkRateLimit(clientIP);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Превышен лимит запросов. Попробуйте через ${rateLimit.resetIn} секунд. Лимит: ${RATE_LIMIT_CONFIG.maxRequests} запросов в минуту.`,
+        metadata: {
+          files_analyzed: 0,
+          total_lines: 0,
+          model_used: '',
+          tokens_used: 0,
+          analysis_duration_ms: Date.now() - startTime
+        }
+      } satisfies AnalyzeResponse,
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': RATE_LIMIT_CONFIG.maxRequests.toString(),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': rateLimit.resetIn.toString()
+        }
+      }
+    );
+  }
 
   try {
     // Parse request body
@@ -82,6 +104,38 @@ export async function POST(request: NextRequest) {
     }
 
     const { files, repo_url, access_token, project_description, user_context } = validation.data;
+
+    // Check cache for GitHub repos
+    let cacheKey: string | null = null;
+    let commitSha: string | null = null;
+
+    if (repo_url) {
+      // Get latest commit SHA for cache key
+      commitSha = await getLatestCommitSha(repo_url, access_token);
+
+      if (commitSha) {
+        cacheKey = AnalysisCache.generateKey(repo_url, commitSha);
+
+        // Check cache
+        const cachedResult = analysisCache.get(cacheKey) as AnalyzeResponse | null;
+        if (cachedResult) {
+          // Return cached result with updated duration
+          return NextResponse.json({
+            ...cachedResult,
+            metadata: {
+              ...cachedResult.metadata,
+              analysis_duration_ms: Date.now() - startTime,
+              cached: true
+            }
+          }, {
+            headers: {
+              'X-Cache': 'HIT',
+              'X-Cache-Key': cacheKey
+            }
+          });
+        }
+      }
+    }
 
     // Get files from GitHub if repo_url provided
     let projectFiles: FileInput[];
@@ -127,15 +181,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Analyze structure locally
-    const structure = analyzeStructure(projectFiles);
-    const techStack = detectTechStack(projectFiles);
-    const detectedStage = detectStage(projectFiles, structure);
-    const totalLines = countTotalLines(projectFiles);
+    // Smart file selection for large repos (prioritize important files, limit context)
+    const originalFileCount = projectFiles.length;
+    const selection = selectFilesForAnalysis(projectFiles);
+    const selectedFiles = selection.files;
+
+    // Log if files were excluded (for debugging)
+    if (selection.excludedFiles.length > 0) {
+      console.log(`Large repo handling: ${getExcludedFilesSummary(selection.excludedFiles)}`);
+      console.log(`Selected ${selection.stats.outputFiles}/${selection.stats.inputFiles} files (~${selection.totalTokens} tokens)`);
+    }
+
+    // Analyze structure locally (use selected files)
+    const structure = analyzeStructure(selectedFiles);
+    const techStack = detectTechStack(selectedFiles);
+    const detectedStage = detectStage(selectedFiles, structure);
+    const totalLines = countTotalLines(selectedFiles);
 
     // Build prompt and send to LLM
     const prompt = buildAnalysisPrompt(
-      projectFiles,
+      selectedFiles,
       project_description,
       structure,
       techStack,
@@ -145,12 +210,12 @@ export async function POST(request: NextRequest) {
 
     const llmResponse = await sendToLLM(prompt);
 
-    // Parse LLM response
+    // Parse and validate LLM response with Zod
     let parsedResponse: LLMAnalysisResponse;
     try {
-      parsedResponse = parseJSONResponse<LLMAnalysisResponse>(llmResponse.content);
+      parsedResponse = parseAndValidateAnalysisResponse(llmResponse.content);
     } catch (parseError) {
-      console.error('Failed to parse LLM response:', parseError);
+      console.error('Failed to parse/validate LLM response:', parseError);
       console.error('LLM response content (first 2000 chars):', llmResponse.content.slice(0, 2000));
       throw new Error(`Failed to parse LLM response: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
@@ -163,7 +228,9 @@ export async function POST(request: NextRequest) {
       partial_analysis: parsedResponse.partial_analysis,
       analysis: parsedResponse.analysis,
       metadata: {
-        files_analyzed: projectFiles.length,
+        files_analyzed: selectedFiles.length,
+        files_total: originalFileCount,
+        files_truncated: selection.truncatedFiles.length,
         total_lines: totalLines,
         model_used: llmResponse.model,
         tokens_used: llmResponse.tokens_used,
@@ -171,7 +238,17 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    return NextResponse.json(response);
+    // Store in cache if we have a cache key (GitHub repos only)
+    if (cacheKey && response.success) {
+      analysisCache.set(cacheKey, response);
+    }
+
+    return NextResponse.json(response, {
+      headers: cacheKey ? {
+        'X-Cache': 'MISS',
+        'X-Cache-Key': cacheKey
+      } : {}
+    });
 
   } catch (error) {
     console.error('Analyze error:', error);

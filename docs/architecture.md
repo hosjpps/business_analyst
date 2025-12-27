@@ -61,22 +61,37 @@ git_reps_checker/
 │   │   │   ├── analyze/
 │   │   │   │   └── route.ts          # POST /api/analyze
 │   │   │   └── chat/
-│   │   │       └── route.ts          # POST /api/chat
-│   │   ├── page.tsx                  # Main page with form
+│   │   │       ├── route.ts          # POST /api/chat
+│   │   │       └── stream/
+│   │   │           └── route.ts      # POST /api/chat/stream (SSE)
+│   │   ├── page.tsx                  # Main page (uses components)
 │   │   ├── layout.tsx                # Root layout
 │   │   └── globals.css               # Global styles
+│   │
+│   ├── components/                   # React components
+│   │   ├── AnalysisView.tsx          # Analysis results display
+│   │   ├── ChatSection.tsx           # Chat with streaming
+│   │   ├── ExportButtons.tsx         # JSON/Markdown export
+│   │   ├── Legend.tsx                # Priority/category legend
+│   │   ├── MarkdownRenderer.tsx      # Markdown + syntax highlighting
+│   │   ├── ProgressIndicator.tsx     # Analysis progress steps
+│   │   └── UploadForm.tsx            # File upload with ZIP
 │   │
 │   ├── lib/                          # Core logic
 │   │   ├── github/
 │   │   │   └── fetcher.ts            # GitHub API integration
 │   │   ├── llm/
-│   │   │   ├── client.ts             # OpenRouter/Anthropic client
+│   │   │   ├── client.ts             # OpenRouter client + Zod validation
 │   │   │   └── prompts.ts            # Analysis prompts
 │   │   ├── analyzers/
 │   │   │   ├── structure.ts          # Project structure analysis
+│   │   │   ├── file-selector.ts      # Smart file selection for large repos
 │   │   │   ├── file-filter.ts        # File filtering logic
 │   │   │   └── stage-detector.ts     # Project stage detection
 │   │   └── utils/
+│   │       ├── rate-limiter.ts       # IP-based rate limiting
+│   │       ├── retry.ts              # Exponential backoff retry
+│   │       ├── cache.ts              # In-memory analysis cache (LRU + TTL)
 │   │       └── token-counter.ts      # Token estimation
 │   │
 │   └── types/
@@ -129,21 +144,90 @@ git_reps_checker/
 - `launched` — есть конфиг деплоя
 - `growing` — есть признаки продакшена
 
+**file-selector.ts:**
+- `selectFilesForAnalysis()` — умный отбор файлов для больших репо
+- `getFilePriority()` — приоритет файла (1-10, меньше = важнее)
+- `estimateTokens()` — оценка токенов (~4 символа/токен)
+- Token limit: 50K (оставляет место для промпта и ответа)
+- Автоматическое усечение важных больших файлов
+- Приоритеты: README → package.json → docs → entry points → components
+
 ### 3. LLM Client (`src/lib/llm/`)
 
 Интеграция с OpenRouter для Claude Opus 4.5.
 
 **client.ts:**
 - Подключение к OpenRouter API
-- Обработка ответов
-- Rate limiting
+- Zod schemas для валидации ответов LLM
+- `parseAndValidateAnalysisResponse()` — парсинг и валидация JSON от LLM
+- Интеграция с retry logic
 
 **prompts.ts:**
 - `buildAnalysisPrompt()` — основной промпт анализа
 - `buildClarificationPrompt()` — промпт для уточнений
 - `buildChatPrompt()` — промпт для follow-up
 
-### 4. API Routes
+### 4. Utilities (`src/lib/utils/`)
+
+**rate-limiter.ts:**
+- In-memory rate limiting (IP-based)
+- `checkRateLimit(identifier)` — проверка лимита запросов
+- `getClientIP(request)` — получение IP из заголовков
+- Лимит: 5 запросов в минуту на IP
+
+**retry.ts:**
+- Exponential backoff retry utility
+- `withRetry<T>(fn, options)` — универсальный retry wrapper
+- `withLLMRetry<T>(fn)` — retry для LLM вызовов (3 попытки, 1s base delay)
+- `withGitHubRetry<T>(fn)` — retry для GitHub API (3 попытки, 500ms base delay)
+- Автоматический jitter для предотвращения thundering herd
+
+**cache.ts:**
+- In-memory кэширование результатов анализа
+- `AnalysisCache<T>` — generic LRU cache с TTL
+- `generateKey(repoUrl, commitSha)` — SHA256 ключ из URL + коммита
+- Конфигурация: max 100 записей, TTL 1 час
+- Автоматическая очистка expired записей
+- HTTP заголовки `X-Cache` (HIT/MISS) и `X-Cache-Key`
+
+### 5. React Components (`src/components/`)
+
+**UploadForm.tsx:**
+- Drag & drop загрузка файлов
+- ZIP-архивы через JSZip
+- Фильтрация бинарных файлов
+- Лимиты: 500KB/файл, 2MB/ZIP, 100 файлов
+
+**ProgressIndicator.tsx:**
+- Показывает шаги анализа: uploading → fetching → analyzing → generating
+- Анимированный спиннер для активного шага
+- Скрывается при idle/complete
+
+**AnalysisView.tsx:**
+- Отображение результатов анализа
+- Секции: summary, tech stack, strengths, issues, tasks, next milestone
+- Использует Legend для цветовой легенды
+
+**ChatSection.tsx:**
+- Чат с поддержкой streaming (SSE)
+- История сообщений с кнопками копирования
+- Fallback на обычный режим без streaming
+
+**ExportButtons.tsx:**
+- Экспорт в JSON — полные данные анализа
+- Экспорт в Markdown — форматированный отчёт
+- Скачивание файлов через Blob URL
+
+**Legend.tsx:**
+- Легенда приоритетов (high/medium/low)
+- Легенда категорий (documentation/technical/product/marketing/business)
+
+**MarkdownRenderer.tsx:**
+- react-markdown для рендеринга Markdown
+- react-syntax-highlighter с темой oneDark
+- Поддержка code blocks, inline code, списков, ссылок
+
+### 6. API Routes
 
 **POST /api/analyze:**
 ```typescript
@@ -184,6 +268,23 @@ Response:
   answer: string,
   updated_tasks?: Task[]
 }
+```
+
+**POST /api/chat/stream:**
+SSE streaming endpoint for real-time chat responses.
+
+```typescript
+Request:
+{
+  session_id: string,
+  message: string,
+  previous_analysis: Analysis
+}
+
+Response: Server-Sent Events stream
+data: {"content": "chunk of text"}
+data: {"content": "more text"}
+data: [DONE]
 ```
 
 ## Data Flow
@@ -230,6 +331,8 @@ Response:
 | @anthropic-ai/sdk | LLM client | ^0.x |
 | zod | Validation | ^3.x |
 | jszip | ZIP extraction | ^3.x |
+| react-markdown | Markdown rendering | ^9.x |
+| react-syntax-highlighter | Code highlighting | ^15.x |
 
 ## Environment Variables
 
@@ -246,10 +349,11 @@ NEXT_PUBLIC_APP_URL=    # App URL for CORS
 
 1. **API Keys** — храним только на сервере, не экспонируем клиенту
 2. **GitHub Tokens** — опциональны, только для приватных репо
-3. **Input Validation** — используем Zod для валидации
-4. **Rate Limiting** — встроенное в Vercel
+3. **Input Validation** — используем Zod для валидации запросов и ответов LLM
+4. **Rate Limiting** — in-memory rate limiting (5 req/min per IP) + Vercel edge limits
 5. **File Size Limits** — max 500KB на файл, max 2MB для ZIP, max 100 файлов
 6. **Binary Detection** — автоматическое определение и фильтрация бинарных файлов
+7. **Retry Protection** — exponential backoff с jitter предотвращает перегрузку API
 
 ## UI/UX
 

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { ChatRequest, ChatResponse } from '@/types';
 import { buildChatPrompt } from '@/lib/llm/prompts';
 import { sendToLLM } from '@/lib/llm/client';
+import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
 
 // ===========================================
 // Request Validation
@@ -28,6 +29,28 @@ const ChatRequestSchema = z.object({
 // ===========================================
 
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const clientIP = getClientIP(request);
+  const rateLimit = checkRateLimit(clientIP);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      {
+        success: false,
+        answer: '',
+        error: `Превышен лимит запросов. Попробуйте через ${rateLimit.resetIn} секунд. Лимит: ${RATE_LIMIT_CONFIG.maxRequests} запросов в минуту.`
+      } satisfies ChatResponse,
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': RATE_LIMIT_CONFIG.maxRequests.toString(),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': rateLimit.resetIn.toString()
+        }
+      }
+    );
+  }
+
   try {
     // Parse request body
     const body = await request.json() as ChatRequest;

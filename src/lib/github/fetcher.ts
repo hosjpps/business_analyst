@@ -1,5 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import type { FileInput, RepoInfo } from '@/types';
+import { withGitHubRetry } from '@/lib/utils/retry';
 
 // ===========================================
 // GitHub URL Parser
@@ -138,16 +139,20 @@ export async function fetchRepoFiles(
   try {
     // Если ветка не указана, получаем default branch
     if (!branch) {
-      const { data: repoData } = await octokit.repos.get({ owner, repo });
+      const { data: repoData } = await withGitHubRetry(() =>
+        octokit.repos.get({ owner, repo })
+      );
       treeSha = repoData.default_branch;
     }
 
-    const { data: tree } = await octokit.git.getTree({
-      owner,
-      repo,
-      tree_sha: treeSha,
-      recursive: 'true'
-    });
+    const { data: tree } = await withGitHubRetry(() =>
+      octokit.git.getTree({
+        owner,
+        repo,
+        tree_sha: treeSha,
+        recursive: 'true'
+      })
+    );
 
     // Фильтруем файлы
     const filesToFetch = tree.tree
@@ -191,6 +196,39 @@ export async function fetchRepoFiles(
       }
     }
     throw error;
+  }
+}
+
+// ===========================================
+// Get Latest Commit SHA (for caching)
+// ===========================================
+
+export async function getLatestCommitSha(
+  repoUrl: string,
+  accessToken?: string
+): Promise<string | null> {
+  const repoInfo = parseRepoUrl(repoUrl);
+
+  if (!repoInfo) {
+    return null;
+  }
+
+  const octokit = new Octokit({
+    auth: accessToken || process.env.GITHUB_TOKEN
+  });
+
+  try {
+    const { data: commits } = await withGitHubRetry(() =>
+      octokit.repos.listCommits({
+        owner: repoInfo.owner,
+        repo: repoInfo.repo,
+        per_page: 1
+      })
+    );
+
+    return commits[0]?.sha || null;
+  } catch {
+    return null;
   }
 }
 

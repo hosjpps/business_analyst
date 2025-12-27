@@ -81,10 +81,13 @@ export interface PartialAnalysis {
 
 export interface Metadata {
   files_analyzed: number;
+  files_total?: number;
+  files_truncated?: number;
   total_lines: number;
   model_used: string;
   tokens_used: number;
   analysis_duration_ms: number;
+  cached?: boolean;
 }
 
 // ===========================================

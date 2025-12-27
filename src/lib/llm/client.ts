@@ -1,4 +1,6 @@
 import OpenAI from 'openai';
+import { z } from 'zod';
+import { withLLMRetry } from '@/lib/utils/retry';
 
 // ===========================================
 // OpenRouter Client (Compatible with OpenAI SDK)
@@ -52,37 +54,95 @@ export async function sendToLLM(
   const client = getClient();
   const modelToUse = model || getDefaultModel();
 
-  try {
-    const response = await client.chat.completions.create({
-      model: modelToUse,
-      max_tokens: getMaxTokens(),
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ]
-    });
+  return withLLMRetry(async () => {
+    try {
+      const response = await client.chat.completions.create({
+        model: modelToUse,
+        max_tokens: getMaxTokens(),
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      });
 
-    const content = response.choices[0]?.message?.content || '';
-    const tokensUsed = response.usage?.total_tokens || 0;
+      const content = response.choices[0]?.message?.content || '';
+      const tokensUsed = response.usage?.total_tokens || 0;
 
-    console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
+      console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
 
-    return {
-      content,
-      model: response.model || modelToUse,
-      tokens_used: tokensUsed
-    };
-  } catch (error) {
-    console.error('LLM Error:', error);
-    throw new Error(
-      error instanceof Error
-        ? `LLM Error: ${error.message}`
-        : 'Unknown LLM error'
-    );
-  }
+      return {
+        content,
+        model: response.model || modelToUse,
+        tokens_used: tokensUsed
+      };
+    } catch (error) {
+      console.error('LLM Error:', error);
+      throw new Error(
+        error instanceof Error
+          ? `LLM Error: ${error.message}`
+          : 'Unknown LLM error'
+      );
+    }
+  });
 }
+
+// ===========================================
+// Zod Schemas for LLM Response Validation
+// ===========================================
+
+const StrengthSchema = z.object({
+  area: z.string(),
+  detail: z.string()
+});
+
+const IssueSchema = z.object({
+  severity: z.enum(['high', 'medium', 'low']),
+  area: z.string(),
+  detail: z.string(),
+  file_path: z.string().nullable()
+});
+
+const TaskSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  priority: z.enum(['high', 'medium', 'low']),
+  category: z.enum(['documentation', 'technical', 'product', 'marketing', 'business']),
+  estimated_minutes: z.number(),
+  depends_on: z.string().nullable()
+});
+
+const QuestionSchema = z.object({
+  id: z.string(),
+  question: z.string(),
+  why: z.string()
+});
+
+const AnalysisSchema = z.object({
+  project_summary: z.string(),
+  detected_stage: z.enum(['documentation', 'mvp', 'launched', 'growing', 'unknown']),
+  tech_stack: z.array(z.string()),
+  strengths: z.array(StrengthSchema),
+  issues: z.array(IssueSchema),
+  tasks: z.array(TaskSchema),
+  next_milestone: z.string()
+});
+
+const PartialAnalysisSchema = z.object({
+  project_summary: z.string(),
+  detected_stage: z.enum(['documentation', 'mvp', 'launched', 'growing', 'unknown']),
+  tech_stack: z.array(z.string())
+});
+
+export const LLMAnalysisResponseSchema = z.object({
+  needs_clarification: z.boolean(),
+  questions: z.array(QuestionSchema).optional(),
+  partial_analysis: PartialAnalysisSchema.optional(),
+  analysis: AnalysisSchema.optional()
+});
+
+export type LLMAnalysisResponse = z.infer<typeof LLMAnalysisResponseSchema>;
 
 // ===========================================
 // Parse JSON Response
@@ -163,6 +223,29 @@ export function parseJSONResponse<T>(content: string): T {
     
     throw new Error(`Failed to parse LLM response as JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+}
+
+/**
+ * Parse and validate LLM analysis response with Zod schema
+ * Returns validated response or throws with detailed error
+ */
+export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisResponse {
+  // First, parse JSON
+  const parsed = parseJSONResponse<unknown>(content);
+
+  // Then validate with Zod
+  const validation = LLMAnalysisResponseSchema.safeParse(parsed);
+
+  if (!validation.success) {
+    const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+    console.error('LLM Response validation failed:', errors);
+    console.error('Parsed response:', JSON.stringify(parsed, null, 2).slice(0, 2000));
+
+    // Try to salvage partial data
+    throw new Error(`LLM response validation failed: ${errors}`);
+  }
+
+  return validation.data;
 }
 
 // ===========================================

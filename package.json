@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "@octokit/rest": "^20.1.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "jszip": "^3.10.1",
     "next": "^14.2.0",
     "openai": "^4.70.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "react-markdown": "^10.1.0",
+    "react-syntax-highlighter": "^16.1.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
