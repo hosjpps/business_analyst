@@ -936,7 +936,18 @@ function Home() {
           {/* Analysis */}
           {codeResult.analysis ? (
             <AnalysisView analysis={codeResult.analysis} />
-          ) : codeResult.success ? (
+          ) : codeResult.partial_analysis ? (
+            // Show partial analysis if full analysis is not available
+            <div className="partial-analysis">
+              <h3>📋 Частичный анализ</h3>
+              <p><strong>Стадия:</strong> {codeResult.partial_analysis.detected_stage}</p>
+              <p><strong>Резюме:</strong> {codeResult.partial_analysis.project_summary}</p>
+              {codeResult.partial_analysis.tech_stack.length > 0 && (
+                <p><strong>Технологии:</strong> {codeResult.partial_analysis.tech_stack.join(', ')}</p>
+              )}
+              <p className="hint">Ответьте на вопросы выше для получения полного анализа.</p>
+            </div>
+          ) : codeResult.success && !codeResult.needs_clarification ? (
             <div className="analysis-error">
               <h3>⚠️ Анализ не выполнен</h3>
               <p>LLM не смог сгенерировать анализ. Возможные причины:</p>
@@ -946,6 +957,18 @@ function Home() {
                 <li>Временная ошибка API</li>
               </ul>
               <p>Попробуйте запустить анализ ещё раз или уменьшить размер проекта.</p>
+              {/* Debug info */}
+              <details style={{ marginTop: '16px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                <summary>Техническая информация</summary>
+                <pre style={{ marginTop: '8px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto' }}>
+                  {JSON.stringify({
+                    needs_clarification: codeResult.needs_clarification,
+                    has_questions: !!codeResult.questions?.length,
+                    has_partial: !!codeResult.partial_analysis,
+                    has_analysis: !!codeResult.analysis,
+                  }, null, 2)}
+                </pre>
+              </details>
             </div>
           ) : null}
 

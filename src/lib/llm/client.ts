@@ -337,6 +337,9 @@ export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisRe
   // First, parse JSON
   const parsed = parseJSONResponse<unknown>(content);
 
+  console.log('Raw parsed JSON keys:', Object.keys(parsed as object));
+  console.log('Raw parsed JSON preview:', JSON.stringify(parsed, null, 2).slice(0, 1000));
+
   // Then validate with Zod
   const validation = LLMAnalysisResponseSchema.safeParse(parsed);
 
@@ -349,7 +352,16 @@ export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisRe
     throw new Error(`LLM response validation failed: ${errors}`);
   }
 
-  return validation.data;
+  const result = validation.data;
+
+  // Warn if no analysis and no clarification needed - this might indicate a problem
+  if (!result.analysis && !result.needs_clarification) {
+    console.warn('WARNING: LLM response has no analysis and needs_clarification is false');
+    console.warn('This might indicate the LLM failed to generate proper output');
+    console.warn('Full parsed data:', JSON.stringify(parsed, null, 2));
+  }
+
+  return result;
 }
 
 // ===========================================

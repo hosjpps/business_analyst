@@ -412,6 +412,33 @@ button:disabled {
   margin: 4px 0;
 }
 
+/* Partial Analysis */
+.partial-analysis {
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.4);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+.partial-analysis h3 {
+  margin: 0 0 12px;
+  color: var(--accent-blue);
+  font-size: 16px;
+}
+
+.partial-analysis p {
+  margin: 8px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.partial-analysis .hint {
+  margin-top: 16px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
 /* Category Badge */
 .category-badge {
   font-size: 11px;

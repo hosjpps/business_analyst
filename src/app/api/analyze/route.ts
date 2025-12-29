@@ -239,10 +239,23 @@ export async function POST(request: NextRequest) {
     // Parse and validate LLM response with Zod
     let parsedResponse: LLMAnalysisResponse;
     try {
+      console.log('LLM response length:', llmResponse.content.length);
+      console.log('LLM response preview:', llmResponse.content.slice(0, 500));
+
       parsedResponse = parseAndValidateAnalysisResponse(llmResponse.content);
+
+      console.log('Parsed response structure:', {
+        needs_clarification: parsedResponse.needs_clarification,
+        has_questions: !!parsedResponse.questions?.length,
+        questions_count: parsedResponse.questions?.length || 0,
+        has_partial_analysis: !!parsedResponse.partial_analysis,
+        has_analysis: !!parsedResponse.analysis,
+        analysis_tasks_count: parsedResponse.analysis?.tasks?.length || 0,
+      });
     } catch (parseError) {
       console.error('Failed to parse/validate LLM response:', parseError);
       console.error('LLM response content (first 2000 chars):', llmResponse.content.slice(0, 2000));
+      console.error('LLM response content (last 500 chars):', llmResponse.content.slice(-500));
       throw new Error(`Failed to parse LLM response: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
 
