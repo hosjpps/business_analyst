@@ -340,23 +340,72 @@ export function parseJSONResponse<T>(content: string): T {
 }
 
 /**
+ * Normalize LLM response structure
+ * If LLM returns fields at top level instead of inside 'analysis', wrap them
+ */
+function normalizeAnalysisResponse(parsed: Record<string, unknown>): Record<string, unknown> {
+  // Check if analysis object already exists
+  if (parsed.analysis && typeof parsed.analysis === 'object') {
+    console.log('normalizeAnalysisResponse: analysis object exists');
+    return parsed;
+  }
+
+  // Check if LLM returned flat structure (fields at top level)
+  const analysisFields = ['project_summary', 'detected_stage', 'stage', 'tech_stack', 'strengths', 'issues', 'tasks', 'next_milestone'];
+  const foundFields = analysisFields.filter(field => field in parsed);
+
+  if (foundFields.length >= 3) {
+    console.log('normalizeAnalysisResponse: found flat structure, wrapping fields:', foundFields);
+
+    // Wrap into analysis object
+    const analysis: Record<string, unknown> = {};
+
+    // Map fields, handling 'stage' -> 'detected_stage' rename
+    for (const field of analysisFields) {
+      if (field in parsed) {
+        const targetField = field === 'stage' ? 'detected_stage' : field;
+        analysis[targetField] = parsed[field];
+      }
+    }
+
+    // Return normalized structure
+    return {
+      needs_clarification: parsed.needs_clarification ?? false,
+      questions: parsed.questions ?? [],
+      analysis,
+    };
+  }
+
+  console.log('normalizeAnalysisResponse: no transformation needed');
+  return parsed;
+}
+
+/**
  * Parse and validate LLM analysis response with Zod schema
  * Returns validated response or throws with detailed error
  */
 export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisResponse {
   // First, parse JSON
-  const parsed = parseJSONResponse<unknown>(content);
+  const parsed = parseJSONResponse<Record<string, unknown>>(content);
 
-  console.log('Raw parsed JSON keys:', Object.keys(parsed as object));
+  console.log('Raw parsed JSON keys:', Object.keys(parsed));
   console.log('Raw parsed JSON preview:', JSON.stringify(parsed, null, 2).slice(0, 1000));
 
+  // Normalize structure (wrap flat fields into analysis object if needed)
+  const normalized = normalizeAnalysisResponse(parsed);
+
+  if (normalized !== parsed) {
+    console.log('Normalized JSON keys:', Object.keys(normalized));
+    console.log('Normalized analysis keys:', Object.keys(normalized.analysis || {}));
+  }
+
   // Then validate with Zod
-  const validation = LLMAnalysisResponseSchema.safeParse(parsed);
+  const validation = LLMAnalysisResponseSchema.safeParse(normalized);
 
   if (!validation.success) {
     const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
     console.error('LLM Response validation failed:', errors);
-    console.error('Parsed response:', JSON.stringify(parsed, null, 2).slice(0, 2000));
+    console.error('Normalized response:', JSON.stringify(normalized, null, 2).slice(0, 2000));
 
     // Try to salvage partial data
     throw new Error(`LLM response validation failed: ${errors}`);

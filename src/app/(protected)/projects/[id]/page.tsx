@@ -417,14 +417,31 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                   tasks?: Array<{ title: string; description: string; priority: string; category?: string; estimated_minutes?: number }>;
                   next_milestone?: string;
                 };
+                security_analysis?: {
+                  findings: Array<{
+                    id: string;
+                    type: string;
+                    severity: string;
+                    file_path: string;
+                    line_number?: number;
+                    description: string;
+                    recommendation: string;
+                    cwe_id?: string;
+                    code_snippet?: string;
+                  }>;
+                  stats: { critical: number; high: number; medium: number; low: number; files_scanned: number };
+                  has_critical_issues: boolean;
+                };
                 gaps?: Array<{ category: string; severity: string; title: string; detail: string }>;
                 tasks?: Array<{ title: string; description: string; priority: string; category?: string }>;
                 alignment_score?: number;
                 verdict?: string;
                 canvas?: { value_proposition?: string };
                 success?: boolean;
+                needs_clarification?: boolean;
               };
               const codeAnalysis = resultData?.analysis;
+              const securityAnalysis = resultData?.security_analysis;
               const summary = codeAnalysis?.project_summary ||
                             resultData?.canvas?.value_proposition ||
                             null;
@@ -432,6 +449,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
               const verdict = resultData?.verdict;
               const gaps = resultData?.gaps;
               const tasks = resultData?.tasks || codeAnalysis?.tasks;
+              const hasNoMainAnalysis = !codeAnalysis && !resultData?.canvas;
 
               return (
                 <div key={analysis.id} className="analysis-card">
@@ -548,6 +566,63 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                     <div className="analysis-milestone">
                       <span className="milestone-label">🎯 Следующая цель:</span>
                       <span className="milestone-text">{codeAnalysis.next_milestone}</span>
+                    </div>
+                  )}
+
+                  {/* Security Analysis */}
+                  {securityAnalysis && securityAnalysis.findings.length > 0 && (
+                    <div className="security-analysis-section">
+                      <h4>🔒 Анализ безопасности</h4>
+                      <div className="security-stats">
+                        {securityAnalysis.stats.critical > 0 && (
+                          <span className="security-stat critical">
+                            🔴 {securityAnalysis.stats.critical} критических
+                          </span>
+                        )}
+                        {securityAnalysis.stats.high > 0 && (
+                          <span className="security-stat high">
+                            🟠 {securityAnalysis.stats.high} высоких
+                          </span>
+                        )}
+                        {securityAnalysis.stats.medium > 0 && (
+                          <span className="security-stat medium">
+                            🟡 {securityAnalysis.stats.medium} средних
+                          </span>
+                        )}
+                        {securityAnalysis.stats.low > 0 && (
+                          <span className="security-stat low">
+                            🟢 {securityAnalysis.stats.low} низких
+                          </span>
+                        )}
+                      </div>
+                      <div className="security-findings-list">
+                        {securityAnalysis.findings.slice(0, 3).map((finding, i) => (
+                          <div key={i} className={`security-finding severity-${finding.severity}`}>
+                            <div className="finding-header">
+                              <span className="finding-type">{finding.type.replace(/_/g, ' ')}</span>
+                              {finding.cwe_id && (
+                                <span className="finding-cwe">{finding.cwe_id}</span>
+                              )}
+                            </div>
+                            <p className="finding-desc">{finding.description}</p>
+                            <span className="finding-file">{finding.file_path}</span>
+                          </div>
+                        ))}
+                        {securityAnalysis.findings.length > 3 && (
+                          <p className="more-items">и ещё {securityAnalysis.findings.length - 3} находок...</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* No Analysis Warning */}
+                  {hasNoMainAnalysis && (
+                    <div className="no-analysis-warning">
+                      <span className="warning-icon">⚠️</span>
+                      <span className="warning-text">
+                        AI анализ не выполнен или данные повреждены.
+                        {securityAnalysis ? ' Доступен только анализ безопасности (паттерны).' : ''}
+                      </span>
                     </div>
                   )}
 
@@ -1165,6 +1240,130 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         .milestone-text {
           font-size: 0.8125rem;
           color: #c9d1d9;
+        }
+
+        /* Security Analysis Styles */
+        .security-analysis-section {
+          margin: 1rem 0;
+          padding: 0.75rem;
+          background: rgba(136, 146, 157, 0.05);
+          border: 1px solid #30363d;
+          border-radius: 6px;
+        }
+
+        .security-analysis-section h4 {
+          margin: 0 0 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #e6edf3;
+        }
+
+        .security-stats {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .security-stat {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-weight: 500;
+        }
+
+        .security-stat.critical {
+          background: rgba(248, 81, 73, 0.15);
+          color: #f85149;
+        }
+
+        .security-stat.high {
+          background: rgba(240, 136, 62, 0.15);
+          color: #f0883e;
+        }
+
+        .security-stat.medium {
+          background: rgba(210, 153, 34, 0.15);
+          color: #d29922;
+        }
+
+        .security-stat.low {
+          background: rgba(63, 185, 80, 0.15);
+          color: #3fb950;
+        }
+
+        .security-findings-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .security-finding {
+          background: #0d1117;
+          border-radius: 4px;
+          padding: 0.5rem 0.75rem;
+          border-left: 3px solid #8b949e;
+        }
+
+        .security-finding.severity-critical { border-left-color: #f85149; }
+        .security-finding.severity-high { border-left-color: #f0883e; }
+        .security-finding.severity-medium { border-left-color: #d29922; }
+        .security-finding.severity-low { border-left-color: #3fb950; }
+
+        .finding-header {
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
+          margin-bottom: 0.25rem;
+        }
+
+        .finding-type {
+          font-size: 0.8125rem;
+          font-weight: 600;
+          color: #e6edf3;
+          text-transform: capitalize;
+        }
+
+        .finding-cwe {
+          font-size: 0.6875rem;
+          padding: 0.125rem 0.375rem;
+          background: rgba(88, 166, 255, 0.15);
+          color: #58a6ff;
+          border-radius: 3px;
+        }
+
+        .finding-desc {
+          font-size: 0.75rem;
+          color: #8b949e;
+          margin: 0 0 0.25rem;
+          line-height: 1.4;
+        }
+
+        .finding-file {
+          font-size: 0.6875rem;
+          color: #58a6ff;
+          font-family: monospace;
+        }
+
+        /* No Analysis Warning */
+        .no-analysis-warning {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem;
+          background: rgba(210, 153, 34, 0.1);
+          border: 1px solid rgba(210, 153, 34, 0.3);
+          border-radius: 6px;
+          margin: 0.75rem 0;
+        }
+
+        .warning-icon {
+          font-size: 1rem;
+        }
+
+        .warning-text {
+          font-size: 0.8125rem;
+          color: #d29922;
         }
 
         @media (max-width: 768px) {
