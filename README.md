@@ -17,8 +17,8 @@
 |-------|----------|--------|
 | **Разбор бизнеса** | Business Canvas + рекомендации | ✅ Готов |
 | **Проверка кода** | Tech analysis + задачи | ✅ Готов |
+| **Полная картина** | Бизнес + Код + Gap Detection | ✅ Готов |
 | **Сравнение с конкурентами** | Competitor analysis | 🔜 Скоро |
-| **Полная картина** | Бизнес + Код + Gap Detection | 🔜 Скоро |
 
 ## Возможности
 
@@ -37,6 +37,14 @@
 - **Tech stack detection** — определение технологий
 - **Генерация задач** — конкретные шаги на неделю
 - **Follow-up чат** — SSE streaming, история
+
+### Gap Detection (NEW)
+- **Поиск разрывов** — между бизнес-целями и кодом
+- **Alignment Score** — 0-100% соответствия
+- **Verdict** — on_track / iterate / pivot
+- **9 категорий gaps** — monetization, growth, security, ux, infrastructure и др.
+- **Приоритизация задач** — 3-5 конкретных шагов
+- **Next Milestone** — что достигнем после выполнения
 
 ### Общее
 - **Кэширование** — клиентский + серверный кэш
@@ -80,6 +88,7 @@ GITHUB_TOKEN=ghp_xxxxx
 |--------|----------|----------|
 | POST | `/api/analyze` | Анализ репозитория |
 | POST | `/api/analyze-business` | Анализ бизнеса → Canvas |
+| POST | `/api/analyze-gaps` | Gap Detection (бизнес vs код) |
 | POST | `/api/chat` | Follow-up вопросы |
 | POST | `/api/chat/stream` | Streaming чат (SSE) |
 | GET | `/api/commit-sha` | Получить SHA коммита |
@@ -130,6 +139,41 @@ curl -X POST http://localhost:3000/api/analyze \
   }'
 ```
 
+### POST /api/analyze-gaps
+
+```bash
+curl -X POST http://localhost:3000/api/analyze-gaps \
+  -H "Content-Type: application/json" \
+  -d '{
+    "canvas": { ... },       // Business Canvas (из /api/analyze-business)
+    "code_analysis": { ... } // Analysis (из /api/analyze)
+  }'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "gaps": [
+    {
+      "id": "gap-1",
+      "type": "critical",
+      "category": "monetization",
+      "business_goal": "Получать деньги за услуги",
+      "current_state": "Нет платёжной системы",
+      "recommendation": "Интегрировать Stripe Checkout",
+      "effort": "medium",
+      "impact": "high"
+    }
+  ],
+  "alignment_score": 65,
+  "verdict": "iterate",
+  "verdict_explanation": "Есть расхождения между бизнес-целями и продуктом",
+  "tasks": [...],
+  "next_milestone": "После интеграции платежей можно начать монетизацию"
+}
+```
+
 ## Лимиты
 
 | Ресурс | Лимит |
@@ -158,27 +202,36 @@ src/
 ├── app/
 │   ├── api/
 │   │   ├── analyze/           # Анализ кода
-│   │   ├── analyze-business/  # Анализ бизнеса (NEW)
+│   │   ├── analyze-business/  # Анализ бизнеса
+│   │   ├── analyze-gaps/      # Gap Detection (NEW)
 │   │   └── chat/              # Follow-up чат
 │   └── page.tsx               # Главная страница
 ├── components/
-│   ├── forms/                 # Формы ввода (NEW)
+│   ├── forms/                 # Формы ввода
 │   │   ├── AnalysisModeSelector.tsx
 │   │   ├── BusinessInputForm.tsx
 │   │   └── ClarificationQuestions.tsx
-│   ├── results/               # Отображение результатов (NEW)
-│   │   └── CanvasView.tsx
+│   ├── results/               # Отображение результатов
+│   │   ├── CanvasView.tsx
+│   │   ├── GapsView.tsx       # Gap карточки (NEW)
+│   │   ├── AlignmentScore.tsx # Score bar (NEW)
+│   │   └── VerdictBadge.tsx   # Verdict display (NEW)
 │   └── ...                    # Существующие компоненты
 ├── lib/
-│   ├── business/              # Бизнес-анализ (NEW)
+│   ├── business/              # Бизнес-анализ
 │   │   ├── document-parser.ts
 │   │   ├── prompts.ts
 │   │   └── canvas-builder.ts
+│   ├── gaps/                  # Gap Detection (NEW)
+│   │   ├── detector.ts        # Gap detector
+│   │   ├── scorer.ts          # Alignment score
+│   │   ├── task-generator.ts  # Task generation
+│   │   └── prompts.ts         # LLM prompts
 │   ├── llm/                   # LLM интеграция
 │   └── github/                # GitHub API
 ├── types/
-│   ├── business.ts            # Типы бизнес-анализа (NEW)
-│   ├── gaps.ts                # Типы Gap Detection (NEW)
+│   ├── business.ts            # Типы бизнес-анализа
+│   ├── gaps.ts                # Типы Gap Detection
 │   └── index.ts
 └── __tests__/                 # Unit тесты
 ```
@@ -205,9 +258,9 @@ npm run build
 - [x] Follow-up чат с streaming
 - [x] Кэширование (клиент + сервер)
 - [x] Business Canvas AI
-- [ ] Gap Detector (бизнес vs код)
+- [x] Gap Detector (бизнес vs код)
+- [x] Full Analysis mode
 - [ ] Competitor Analysis
-- [ ] Full Analysis mode
 - [ ] Auth + Dashboard
 - [ ] Weekly Reports
 

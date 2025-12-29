@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // ===========================================
 // API Request/Response Types
 // ===========================================
@@ -132,3 +134,49 @@ export interface RepoInfo {
   repo: string;
   branch?: string;
 }
+
+// ===========================================
+// Zod Schemas for API Validation
+// ===========================================
+
+export const ProjectStageSchema = z.enum(['documentation', 'mvp', 'launched', 'growing', 'unknown']);
+export const PrioritySchema = z.enum(['high', 'medium', 'low']);
+export const SeveritySchema = z.enum(['high', 'medium', 'low']);
+export const TaskCategorySchema = z.enum(['documentation', 'technical', 'product', 'marketing', 'business']);
+
+export const StrengthSchema = z.object({
+  area: z.string(),
+  detail: z.string(),
+  // Also accept 'title' and 'details' aliases for compatibility
+  title: z.string().optional(),
+  details: z.string().optional(),
+});
+
+export const IssueSchema = z.object({
+  severity: SeveritySchema,
+  area: z.string(),
+  detail: z.string(),
+  file_path: z.string().nullable(),
+  // Also accept 'title' and 'details' aliases for compatibility
+  title: z.string().optional(),
+  details: z.string().optional(),
+});
+
+export const TaskSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  priority: PrioritySchema,
+  category: TaskCategorySchema,
+  estimated_minutes: z.number(),
+  depends_on: z.string().nullable(),
+});
+
+export const AnalysisSchema = z.object({
+  project_summary: z.string(),
+  detected_stage: ProjectStageSchema,
+  tech_stack: z.array(z.string()),
+  strengths: z.array(StrengthSchema),
+  issues: z.array(IssueSchema),
+  tasks: z.array(TaskSchema),
+  next_milestone: z.string(),
+});

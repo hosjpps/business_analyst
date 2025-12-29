@@ -63,7 +63,7 @@
 
 ---
 
-## Текущий статус: v0.3.5
+## Текущий статус: v0.4.0
 
 ### Готово
 
@@ -93,12 +93,12 @@
 - [x] Client-side + server-side кэширование
 - [x] 68 unit тестов
 
-### В разработке (Фаза 1)
+### Фаза 1 (Завершена)
 
-- [ ] Business Canvas AI
-- [ ] Gap Detector
-- [ ] Объединённый анализ (Full Analysis)
-- [ ] Загрузка документов (PDF, DOCX)
+- [x] Business Canvas AI
+- [x] Gap Detector
+- [x] Объединённый анализ (Full Analysis)
+- [x] Загрузка документов (PDF, DOCX)
 
 ---
 
@@ -106,8 +106,8 @@
 
 | Фаза | Описание | Статус |
 |------|----------|--------|
-| 1 | Business Canvas AI + Gap Detector | **ТЕКУЩАЯ** |
-| 2 | Competitor Snapshot (ручной ввод) | Планируется |
+| 1 | Business Canvas AI + Gap Detector | ✅ Завершена |
+| 2 | Competitor Snapshot (ручной ввод) | **ТЕКУЩАЯ** |
 | 3 | Auth + Database + Dashboard | Планируется |
 | 4 | Weekly Reports | Future |
 | 5 | Social Media API Integration | Future |
@@ -133,22 +133,14 @@
 
 ## API Endpoints
 
-### Существующие
-
 | Method | Endpoint | Описание |
 |--------|----------|----------|
 | POST | `/api/analyze` | Анализ репозитория |
+| POST | `/api/analyze-business` | Анализ бизнеса → Canvas |
+| POST | `/api/analyze-gaps` | Gap Detection |
 | POST | `/api/chat` | Follow-up вопросы |
 | POST | `/api/chat/stream` | Streaming чат (SSE) |
 | GET | `/api/commit-sha` | Получить SHA коммита |
-
-### Новые (Фаза 1)
-
-| Method | Endpoint | Описание |
-|--------|----------|----------|
-| POST | `/api/analyze-business` | Анализ бизнеса → Canvas |
-| POST | `/api/analyze-gaps` | Gap Detection |
-| POST | `/api/analyze-full` | Полный анализ (бизнес + код) |
 
 Детали и примеры: [docs/api-spec.md](./docs/api-spec.md)
 

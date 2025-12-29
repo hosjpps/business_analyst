@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { AnalyzeResponse, FileInput } from '@/types';
 import type { BusinessInput, BusinessAnalyzeResponse } from '@/types/business';
+import type { GapAnalyzeResponse } from '@/types/gaps';
 import { UploadForm } from '@/components/UploadForm';
 import { ProgressIndicator, type AnalysisStep } from '@/components/ProgressIndicator';
 import { AnalysisView } from '@/components/AnalysisView';
@@ -12,6 +13,9 @@ import { AnalysisModeSelector, type AnalysisMode } from '@/components/forms/Anal
 import { BusinessInputForm } from '@/components/forms/BusinessInputForm';
 import { CanvasView } from '@/components/results/CanvasView';
 import { ClarificationQuestions } from '@/components/forms/ClarificationQuestions';
+import { GapsView } from '@/components/results/GapsView';
+import { AlignmentScore } from '@/components/results/AlignmentScore';
+import { VerdictBadge } from '@/components/results/VerdictBadge';
 import {
   usePersistedDescription,
   usePersistedRepoUrl,
@@ -41,6 +45,9 @@ export default function Home() {
   });
   const [businessResult, setBusinessResult] = useState<BusinessAnalyzeResponse | null>(null);
 
+  // Gap analysis state (for full mode)
+  const [gapResult, setGapResult] = useState<GapAnalyzeResponse | null>(null);
+
   // Non-persisted state
   const [uploadedFiles, setUploadedFiles] = useState<FileInput[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,6 +67,7 @@ export default function Home() {
     setUploadedFiles([]);
     setBusinessInput({ description: '', social_links: {}, documents: [] });
     setBusinessResult(null);
+    setGapResult(null);
     setError(null);
     setAnalysisStep('idle');
     window.location.reload();
@@ -195,6 +203,106 @@ export default function Home() {
   };
 
   // ===========================================
+  // Full Analysis Handler (Business + Code + Gaps)
+  // ===========================================
+
+  const handleFullAnalyze = async () => {
+    // Validate both inputs
+    if (businessInput.description.length < 50) {
+      setError('Описание бизнеса должно быть минимум 50 символов');
+      return;
+    }
+    if (!repoUrl && uploadedFiles.length === 0) {
+      setError('Укажите GitHub URL или загрузите файлы');
+      return;
+    }
+    if (!description.trim()) {
+      setError('Опишите свой проект');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setBusinessResult(null);
+    setPersistedResult(null);
+    setGapResult(null);
+    setAnalysisStep('uploading');
+
+    try {
+      // Step 1: Run both analyses in parallel
+      setAnalysisStep('analyzing');
+
+      const [businessResponse, codeResponse] = await Promise.all([
+        fetch('/api/analyze-business', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(businessInput),
+        }),
+        fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            repo_url: repoUrl || undefined,
+            files: uploadedFiles.length > 0 ? uploadedFiles : undefined,
+            project_description: description,
+          }),
+        }),
+      ]);
+
+      const businessData: BusinessAnalyzeResponse = await businessResponse.json();
+      const codeData: AnalyzeResponse = await codeResponse.json();
+
+      // Check for errors
+      if (!businessData.success) {
+        setError(businessData.error || 'Ошибка анализа бизнеса');
+        setAnalysisStep('error');
+        return;
+      }
+      if (!codeData.success) {
+        setError(codeData.error || 'Ошибка анализа кода');
+        setAnalysisStep('error');
+        return;
+      }
+
+      // Save intermediate results
+      setBusinessResult(businessData);
+      setPersistedResult(codeData);
+
+      // Step 2: Run gap detection if we have both canvas and analysis
+      if (businessData.canvas && codeData.analysis) {
+        setAnalysisStep('generating');
+
+        const gapResponse = await fetch('/api/analyze-gaps', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            canvas: businessData.canvas,
+            code_analysis: codeData.analysis,
+          }),
+        });
+
+        const gapData: GapAnalyzeResponse = await gapResponse.json();
+
+        if (!gapData.success) {
+          setError(gapData.error || 'Ошибка анализа разрывов');
+          setAnalysisStep('error');
+          return;
+        }
+
+        setGapResult(gapData);
+      }
+
+      setAnalysisStep('complete');
+    } catch (err) {
+      setError('Не удалось выполнить запрос');
+      setAnalysisStep('error');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===========================================
   // Handle clarification answers
   // ===========================================
 
@@ -224,8 +332,7 @@ export default function Home() {
     } else if (analysisMode === 'business') {
       handleBusinessAnalyze();
     } else if (analysisMode === 'full') {
-      // Full analysis: TODO in PR #2
-      setError('Полный анализ будет доступен в следующей версии');
+      handleFullAnalyze();
     }
   };
 
@@ -235,12 +342,17 @@ export default function Home() {
       ? (repoUrl || uploadedFiles.length > 0) && description.trim()
       : analysisMode === 'business'
       ? businessInput.description.length >= 50
+      : analysisMode === 'full'
+      ? businessInput.description.length >= 50 &&
+        (repoUrl || uploadedFiles.length > 0) &&
+        description.trim()
       : false;
 
   // Has any result
   const hasCodeResult = codeResult && codeResult.success;
   const hasBusinessResult = businessResult && businessResult.success;
-  const hasAnyResult = hasCodeResult || hasBusinessResult;
+  const hasGapResult = gapResult && gapResult.success;
+  const hasAnyResult = hasCodeResult || hasBusinessResult || hasGapResult;
 
   return (
     <div className="container">
@@ -320,17 +432,76 @@ export default function Home() {
 
       {/* Full Analysis Form */}
       {analysisMode === 'full' && (
-        <div className="coming-soon">
-          <span className="coming-soon-icon">🚧</span>
-          <p>Полный анализ (Бизнес + Код + Gap Detection) будет доступен в следующей версии</p>
-          <p className="coming-soon-hint">Пока можно использовать режимы "Разбор бизнеса" или "Проверка кода" отдельно</p>
-        </div>
+        <>
+          {/* Business Section */}
+          <div className="form-section">
+            <h3 className="section-header">Шаг 1: Опишите бизнес</h3>
+            <BusinessInputForm
+              value={businessInput}
+              onChange={setBusinessInput}
+              onError={setError}
+              disabled={loading}
+            />
+          </div>
+
+          <div className="divider">
+            <span>+</span>
+          </div>
+
+          {/* Code Section */}
+          <div className="form-section">
+            <h3 className="section-header">Шаг 2: Укажите код</h3>
+
+            {/* GitHub URL */}
+            <div className="form-group">
+              <label htmlFor="repo-url-full">GitHub URL</label>
+              <input
+                id="repo-url-full"
+                type="text"
+                placeholder="https://github.com/username/repo"
+                value={repoUrl}
+                onChange={(e) => setRepoUrl(e.target.value)}
+                disabled={uploadedFiles.length > 0 || loading}
+              />
+            </div>
+
+            <div className="divider-small">
+              <span>или</span>
+            </div>
+
+            {/* File Upload */}
+            <UploadForm
+              files={uploadedFiles}
+              onFilesChange={setUploadedFiles}
+              onError={setError}
+              disabled={loading}
+            />
+
+            {/* Project Description */}
+            <div className="form-group">
+              <label htmlFor="description-full">Опиши свой проект</label>
+              <textarea
+                id="description-full"
+                placeholder="Чем занимается твой проект? Какую проблему решает?"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+          </div>
+        </>
       )}
 
       {/* Submit Button */}
-      {analysisMode !== 'full' && analysisMode !== 'competitor' && (
+      {analysisMode !== 'competitor' && (
         <button onClick={handleAnalyze} disabled={loading || !canSubmit}>
-          {loading ? 'Анализирую...' : 'Анализировать'}
+          {loading
+            ? analysisMode === 'full'
+              ? 'Полный анализ...'
+              : 'Анализирую...'
+            : analysisMode === 'full'
+            ? 'Запустить полный анализ'
+            : 'Анализировать'}
         </button>
       )}
 
@@ -430,6 +601,84 @@ export default function Home() {
         </div>
       )}
 
+      {/* Full Analysis Results */}
+      {analysisMode === 'full' && (hasBusinessResult || hasCodeResult || hasGapResult) && (
+        <div className="results full-results">
+          {/* Gap Detection Results */}
+          {gapResult && (
+            <>
+              <div className="full-results-header">
+                <h3>Результаты анализа</h3>
+              </div>
+
+              {/* Verdict */}
+              {gapResult.verdict && (
+                <VerdictBadge
+                  verdict={gapResult.verdict}
+                  explanation={gapResult.verdict_explanation}
+                  size="large"
+                />
+              )}
+
+              {/* Alignment Score */}
+              {typeof gapResult.alignment_score === 'number' && (
+                <div className="score-section">
+                  <AlignmentScore score={gapResult.alignment_score} />
+                </div>
+              )}
+
+              {/* Gaps */}
+              {gapResult.gaps && gapResult.gaps.length > 0 && (
+                <GapsView
+                  gaps={gapResult.gaps}
+                  tasks={gapResult.tasks}
+                  nextMilestone={gapResult.next_milestone}
+                />
+              )}
+            </>
+          )}
+
+          {/* Business Canvas (collapsible) */}
+          {businessResult?.canvas && (
+            <details className="results-section">
+              <summary>Business Canvas</summary>
+              <CanvasView
+                canvas={businessResult.canvas}
+                businessStage={businessResult.business_stage}
+                gapsInModel={businessResult.gaps_in_model}
+                recommendations={businessResult.recommendations}
+              />
+            </details>
+          )}
+
+          {/* Code Analysis (collapsible) */}
+          {codeResult?.analysis && (
+            <details className="results-section">
+              <summary>Анализ кода</summary>
+              <AnalysisView analysis={codeResult.analysis} />
+            </details>
+          )}
+
+          {/* Metadata */}
+          <div className="metadata">
+            {businessResult?.metadata && (
+              <span>Бизнес: {businessResult.metadata.analysis_duration_ms}ms</span>
+            )}
+            {codeResult?.metadata && (
+              <span>Код: {codeResult.metadata.analysis_duration_ms}ms</span>
+            )}
+            {gapResult?.metadata && (
+              <span>Gaps: {gapResult.metadata.analysis_duration_ms}ms</span>
+            )}
+          </div>
+
+          {/* Chat */}
+          {codeResult?.analysis && (
+            <ChatSection analysis={codeResult.analysis} onError={setError} />
+          )}
+        </div>
+      )}
+
       <style jsx>{`
         .header-row {
           display: flex;
@@ -473,6 +722,66 @@ export default function Home() {
         }
         .coming-soon-hint {
           font-size: 13px;
+        }
+        .section-header {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--color-fg-default);
+          margin: 0 0 16px 0;
+        }
+        .divider-small {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 12px 0;
+          color: var(--color-fg-muted);
+          font-size: 12px;
+        }
+        .divider-small::before,
+        .divider-small::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid var(--color-border-default);
+        }
+        .divider-small span {
+          padding: 0 12px;
+        }
+        .full-results {
+          margin-top: 24px;
+        }
+        .full-results-header {
+          margin-bottom: 24px;
+        }
+        .full-results-header h3 {
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--color-fg-default);
+          margin: 0;
+        }
+        .score-section {
+          margin: 24px 0;
+        }
+        .results-section {
+          margin: 24px 0;
+          padding: 16px;
+          background: var(--color-canvas-subtle);
+          border: 1px solid var(--color-border-default);
+          border-radius: 6px;
+        }
+        .results-section summary {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--color-fg-default);
+          cursor: pointer;
+          padding: 8px 0;
+        }
+        .results-section summary:hover {
+          color: var(--color-accent-fg);
+        }
+        .results-section[open] summary {
+          margin-bottom: 16px;
+          border-bottom: 1px solid var(--color-border-default);
+          padding-bottom: 12px;
         }
       `}</style>
     </div>
