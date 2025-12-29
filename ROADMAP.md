@@ -45,7 +45,7 @@
 │                                                                             │
 │  ───────────────────────────────────────────────────────────────────────    │
 │                                                                             │
-│  ФАЗА 5: Auth + Database                                       [ТЕКУЩАЯ]   │
+│  ФАЗА 5: Auth + Database                                       [DONE ✅]   │
 │  ══════════════════════════                                                 │
 │  • Supabase integration                                                     │
 │  • User accounts                                                            │
@@ -54,7 +54,7 @@
 │                                                                             │
 │  ───────────────────────────────────────────────────────────────────────    │
 │                                                                             │
-│  ФАЗА 6: Weekly Reports                                        [FUTURE]    │
+│  ФАЗА 6: Weekly Reports                                        [ТЕКУЩАЯ]   │
 │  ═════════════════════════                                                  │
 │  • Progress tracking                                                        │
 │  • Automated reports                                                        │
@@ -470,26 +470,31 @@
 
 ---
 
-## ФАЗА 5: Auth + Database
+## ФАЗА 5: Auth + Database [DONE ✅]
 
 > **Цель:** Пользователи могут сохранять проекты и историю.
 
 ### Задачи
 
-- [ ] Supabase setup
-- [ ] Auth (email, Google)
-- [ ] Таблицы: users, projects, analyses, canvases
-- [ ] API для CRUD проектов
-- [ ] Dashboard UI
-- [ ] Миграция с localStorage
+- [x] Supabase setup
+- [x] Auth (email)
+- [x] Таблицы: profiles, projects, analyses, business_canvases, competitors, tasks
+- [x] API для CRUD проектов
+- [x] Dashboard UI
+- [x] Project detail page
+- [ ] Google OAuth (будет в след. итерации)
+- [ ] Миграция с localStorage (будет в след. итерации)
 
 ### Чеклист Фазы 5
 
 ```
-[ ] Auth работает
-[ ] Проекты сохраняются в DB
-[ ] Dashboard показывает проекты
-[ ] История анализов доступна
+[x] Auth работает (email + password)
+[x] Проекты сохраняются в DB
+[x] Dashboard показывает проекты
+[x] Детальная страница проекта
+[x] RLS политики для безопасности
+[ ] Google OAuth
+[ ] История анализов (нужна интеграция с анализом)
 ```
 
 ---
