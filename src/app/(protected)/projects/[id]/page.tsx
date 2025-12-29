@@ -18,7 +18,7 @@ type ProjectWithRelations = Tables<'projects'> & {
 export default function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const [supabase] = useState(() => createClient());
+  const supabase = createClient();
 
   const [project, setProject] = useState<ProjectWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,17 +30,23 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
 
   useEffect(() => {
     if (!supabase) {
+      // Supabase not configured, redirect to home
       router.push('/');
       return;
     }
 
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          router.push('/login');
+          return;
+        }
+        loadProject();
+      } catch (err) {
+        console.error('Auth check failed:', err);
         router.push('/login');
-        return;
       }
-      loadProject();
     };
 
     checkAuth();

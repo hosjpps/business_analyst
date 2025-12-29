@@ -15,7 +15,7 @@ type Project = Tables<'projects'> & {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [supabase] = useState(() => createClient());
+  const supabase = createClient();
 
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -36,13 +36,18 @@ export default function DashboardPage() {
     }
 
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          router.push('/login');
+          return;
+        }
+        setUser(user);
+        await loadProjects();
+      } catch (err) {
+        console.error('Auth check failed:', err);
         router.push('/login');
-        return;
       }
-      setUser(user);
-      await loadProjects();
     };
 
     checkAuth();
