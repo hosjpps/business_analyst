@@ -57,6 +57,23 @@ Based on alignment score:
 - 40-69: **iterate** - Significant work needed
 - 0-39: **pivot** - Major strategy rethink recommended
 
+## Language Requirements - CRITICAL
+
+Write ALL text in PLAIN RUSSIAN that a non-technical person can understand:
+- Always explain IT terms in parentheses: "CDN (сеть доставки контента — ускоряет загрузку)"
+- Avoid jargon without explanation: instead of "implement SSO" write "единый вход (SSO) — один пароль для всех сервисов"
+- Use simple verbs: "добавить/настроить" instead of "имплементировать/интегрировать"
+- Give concrete examples: instead of "optimize queries" write "ускорить загрузку списка товаров (сейчас 3 сек, нужно < 1 сек)"
+- In recommendations, explain WHY this matters for the business
+
+Examples of good formulations:
+- ❌ "Implement Redis caching layer for API responses"
+- ✅ "Добавить Redis (быстрый кэш) для ускорения загрузки страниц — пользователи не будут ждать"
+- ❌ "Set up CI/CD pipeline with GitHub Actions"
+- ✅ "Настроить автопубликацию через GitHub Actions — код будет обновляться на сайте автоматически после каждого изменения"
+- ❌ "Integrate Stripe webhooks for subscription management"
+- ✅ "Подключить уведомления от Stripe (сервис оплаты) — чтобы знать когда клиент оплатил или отменил подписку"
+
 ## Output Format
 
 Respond with valid JSON only:
@@ -68,7 +85,7 @@ Respond with valid JSON only:
       "category": "category_name",
       "business_goal": "What the business wants to achieve",
       "current_state": "What the code/product currently does",
-      "recommendation": "Specific actionable recommendation",
+      "recommendation": "Specific actionable recommendation IN PLAIN LANGUAGE with IT terms explained",
       "effort": "low|medium|high",
       "impact": "low|medium|high",
       "resources": ["optional", "helpful", "links"]
@@ -76,7 +93,7 @@ Respond with valid JSON only:
   ],
   "alignment_score": 0-100,
   "verdict": "on_track|iterate|pivot",
-  "verdict_explanation": "2-3 sentence explanation of the verdict"
+  "verdict_explanation": "2-3 sentence explanation of the verdict IN PLAIN RUSSIAN"
 }`;
 }
 
@@ -176,14 +193,37 @@ export function buildTaskGenerationSystemPrompt(): string {
 - **medium** - Important, do this week
 - **low** - Nice to have, do when possible
 
+## Language Requirements - CRITICAL
+
+Write ALL text in PLAIN RUSSIAN that a non-technical person can understand:
+
+1. **Task titles**: Simple and clear
+   - ❌ "Implement Stripe webhook handlers"
+   - ✅ "Настроить уведомления об оплатах от Stripe"
+
+2. **Task descriptions**: Step-by-step instructions with explanations
+   - ❌ "Configure CI/CD pipeline with automated testing and deployment to production"
+   - ✅ "Настроить автоматическую публикацию: 1) Зарегистрироваться в GitHub Actions (бесплатно), 2) Добавить файл настройки в папку проекта, 3) После этого каждое изменение кода будет автоматически проверяться и публиковаться на сайт"
+
+3. **IT terms**: Always explain in parentheses
+   - CDN (сеть доставки контента — ускоряет загрузку)
+   - Redis (быстрая база данных для кэша)
+   - API (способ общения между сервисами)
+   - Webhook (автоуведомление от сервиса)
+   - SSL (защита соединения, "замочек" в браузере)
+
+4. **Why it matters**: Explain business benefit
+   - ❌ "Add caching for better performance"
+   - ✅ "Добавить кэширование — страницы будут загружаться за 0.5 сек вместо 3 сек, пользователи не уйдут"
+
 ## Output Format
 
 Respond with valid JSON only:
 {
   "tasks": [
     {
-      "title": "Clear action title",
-      "description": "Detailed description of what to do and how",
+      "title": "Clear action title IN PLAIN RUSSIAN",
+      "description": "Detailed step-by-step description IN PLAIN RUSSIAN with IT terms explained",
       "priority": "high|medium|low",
       "category": "category_name",
       "estimated_minutes": 60,
@@ -192,7 +232,7 @@ Respond with valid JSON only:
       "resources": ["helpful links"]
     }
   ],
-  "next_milestone": "What completing these tasks will achieve"
+  "next_milestone": "What completing these tasks will achieve IN PLAIN RUSSIAN"
 }`;
 }
 

@@ -68,17 +68,33 @@ interface AutoTooltipTextProps {
 export function AutoTooltipText({ text, className }: AutoTooltipTextProps) {
   // Known term patterns to detect in text
   const termPatterns: Record<string, RegExp> = {
+    // Business metrics
     mrr: /\bMRR\b/gi,
     arr: /\bARR\b/gi,
     churn: /\b(churn|отток)\b/gi,
     ltv: /\bLTV\b/gi,
     cac: /\bCAC\b/gi,
+    // Business models
     saas: /\bSaaS\b/gi,
     b2b: /\bB2B\b/gi,
     b2c: /\bB2C\b/gi,
     mvp: /\bMVP\b/gi,
     pmf: /\b(PMF|Product-Market Fit)\b/gi,
+    freemium: /\bfreemium\b/gi,
+    // Tech terms
     api: /\bAPI\b/gi,
+    cdn: /\bCDN\b/gi,
+    redis: /\bRedis\b/gi,
+    webhook: /\b(webhook|вебхук)\b/gi,
+    cicd: /\b(CI\/CD|CI CD)\b/gi,
+    ssl: /\b(SSL|HTTPS)\b/gi,
+    seo: /\bSEO\b/gi,
+    stripe: /\bStripe\b/gi,
+    mixpanel: /\bMixpanel\b/gi,
+    pwa: /\bPWA\b/gi,
+    utm: /\b(UTM|utm[-_])\b/gi,
+    gdpr: /\bGDPR\b/gi,
+    onboarding: /\b(онбординг|onboarding)\b/gi,
   };
 
   // Find all matches in text

@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Checklist } from '@/components/ui/Checklist';
+import { TermTooltip, AutoTooltipText } from '@/components/ui/TermTooltip';
 import type { Tables } from '@/types/database';
-import type { ChecklistItem } from '@/types/ux';
+import type { ChecklistItem, TooltipTerm } from '@/types/ux';
 
 type Analysis = Tables<'analyses'>;
 type BusinessCanvas = Tables<'business_canvases'>;
@@ -15,6 +16,47 @@ type ProjectWithRelations = Tables<'projects'> & {
   analyses: Analysis[];
   business_canvases: BusinessCanvas[];
   tasks: Task[];
+};
+
+// Типы анализов для табов
+type AnalysisTabType = 'all' | 'code' | 'business' | 'full' | 'competitor';
+
+// Определения терминов для нетехнических пользователей
+const TERM_DEFINITIONS: Record<string, TooltipTerm> = {
+  'alignment_score': {
+    term: 'Оценка соответствия',
+    simple: 'Показывает, насколько ваш продукт соответствует бизнес-целям (от 0 до 100)',
+    example: 'Если хотите монетизировать, но нет оплаты — оценка будет низкой',
+    whyMatters: 'Помогает понять, на чём сосредоточиться в первую очередь',
+  },
+  'gap': {
+    term: 'Разрыв',
+    simple: 'Разница между тем, что нужно бизнесу, и тем, что есть в продукте',
+    example: 'Нужна аналитика для роста, но её нет — это разрыв',
+    whyMatters: 'Закрытие разрывов приближает вас к целям',
+  },
+  'verdict': {
+    term: 'Вердикт',
+    simple: 'Общая рекомендация: всё хорошо, нужны улучшения, или нужно менять направление',
+    whyMatters: 'Помогает быстро понять общее состояние проекта',
+  },
+  'security': {
+    term: 'Безопасность',
+    simple: 'Проверка кода на уязвимости, которые могут навредить пользователям',
+    example: 'Утечка паролей, SQL-инъекции, незащищённые данные',
+    whyMatters: 'Защищает ваших пользователей и репутацию',
+  },
+  'tech_stack': {
+    term: 'Технологии',
+    simple: 'Инструменты и языки программирования, которые использует ваш проект',
+    example: 'React, Node.js, PostgreSQL',
+  },
+  'cwe': {
+    term: 'CWE',
+    simple: 'Классификация типов уязвимостей безопасности',
+    example: 'CWE-200 — утечка данных, CWE-89 — SQL-инъекция',
+    whyMatters: 'Помогает разработчикам быстро найти решение',
+  },
 };
 
 export default function ProjectPage({ params }: { params: { id: string } }) {
@@ -29,6 +71,28 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<AnalysisTabType>('all');
+
+  // Подсчёт анализов по типам
+  const analysisCounts = useMemo(() => {
+    if (!project?.analyses) return { all: 0, code: 0, business: 0, full: 0, competitor: 0 };
+
+    const counts = { all: project.analyses.length, code: 0, business: 0, full: 0, competitor: 0 };
+    project.analyses.forEach(a => {
+      if (a.type === 'code') counts.code++;
+      else if (a.type === 'business') counts.business++;
+      else if (a.type === 'full') counts.full++;
+      else if (a.type === 'competitor') counts.competitor++;
+    });
+    return counts;
+  }, [project?.analyses]);
+
+  // Фильтрация анализов по выбранному табу
+  const filteredAnalyses = useMemo(() => {
+    if (!project?.analyses) return [];
+    if (activeTab === 'all') return project.analyses;
+    return project.analyses.filter(a => a.type === activeTab);
+  }, [project?.analyses, activeTab]);
 
   useEffect(() => {
     if (!supabase) {
@@ -303,109 +367,147 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     );
   }
 
+  // Табы анализов
+  const analysisTabs: { key: AnalysisTabType; label: string; icon: string; description: string }[] = [
+    { key: 'all', label: 'Все', icon: '📋', description: 'Все виды анализа' },
+    { key: 'code', label: 'Код', icon: '💻', description: 'Технический анализ кода' },
+    { key: 'business', label: 'Бизнес', icon: '📊', description: 'Анализ бизнес-модели' },
+    { key: 'full', label: 'Полный', icon: '🔬', description: 'Код + Бизнес + Разрывы' },
+    { key: 'competitor', label: 'Конкуренты', icon: '🎯', description: 'Сравнение с конкурентами' },
+  ];
+
   return (
     <div className="project-page">
       {/* Header */}
       <header className="project-header">
-        <button className="back-btn" onClick={() => router.push('/dashboard')}>
-          ← Проекты
-        </button>
-        <div className="header-actions">
-          <button className="btn-analyze" onClick={() => router.push(`/?project=${id}`)}>
-            🔬 Новый анализ
+        <div className="header-container">
+          <button className="back-btn" onClick={() => router.push('/dashboard')}>
+            ← Проекты
           </button>
-          <button className="btn-delete" onClick={handleDelete}>
-            🗑️ Удалить
-          </button>
+          <div className="header-actions">
+            <button className="btn-analyze" onClick={() => router.push(`/?project=${id}`)}>
+              + Новый анализ
+            </button>
+            <button className="btn-delete" onClick={handleDelete}>
+              Удалить
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Error banner */}
-      {error && (
-        <div className="error-banner">
-          {error}
-          <button onClick={() => setError(null)}>×</button>
-        </div>
-      )}
-
-      {/* Project info */}
-      <section className="project-info">
-        {editing ? (
-          <div className="edit-form">
-            <input
-              type="text"
-              value={editName}
-              onChange={e => setEditName(e.target.value)}
-              placeholder="Название проекта"
-              maxLength={100}
-            />
-            <textarea
-              value={editDescription}
-              onChange={e => setEditDescription(e.target.value)}
-              placeholder="Описание проекта..."
-              maxLength={5000}
-              rows={3}
-            />
-            <div className="edit-actions">
-              <button
-                className="btn-secondary"
-                onClick={() => {
-                  setEditing(false);
-                  setEditName(project?.name || '');
-                  setEditDescription(project?.description || '');
-                }}
-              >
-                Отмена
-              </button>
-              <button
-                className="btn-primary"
-                onClick={handleSave}
-                disabled={saving || !editName.trim()}
-              >
-                {saving ? 'Сохранение...' : 'Сохранить'}
-              </button>
-            </div>
+      {/* Main content container */}
+      <div className="page-container">
+        {/* Error banner */}
+        {error && (
+          <div className="error-banner">
+            {error}
+            <button onClick={() => setError(null)}>×</button>
           </div>
-        ) : (
-          <>
-            <div className="info-header">
-              <h1>{project?.name}</h1>
-              <button className="edit-btn" onClick={() => setEditing(true)}>
-                ✏️ Редактировать
-              </button>
-            </div>
-            {project?.description && (
-              <p className="description">{project.description}</p>
-            )}
-            {project?.repo_url && (
-              <a
-                href={project.repo_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="repo-link"
-              >
-                🔗 {project.repo_url}
-              </a>
-            )}
-            <div className="meta">
-              <span>Создан: {formatDate(project?.created_at || '')}</span>
-              <span>Обновлён: {formatDate(project?.updated_at || '')}</span>
-            </div>
-          </>
         )}
-      </section>
 
-      {/* Analyses */}
-      <section className="section">
-        <div className="section-header">
-          <h2>📊 Анализы ({project?.analyses?.length || 0})</h2>
-          <button className="btn-analyze-small" onClick={() => router.push(`/?project=${id}`)}>
-            + Новый анализ
-          </button>
-        </div>
-        {project?.analyses && project.analyses.length > 0 ? (
-          <div className="analyses-list">
-            {project.analyses.map(analysis => {
+        {/* Project info */}
+        <section className="project-info">
+          {editing ? (
+            <div className="edit-form">
+              <input
+                type="text"
+                value={editName}
+                onChange={e => setEditName(e.target.value)}
+                placeholder="Название проекта"
+                maxLength={100}
+              />
+              <textarea
+                value={editDescription}
+                onChange={e => setEditDescription(e.target.value)}
+                placeholder="Описание проекта..."
+                maxLength={5000}
+                rows={3}
+              />
+              <div className="edit-actions">
+                <button
+                  className="btn-secondary"
+                  onClick={() => {
+                    setEditing(false);
+                    setEditName(project?.name || '');
+                    setEditDescription(project?.description || '');
+                  }}
+                >
+                  Отмена
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={handleSave}
+                  disabled={saving || !editName.trim()}
+                >
+                  {saving ? 'Сохранение...' : 'Сохранить'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="info-header">
+                <h1>{project?.name}</h1>
+                <button className="edit-btn" onClick={() => setEditing(true)}>
+                  ✏️ Редактировать
+                </button>
+              </div>
+              {project?.description && (
+                <p className="description">{project.description}</p>
+              )}
+              {project?.repo_url && (
+                <a
+                  href={project.repo_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="repo-link"
+                >
+                  🔗 {project.repo_url}
+                </a>
+              )}
+              <div className="meta">
+                <span>Создан: {formatDate(project?.created_at || '')}</span>
+                <span>Обновлён: {formatDate(project?.updated_at || '')}</span>
+              </div>
+            </>
+          )}
+        </section>
+
+        {/* Analysis Tabs */}
+        <section className="section analysis-tabs-section">
+          <div className="section-header">
+            <h2>📊 Анализы</h2>
+            <button className="btn-analyze-small" onClick={() => router.push(`/?project=${id}`)}>
+              + Новый анализ
+            </button>
+          </div>
+
+          {/* Tab Navigation */}
+          <nav className="tabs-nav">
+            {analysisTabs.map(tab => (
+              <button
+                key={tab.key}
+                className={`tab-btn ${activeTab === tab.key ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.key)}
+                title={tab.description}
+              >
+                <span className="tab-icon">{tab.icon}</span>
+                <span className="tab-label">{tab.label}</span>
+                {analysisCounts[tab.key] > 0 && (
+                  <span className="tab-count">{analysisCounts[tab.key]}</span>
+                )}
+              </button>
+            ))}
+          </nav>
+
+          {/* Tab Content Hint */}
+          <p className="tab-hint">
+            {analysisTabs.find(t => t.key === activeTab)?.description}
+          </p>
+
+          {/* Filtered Analyses List */}
+          {filteredAnalyses.length > 0 ? (
+            <div className="analyses-list">
+              {filteredAnalyses.map(analysis => {
               const badge = getAnalysisTypeBadge(analysis.type);
               const resultData = analysis.result as {
                 analysis?: {
@@ -473,18 +575,31 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                   </div>
 
                   {typeof alignmentScore === 'number' && (
-                    <div className="alignment-score-mini">
-                      <div className="score-bar">
-                        <div
-                          className="score-fill"
-                          style={{
-                            width: `${alignmentScore}%`,
-                            backgroundColor: alignmentScore >= 70 ? '#3fb950' :
-                                           alignmentScore >= 40 ? '#d29922' : '#f85149'
-                          }}
-                        />
+                    <div className="alignment-score-section">
+                      <div className="score-header">
+                        <span className="score-label">
+                          {alignmentScore >= 70 ? '✅ Продукт готов к росту' :
+                           alignmentScore >= 40 ? '⚡ Есть возможности для улучшения' : '🔧 Требуется доработка'}
+                        </span>
                       </div>
-                      <span className="score-value">{Math.round(alignmentScore)}%</span>
+                      <div className="alignment-score-mini">
+                        <div className="score-bar">
+                          <div
+                            className="score-fill"
+                            style={{
+                              width: `${alignmentScore}%`,
+                              backgroundColor: alignmentScore >= 70 ? '#3fb950' :
+                                             alignmentScore >= 40 ? '#d29922' : '#f85149'
+                            }}
+                          />
+                        </div>
+                        <span className="score-value">{Math.round(alignmentScore)}%</span>
+                      </div>
+                      <p className="score-explanation">
+                        {alignmentScore >= 70 ? 'Ваш продукт хорошо соответствует бизнес-целям. Можно масштабировать.' :
+                         alignmentScore >= 40 ? 'Есть разрывы между целями и продуктом. Выполните рекомендации ниже.' :
+                         'Серьёзные разрывы между целями и продуктом. Сосредоточьтесь на ключевых задачах.'}
+                      </p>
                     </div>
                   )}
 
@@ -503,55 +618,62 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                     </div>
                   )}
 
-                  {/* Gaps Summary */}
+                  {/* Gaps Summary - упрощённые описания */}
                   {gaps && gaps.length > 0 && (
                     <div className="analysis-gaps-summary">
-                      <h4>🔍 Разрывы</h4>
+                      <h4>🎯 Что нужно улучшить</h4>
+                      <p className="section-hint">Разница между вашими целями и текущим состоянием продукта</p>
                       <div className="gaps-list">
                         {gaps.slice(0, 3).map((gap, i) => (
                           <div key={i} className={`gap-item gap-${gap.severity}`}>
-                            <span className="gap-title">{gap.title}</span>
+                            <span className="gap-title">
+                              <AutoTooltipText text={gap.title} />
+                            </span>
                             <span className={`gap-severity severity-${gap.severity}`}>
-                              {gap.severity === 'critical' ? '🔴' : gap.severity === 'warning' ? '🟡' : '🔵'}
+                              {gap.severity === 'critical' ? '❗ Важно' : gap.severity === 'warning' ? '⚡ Желательно' : '💡 Совет'}
                             </span>
                           </div>
                         ))}
                         {gaps.length > 3 && (
-                          <p className="more-items">и ещё {gaps.length - 3} разрывов...</p>
+                          <p className="more-items">и ещё {gaps.length - 3}...</p>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Issues Summary */}
+                  {/* Issues Summary - упрощённые описания */}
                   {codeAnalysis?.issues && codeAnalysis.issues.length > 0 && (
                     <div className="analysis-issues-summary">
-                      <h4>⚠️ Проблемы</h4>
+                      <h4>⚠️ Найденные проблемы</h4>
+                      <p className="section-hint">Технические проблемы, которые стоит исправить</p>
                       <div className="issues-list">
                         {codeAnalysis.issues.slice(0, 3).map((issue, i) => (
                           <div key={i} className={`issue-item-mini issue-${issue.severity}`}>
-                            <span className="issue-title">{issue.area}</span>
+                            <span className="issue-title">{issue.area}: {issue.detail?.slice(0, 50)}</span>
                             <span className={`issue-severity severity-${issue.severity}`}>
-                              {issue.severity}
+                              {issue.severity === 'high' ? '❗ Высокий' : issue.severity === 'medium' ? '⚡ Средний' : '💡 Низкий'}
                             </span>
                           </div>
                         ))}
                         {codeAnalysis.issues.length > 3 && (
-                          <p className="more-items">и ещё {codeAnalysis.issues.length - 3} проблем...</p>
+                          <p className="more-items">и ещё {codeAnalysis.issues.length - 3}...</p>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Tasks Summary */}
+                  {/* Tasks Summary - упрощённые описания */}
                   {tasks && tasks.length > 0 && (
                     <div className="analysis-tasks-summary">
-                      <h4>📋 Рекомендуемые задачи</h4>
+                      <h4>✅ Что делать дальше</h4>
+                      <p className="section-hint">Конкретные шаги для улучшения продукта</p>
                       <div className="tasks-preview-list">
                         {tasks.slice(0, 3).map((task, i) => (
                           <div key={i} className={`task-item-mini priority-${task.priority}`}>
                             <span className="task-number">{i + 1}.</span>
-                            <span className="task-title">{task.title}</span>
+                            <span className="task-title">
+                              <AutoTooltipText text={task.title} />
+                            </span>
                           </div>
                         ))}
                         {tasks.length > 3 && (
@@ -565,33 +687,36 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                   {codeAnalysis?.next_milestone && (
                     <div className="analysis-milestone">
                       <span className="milestone-label">🎯 Следующая цель:</span>
-                      <span className="milestone-text">{codeAnalysis.next_milestone}</span>
+                      <span className="milestone-text">
+                        <AutoTooltipText text={codeAnalysis.next_milestone} />
+                      </span>
                     </div>
                   )}
 
-                  {/* Security Analysis */}
+                  {/* Security Analysis - с понятными описаниями */}
                   {securityAnalysis && securityAnalysis.findings.length > 0 && (
                     <div className="security-analysis-section">
-                      <h4>🔒 Анализ безопасности</h4>
+                      <h4>🔒 Защита от угроз</h4>
+                      <p className="section-hint">Проверка кода на уязвимости, которые могут навредить вашим пользователям</p>
                       <div className="security-stats">
                         {securityAnalysis.stats.critical > 0 && (
                           <span className="security-stat critical">
-                            🔴 {securityAnalysis.stats.critical} критических
+                            ❗ {securityAnalysis.stats.critical} срочных
                           </span>
                         )}
                         {securityAnalysis.stats.high > 0 && (
                           <span className="security-stat high">
-                            🟠 {securityAnalysis.stats.high} высоких
+                            ⚠️ {securityAnalysis.stats.high} важных
                           </span>
                         )}
                         {securityAnalysis.stats.medium > 0 && (
                           <span className="security-stat medium">
-                            🟡 {securityAnalysis.stats.medium} средних
+                            💡 {securityAnalysis.stats.medium} средних
                           </span>
                         )}
                         {securityAnalysis.stats.low > 0 && (
                           <span className="security-stat low">
-                            🟢 {securityAnalysis.stats.low} низких
+                            ℹ️ {securityAnalysis.stats.low} мелких
                           </span>
                         )}
                       </div>
@@ -600,16 +725,13 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                           <div key={i} className={`security-finding severity-${finding.severity}`}>
                             <div className="finding-header">
                               <span className="finding-type">{finding.type.replace(/_/g, ' ')}</span>
-                              {finding.cwe_id && (
-                                <span className="finding-cwe">{finding.cwe_id}</span>
-                              )}
                             </div>
                             <p className="finding-desc">{finding.description}</p>
-                            <span className="finding-file">{finding.file_path}</span>
+                            <span className="finding-file">📁 {finding.file_path}</span>
                           </div>
                         ))}
                         {securityAnalysis.findings.length > 3 && (
-                          <p className="more-items">и ещё {securityAnalysis.findings.length - 3} находок...</p>
+                          <p className="more-items">и ещё {securityAnalysis.findings.length - 3}...</p>
                         )}
                       </div>
                     </div>
@@ -636,46 +758,51 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                   </details>
                 </div>
               );
-            })}
-          </div>
-        ) : (
-          <div className="empty-section">
-            <p>Пока нет анализов</p>
-            <button className="btn-primary" onClick={() => router.push(`/?project=${id}`)}>
-              🔬 Запустить анализ
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* Tasks */}
-      <section className="section tasks-section">
-        <h2>📋 Задачи ({project?.tasks?.length || 0})</h2>
-        {project?.tasks && project.tasks.length > 0 ? (
-          <Checklist
-            items={convertTasksToChecklist(project.tasks)}
-            onChange={handleTasksChange}
-            groupByPriority={true}
-            showProgress={true}
-          />
-        ) : (
-          <div className="empty-section">
-            <p>Пока нет задач. Запустите анализ для генерации рекомендаций.</p>
-          </div>
-        )}
-      </section>
-
-      {/* Business Canvas */}
-      {project?.business_canvases && project.business_canvases.length > 0 && (
-        <section className="section">
-          <h2>🎯 Business Canvas</h2>
-          <div className="canvas-preview">
-            <pre>
-              {JSON.stringify(project.business_canvases[0].canvas, null, 2)}
-            </pre>
-          </div>
+              })}
+            </div>
+          ) : (
+            <div className="empty-section">
+              <p>
+                {activeTab === 'all'
+                  ? 'Пока нет анализов. Запустите первый анализ!'
+                  : `Нет анализов типа "${analysisTabs.find(t => t.key === activeTab)?.label}"`}
+              </p>
+              <button className="btn-primary" onClick={() => router.push(`/?project=${id}`)}>
+                + Запустить анализ
+              </button>
+            </div>
+          )}
         </section>
-      )}
+
+        {/* Tasks */}
+        <section className="section tasks-section">
+          <h2>📋 Задачи ({project?.tasks?.length || 0})</h2>
+          {project?.tasks && project.tasks.length > 0 ? (
+            <Checklist
+              items={convertTasksToChecklist(project.tasks)}
+              onChange={handleTasksChange}
+              groupByPriority={true}
+              showProgress={true}
+            />
+          ) : (
+            <div className="empty-section">
+              <p>Пока нет задач. Запустите анализ для генерации рекомендаций.</p>
+            </div>
+          )}
+        </section>
+
+        {/* Business Canvas */}
+        {project?.business_canvases && project.business_canvases.length > 0 && (
+          <section className="section">
+            <h2>🎯 Business Canvas</h2>
+            <div className="canvas-preview">
+              <pre>
+                {JSON.stringify(project.business_canvases[0].canvas, null, 2)}
+              </pre>
+            </div>
+          </section>
+        )}
+      </div> {/* End of page-container */}
 
       <style jsx>{`
         .project-page {
@@ -685,13 +812,26 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           padding-bottom: 3rem;
         }
 
+        /* Container with max width like main page */
+        .page-container {
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+
         .project-header {
+          border-bottom: 1px solid #30363d;
+          background: #161b22;
+          padding: 0;
+        }
+
+        .header-container {
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 1rem 24px;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 1rem 2rem;
-          border-bottom: 1px solid #30363d;
-          background: #161b22;
         }
 
         .back-btn {
@@ -728,7 +868,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         .btn-delete {
           background: transparent;
           color: #f85149;
-          border: 1px solid #f85149;
+          border: 1px solid #30363d;
           padding: 0.5rem 1rem;
           border-radius: 6px;
           cursor: pointer;
@@ -737,6 +877,8 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
         .btn-delete:hover {
           background: rgba(248, 81, 73, 0.1);
+          border-color: #f85149;
+          color: #f85149;
         }
 
         .error-banner {
@@ -747,7 +889,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           background: rgba(248, 81, 73, 0.1);
           border: 1px solid #f85149;
           color: #f85149;
-          margin: 1rem 2rem;
+          margin: 1rem 0;
           border-radius: 6px;
         }
 
@@ -760,7 +902,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         }
 
         .project-info {
-          padding: 2rem;
+          padding: 2rem 0;
           border-bottom: 1px solid #30363d;
         }
 
@@ -773,7 +915,97 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
         .info-header h1 {
           margin: 0;
-          font-size: 1.75rem;
+          font-size: 1.5rem;
+        }
+
+        /* Tabs Navigation */
+        .analysis-tabs-section {
+          padding-top: 1.5rem;
+        }
+
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+        .section-header h2 {
+          margin: 0;
+          font-size: 1.25rem;
+        }
+
+        .btn-analyze-small {
+          background: #238636;
+          color: #fff;
+          border: none;
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.8rem;
+        }
+
+        .btn-analyze-small:hover {
+          background: #2ea043;
+        }
+
+        .tabs-nav {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-bottom: 1rem;
+          padding: 0.5rem;
+          background: #161b22;
+          border-radius: 8px;
+          border: 1px solid #30363d;
+        }
+
+        .tab-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.6rem 1rem;
+          background: transparent;
+          border: 1px solid transparent;
+          border-radius: 6px;
+          color: #8b949e;
+          cursor: pointer;
+          font-size: 0.875rem;
+          transition: all 0.15s ease;
+        }
+
+        .tab-btn:hover {
+          background: #21262d;
+          color: #e6edf3;
+        }
+
+        .tab-btn.active {
+          background: #238636;
+          color: #fff;
+          border-color: #238636;
+        }
+
+        .tab-icon {
+          font-size: 1rem;
+        }
+
+        .tab-count {
+          background: #30363d;
+          padding: 0.1rem 0.4rem;
+          border-radius: 10px;
+          font-size: 0.7rem;
+          font-weight: 600;
+        }
+
+        .tab-btn.active .tab-count {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-hint {
+          color: #8b949e;
+          font-size: 0.8rem;
+          margin: 0 0 1.5rem 0;
+          padding-left: 0.5rem;
         }
 
         .edit-btn {
@@ -993,11 +1225,42 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           color: #f85149;
         }
 
+        /* Улучшенные стили для упрощённых терминов */
+        .section-hint {
+          color: #8b949e;
+          font-size: 0.8rem;
+          margin: 0 0 0.75rem;
+          line-height: 1.4;
+        }
+
+        .alignment-score-section {
+          background: #0d1117;
+          border-radius: 8px;
+          padding: 1rem;
+          margin: 1rem 0;
+        }
+
+        .score-header {
+          margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .score-explanation {
+          color: #8b949e;
+          font-size: 0.8rem;
+          margin: 0.5rem 0 0;
+          line-height: 1.4;
+        }
+
         .alignment-score-mini {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          margin: 0.75rem 0;
+          margin: 0.5rem 0;
         }
 
         .score-bar {

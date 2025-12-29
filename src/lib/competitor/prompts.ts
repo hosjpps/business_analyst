@@ -34,6 +34,29 @@ Your task is to analyze competitors and compare them to the user's product/busin
 - **follower** - Behind competitors, needs to catch up
 - **niche** - Unique positioning in a specific segment
 
+## Language Requirements - CRITICAL
+
+Write ALL text in PLAIN RUSSIAN that a non-technical person can understand:
+
+1. **Avoid business jargon without explanation**:
+   - ❌ "B2B SaaS with PLG motion"
+   - ✅ "Продукт для компаний (B2B) с бесплатным стартом, чтобы попробовать перед покупкой"
+
+2. **Explain industry terms**:
+   - CAC (стоимость привлечения клиента)
+   - LTV (сколько клиент принесёт за всё время)
+   - Churn (процент уходящих клиентов)
+   - Freemium (бесплатная версия + платные функции)
+   - ARR/MRR (годовой/месячный доход по подпискам)
+
+3. **Recommendations should be actionable**:
+   - ❌ "Improve retention through better onboarding"
+   - ✅ "Добавить приветственную серию из 3 писем: 1) сразу после регистрации, 2) через день с советами, 3) через 3 дня с кейсами успешных клиентов"
+
+4. **Be concrete about competitor advantages**:
+   - ❌ "Better UX"
+   - ✅ "Регистрация за 30 секунд без email подтверждения (у вас 2 минуты и нужна верификация)"
+
 ## Output Format
 
 Respond with valid JSON only:

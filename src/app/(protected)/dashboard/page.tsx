@@ -5,12 +5,20 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Tables } from '@/types/database';
 
+type TaskItem = {
+  id: string;
+  title: string;
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
+};
+
 type Project = Tables<'projects'> & {
   analyses?: Array<{
     id: string;
     type: string;
     created_at: string;
   }>;
+  tasks?: TaskItem[];
 };
 
 export default function DashboardPage() {
@@ -27,6 +35,21 @@ export default function DashboardPage() {
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDescription, setNewProjectDescription] = useState('');
   const [creating, setCreating] = useState(false);
+
+  // Tasks by project
+  const [selectedProjectForTasks, setSelectedProjectForTasks] = useState<string | null>(null);
+
+  // Get tasks for selected project
+  const selectedProjectTasks = selectedProjectForTasks
+    ? projects.find(p => p.id === selectedProjectForTasks)?.tasks || []
+    : [];
+
+  // Get all tasks count
+  const totalTasksCount = projects.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
+  const completedTasksCount = projects.reduce(
+    (acc, p) => acc + (p.tasks?.filter(t => t.status === 'completed').length || 0),
+    0
+  );
 
   // Check auth and load projects
   useEffect(() => {
@@ -164,35 +187,208 @@ export default function DashboardPage() {
     <div className="dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <div className="header-left">
-          <h1>Dashboard</h1>
-          <span className="user-email">{user?.email}</span>
-        </div>
-        <div className="header-right">
-          <button
-            className="btn-primary"
-            onClick={() => setShowNewProject(true)}
-          >
-            + Новый проект
-          </button>
-          <button
-            className="btn-secondary"
-            onClick={handleLogout}
-          >
-            Выйти
-          </button>
+        <div className="header-container">
+          <div className="header-left">
+            <h1>Мои проекты</h1>
+            <span className="user-email">{user?.email}</span>
+          </div>
+          <div className="header-right">
+            <button
+              className="btn-primary"
+              onClick={() => setShowNewProject(true)}
+            >
+              + Новый проект
+            </button>
+            <button
+              className="btn-secondary"
+              onClick={handleLogout}
+            >
+              Выйти
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Error message */}
-      {error && (
-        <div className="error-banner">
-          {error}
-          <button onClick={() => setError(null)}>×</button>
-        </div>
-      )}
+      {/* Main container with limited width */}
+      <div className="page-container">
+        {/* Error message */}
+        {error && (
+          <div className="error-banner">
+            {error}
+            <button onClick={() => setError(null)}>×</button>
+          </div>
+        )}
 
-      {/* New project form */}
+        {/* Main content */}
+        <main className="dashboard-content">
+          {projects.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📁</div>
+              <h2>Нет проектов</h2>
+              <p>Создайте свой первый проект для анализа</p>
+              <button
+                className="btn-primary"
+                onClick={() => setShowNewProject(true)}
+              >
+                + Создать проект
+              </button>
+            </div>
+          ) : (
+            <div className="projects-list">
+              {projects.map(project => (
+                <div key={project.id} className="project-card">
+                  <div className="project-header">
+                    <h3>{project.name}</h3>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeleteProject(project.id)}
+                      title="Удалить проект"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+
+                  {project.description && (
+                    <p className="project-description">{project.description}</p>
+                  )}
+
+                  {project.repo_url && (
+                    <a
+                      href={project.repo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="repo-link"
+                    >
+                      🔗 {project.repo_url.replace('https://github.com/', '')}
+                    </a>
+                  )}
+
+                  {project.analyses && project.analyses.length > 0 && (
+                    <div className="project-analyses">
+                      <span className="analyses-label">Анализы:</span>
+                      <div className="analyses-badges">
+                        {project.analyses.slice(0, 3).map(analysis => {
+                          const badge = getAnalysisTypeBadge(analysis.type);
+                          return (
+                            <span
+                              key={analysis.id}
+                              className="analysis-badge"
+                              style={{ backgroundColor: badge.color }}
+                            >
+                              {badge.label}
+                            </span>
+                          );
+                        })}
+                        {project.analyses.length > 3 && (
+                          <span className="more-badge">
+                            +{project.analyses.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="project-footer">
+                    <span className="project-date">
+                      Обновлён {formatDate(project.updated_at)}
+                    </span>
+                    <button
+                      className="btn-view"
+                      onClick={() => router.push(`/projects/${project.id}`)}
+                    >
+                      Открыть →
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+
+        {/* Tasks Section - grouped by project */}
+        {totalTasksCount > 0 && (
+          <section className="tasks-overview-section">
+            <div className="tasks-header">
+              <h2>📋 Задачи</h2>
+              <span className="tasks-stats">
+                Выполнено {completedTasksCount} из {totalTasksCount}
+              </span>
+            </div>
+
+            {/* Project Selector */}
+            <div className="project-selector">
+              <label>Выберите проект:</label>
+              <select
+                value={selectedProjectForTasks || ''}
+                onChange={e => setSelectedProjectForTasks(e.target.value || null)}
+              >
+                <option value="">Все проекты</option>
+                {projects.filter(p => p.tasks && p.tasks.length > 0).map(p => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} ({p.tasks?.length || 0})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Tasks List */}
+            {selectedProjectForTasks ? (
+              <div className="tasks-list">
+                {selectedProjectTasks.length > 0 ? (
+                  selectedProjectTasks.map(task => (
+                    <div key={task.id} className={`task-item task-${task.priority} task-status-${task.status}`}>
+                      <span className="task-checkbox">
+                        {task.status === 'completed' ? '✅' : '⬜'}
+                      </span>
+                      <span className="task-title-text">{task.title}</span>
+                      <span className={`task-priority priority-${task.priority}`}>
+                        {task.priority === 'critical' ? '❗ Срочно' :
+                         task.priority === 'high' ? '⚡ Важно' :
+                         task.priority === 'medium' ? '📌 Средний' : '💡 Низкий'}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-tasks">Нет задач для этого проекта</p>
+                )}
+              </div>
+            ) : (
+              <div className="tasks-by-project">
+                {projects.filter(p => p.tasks && p.tasks.length > 0).map(project => (
+                  <div key={project.id} className="project-tasks-group">
+                    <h4 className="project-tasks-title">
+                      📁 {project.name}
+                      <span className="project-tasks-count">
+                        {project.tasks?.filter(t => t.status === 'completed').length || 0}/{project.tasks?.length || 0}
+                      </span>
+                    </h4>
+                    <div className="tasks-list">
+                      {project.tasks?.slice(0, 3).map(task => (
+                        <div key={task.id} className={`task-item task-${task.priority} task-status-${task.status}`}>
+                          <span className="task-checkbox">
+                            {task.status === 'completed' ? '✅' : '⬜'}
+                          </span>
+                          <span className="task-title-text">{task.title}</span>
+                        </div>
+                      ))}
+                      {(project.tasks?.length || 0) > 3 && (
+                        <button
+                          className="btn-view-more"
+                          onClick={() => setSelectedProjectForTasks(project.id)}
+                        >
+                          Показать все ({project.tasks?.length})
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+      </div> {/* End page-container */}
+
+      {/* New project modal - outside container */}
       {showNewProject && (
         <div className="modal-overlay" onClick={() => setShowNewProject(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
@@ -242,99 +438,13 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Main content */}
-      <main className="dashboard-content">
-        {projects.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">📁</div>
-            <h2>Нет проектов</h2>
-            <p>Создайте свой первый проект для анализа</p>
-            <button
-              className="btn-primary"
-              onClick={() => setShowNewProject(true)}
-            >
-              + Создать проект
-            </button>
-          </div>
-        ) : (
-          <div className="projects-grid">
-            {projects.map(project => (
-              <div key={project.id} className="project-card">
-                <div className="project-header">
-                  <h3>{project.name}</h3>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteProject(project.id)}
-                    title="Удалить проект"
-                  >
-                    🗑️
-                  </button>
-                </div>
-
-                {project.description && (
-                  <p className="project-description">{project.description}</p>
-                )}
-
-                {project.repo_url && (
-                  <a
-                    href={project.repo_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="repo-link"
-                  >
-                    🔗 {project.repo_url.replace('https://github.com/', '')}
-                  </a>
-                )}
-
-                {project.analyses && project.analyses.length > 0 && (
-                  <div className="project-analyses">
-                    <span className="analyses-label">Анализы:</span>
-                    <div className="analyses-badges">
-                      {project.analyses.slice(0, 3).map(analysis => {
-                        const badge = getAnalysisTypeBadge(analysis.type);
-                        return (
-                          <span
-                            key={analysis.id}
-                            className="analysis-badge"
-                            style={{ backgroundColor: badge.color }}
-                          >
-                            {badge.label}
-                          </span>
-                        );
-                      })}
-                      {project.analyses.length > 3 && (
-                        <span className="more-badge">
-                          +{project.analyses.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="project-footer">
-                  <span className="project-date">
-                    Обновлён {formatDate(project.updated_at)}
-                  </span>
-                  <button
-                    className="btn-view"
-                    onClick={() => router.push(`/projects/${project.id}`)}
-                  >
-                    Открыть →
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
-
       {/* Quick action - go to main analysis */}
       <div className="quick-action">
         <button
           className="btn-analyze"
           onClick={() => router.push('/')}
         >
-          🔬 Быстрый анализ (без сохранения)
+          + Быстрый анализ
         </button>
       </div>
 
@@ -343,6 +453,13 @@ export default function DashboardPage() {
           min-height: 100vh;
           background: #0d1117;
           color: #e6edf3;
+        }
+
+        /* Container with max width */
+        .page-container {
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 0 24px;
         }
 
         .dashboard-loading {
@@ -368,12 +485,18 @@ export default function DashboardPage() {
         }
 
         .dashboard-header {
+          border-bottom: 1px solid #30363d;
+          background: #161b22;
+          padding: 0;
+        }
+
+        .header-container {
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 1rem 24px;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 1.5rem 2rem;
-          border-bottom: 1px solid #30363d;
-          background: #161b22;
         }
 
         .header-left {
@@ -383,14 +506,14 @@ export default function DashboardPage() {
         }
 
         .header-left h1 {
-          font-size: 1.5rem;
+          font-size: 1.25rem;
           font-weight: 600;
           margin: 0;
         }
 
         .user-email {
           color: #8b949e;
-          font-size: 0.875rem;
+          font-size: 0.8rem;
         }
 
         .header-right {
@@ -441,7 +564,7 @@ export default function DashboardPage() {
           background: rgba(248, 81, 73, 0.1);
           border: 1px solid #f85149;
           color: #f85149;
-          margin: 1rem 2rem;
+          margin: 1rem 0;
           border-radius: 6px;
         }
 
@@ -519,7 +642,7 @@ export default function DashboardPage() {
         }
 
         .dashboard-content {
-          padding: 2rem;
+          padding: 1.5rem 0;
         }
 
         .empty-state {
@@ -542,10 +665,10 @@ export default function DashboardPage() {
           margin: 0 0 1.5rem;
         }
 
-        .projects-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 1.5rem;
+        .projects-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
         }
 
         .project-card {
@@ -696,16 +819,178 @@ export default function DashboardPage() {
           box-shadow: 0 6px 16px rgba(35, 134, 54, 0.4);
         }
 
+        /* Tasks Overview Section */
+        .tasks-overview-section {
+          margin-top: 2rem;
+          padding: 1.5rem;
+          background: #161b22;
+          border: 1px solid #30363d;
+          border-radius: 12px;
+        }
+
+        .tasks-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+        .tasks-header h2 {
+          margin: 0;
+          font-size: 1.25rem;
+        }
+
+        .tasks-stats {
+          color: #8b949e;
+          font-size: 0.875rem;
+        }
+
+        .project-selector {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-bottom: 1rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #30363d;
+        }
+
+        .project-selector label {
+          color: #8b949e;
+          font-size: 0.875rem;
+        }
+
+        .project-selector select {
+          flex: 1;
+          max-width: 300px;
+          padding: 0.5rem 0.75rem;
+          background: #0d1117;
+          border: 1px solid #30363d;
+          border-radius: 6px;
+          color: #e6edf3;
+          font-size: 0.875rem;
+        }
+
+        .project-selector select:focus {
+          outline: none;
+          border-color: #58a6ff;
+        }
+
+        .tasks-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .task-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.6rem 0.75rem;
+          background: #0d1117;
+          border-radius: 6px;
+          border-left: 3px solid #30363d;
+        }
+
+        .task-item.task-critical {
+          border-left-color: #f85149;
+        }
+
+        .task-item.task-high {
+          border-left-color: #d29922;
+        }
+
+        .task-item.task-medium {
+          border-left-color: #58a6ff;
+        }
+
+        .task-item.task-low {
+          border-left-color: #8b949e;
+        }
+
+        .task-item.task-status-completed {
+          opacity: 0.6;
+        }
+
+        .task-item.task-status-completed .task-title-text {
+          text-decoration: line-through;
+        }
+
+        .task-checkbox {
+          font-size: 0.9rem;
+        }
+
+        .task-title-text {
+          flex: 1;
+          font-size: 0.875rem;
+        }
+
+        .task-priority {
+          font-size: 0.7rem;
+          padding: 0.1rem 0.4rem;
+          border-radius: 4px;
+          background: #21262d;
+        }
+
+        .tasks-by-project {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .project-tasks-group {
+          padding: 1rem;
+          background: #0d1117;
+          border-radius: 8px;
+        }
+
+        .project-tasks-title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: 0 0 0.75rem;
+          font-size: 0.9rem;
+          font-weight: 600;
+        }
+
+        .project-tasks-count {
+          color: #8b949e;
+          font-size: 0.75rem;
+          font-weight: normal;
+        }
+
+        .btn-view-more {
+          background: transparent;
+          border: 1px solid #30363d;
+          color: #58a6ff;
+          padding: 0.4rem 0.75rem;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          cursor: pointer;
+          margin-top: 0.5rem;
+        }
+
+        .btn-view-more:hover {
+          background: #21262d;
+        }
+
+        .no-tasks {
+          color: #8b949e;
+          font-size: 0.875rem;
+          text-align: center;
+          padding: 1rem;
+        }
+
         @media (max-width: 768px) {
-          .dashboard-header {
+          .header-container {
             flex-direction: column;
             gap: 1rem;
-            padding: 1rem;
+            padding: 1rem 16px;
           }
 
           .header-left {
             flex-direction: column;
             align-items: flex-start;
+            width: 100%;
           }
 
           .header-right {
@@ -713,12 +998,8 @@ export default function DashboardPage() {
             justify-content: space-between;
           }
 
-          .dashboard-content {
-            padding: 1rem;
-          }
-
-          .projects-grid {
-            grid-template-columns: 1fr;
+          .page-container {
+            padding: 0 16px;
           }
 
           .quick-action {
