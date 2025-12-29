@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import type { CompetitorInput } from '@/types/competitor';
 
 // ===========================================
@@ -31,171 +30,163 @@ function CompetitorCard({
   onRemove: (index: number) => void;
   disabled?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
-
   return (
     <div className="competitor-card">
-      <div className="competitor-header">
+      {/* Header with number and remove button */}
+      <div className="card-header">
         <span className="competitor-number">{index + 1}</span>
-        <input
-          type="text"
-          className="competitor-name"
-          placeholder="Название конкурента"
-          value={competitor.name}
-          onChange={(e) =>
-            onUpdate(index, { ...competitor, name: e.target.value })
-          }
-          disabled={disabled}
-        />
-        <button
-          type="button"
-          className="expand-btn"
-          onClick={() => setExpanded(!expanded)}
-          disabled={disabled}
-        >
-          {expanded ? '▲' : '▼'}
-        </button>
+        <span className="competitor-title">Конкурент {index + 1}</span>
         <button
           type="button"
           className="remove-btn"
           onClick={() => onRemove(index)}
           disabled={disabled}
+          title="Удалить"
         >
           ✕
         </button>
       </div>
 
-      <div className="competitor-url">
-        <input
-          type="url"
-          placeholder="https://competitor.com"
-          value={competitor.url || ''}
-          onChange={(e) =>
-            onUpdate(index, { ...competitor, url: e.target.value })
-          }
-          disabled={disabled}
-        />
-      </div>
+      {/* Main fields */}
+      <div className="card-content">
+        {/* Name */}
+        <div className="form-field">
+          <label>Название *</label>
+          <input
+            type="text"
+            placeholder="Например: Notion, Figma, Slack"
+            value={competitor.name}
+            onChange={(e) =>
+              onUpdate(index, { ...competitor, name: e.target.value })
+            }
+            disabled={disabled}
+          />
+        </div>
 
-      {expanded && (
-        <div className="competitor-details">
+        {/* URL */}
+        <div className="form-field">
+          <label>Сайт</label>
+          <input
+            type="url"
+            placeholder="https://competitor.com"
+            value={competitor.url || ''}
+            onChange={(e) =>
+              onUpdate(index, { ...competitor, url: e.target.value })
+            }
+            disabled={disabled}
+          />
+        </div>
+
+        {/* Social Links - Optional */}
+        <div className="social-section">
+          <label className="section-label">
+            Соцсети <span className="optional-badge">опционально</span>
+          </label>
           <div className="social-links-grid">
-            <div className="social-input">
-              <label>Instagram</label>
-              <input
-                type="url"
-                placeholder="https://instagram.com/..."
-                value={competitor.social_links?.instagram || ''}
-                onChange={(e) =>
-                  onUpdate(index, {
-                    ...competitor,
-                    social_links: {
-                      ...competitor.social_links,
-                      instagram: e.target.value,
-                    },
-                  })
-                }
-                disabled={disabled}
-              />
-            </div>
-            <div className="social-input">
-              <label>LinkedIn</label>
-              <input
-                type="url"
-                placeholder="https://linkedin.com/company/..."
-                value={competitor.social_links?.linkedin || ''}
-                onChange={(e) =>
-                  onUpdate(index, {
-                    ...competitor,
-                    social_links: {
-                      ...competitor.social_links,
-                      linkedin: e.target.value,
-                    },
-                  })
-                }
-                disabled={disabled}
-              />
-            </div>
-            <div className="social-input">
-              <label>Twitter</label>
-              <input
-                type="url"
-                placeholder="https://twitter.com/..."
-                value={competitor.social_links?.twitter || ''}
-                onChange={(e) =>
-                  onUpdate(index, {
-                    ...competitor,
-                    social_links: {
-                      ...competitor.social_links,
-                      twitter: e.target.value,
-                    },
-                  })
-                }
-                disabled={disabled}
-              />
-            </div>
-          </div>
-
-          <div className="notes-input">
-            <label>Заметки о конкуренте</label>
-            <textarea
-              placeholder="Что вы знаете об этом конкуренте? Чем они отличаются?"
-              value={competitor.notes || ''}
+            <input
+              type="url"
+              placeholder="Instagram URL"
+              value={competitor.social_links?.instagram || ''}
               onChange={(e) =>
-                onUpdate(index, { ...competitor, notes: e.target.value })
+                onUpdate(index, {
+                  ...competitor,
+                  social_links: {
+                    ...competitor.social_links,
+                    instagram: e.target.value,
+                  },
+                })
+              }
+              disabled={disabled}
+            />
+            <input
+              type="url"
+              placeholder="LinkedIn URL"
+              value={competitor.social_links?.linkedin || ''}
+              onChange={(e) =>
+                onUpdate(index, {
+                  ...competitor,
+                  social_links: {
+                    ...competitor.social_links,
+                    linkedin: e.target.value,
+                  },
+                })
+              }
+              disabled={disabled}
+            />
+            <input
+              type="url"
+              placeholder="Twitter URL"
+              value={competitor.social_links?.twitter || ''}
+              onChange={(e) =>
+                onUpdate(index, {
+                  ...competitor,
+                  social_links: {
+                    ...competitor.social_links,
+                    twitter: e.target.value,
+                  },
+                })
               }
               disabled={disabled}
             />
           </div>
         </div>
-      )}
+
+        {/* Notes */}
+        <div className="form-field">
+          <label>
+            Заметки <span className="optional-badge">опционально</span>
+          </label>
+          <textarea
+            placeholder="Что вы знаете об этом конкуренте? Чем они отличаются?"
+            value={competitor.notes || ''}
+            onChange={(e) =>
+              onUpdate(index, { ...competitor, notes: e.target.value })
+            }
+            disabled={disabled}
+            rows={2}
+          />
+        </div>
+      </div>
 
       <style jsx>{`
         .competitor-card {
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
-          padding: 12px;
-          margin-bottom: 12px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
+          overflow: hidden;
+          margin-bottom: 16px;
         }
 
-        .competitor-header {
+        .card-header {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 12px;
+          padding: 12px 16px;
+          background: var(--bg-tertiary);
+          border-bottom: 1px solid var(--border-default);
         }
 
         .competitor-number {
-          width: 24px;
-          height: 24px;
+          width: 28px;
+          height: 28px;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: var(--color-accent-subtle);
-          color: var(--color-accent-fg);
+          background: rgba(88, 166, 255, 0.15);
+          color: var(--accent-blue);
           border-radius: 50%;
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 600;
           flex-shrink: 0;
         }
 
-        .competitor-name {
+        .competitor-title {
           flex: 1;
-          padding: 8px 12px;
           font-size: 14px;
-          font-weight: 500;
-          background: var(--color-canvas-default);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
-          color: var(--color-fg-default);
+          font-weight: 600;
+          color: var(--text-primary);
         }
 
-        .competitor-name:focus {
-          outline: none;
-          border-color: var(--color-accent-fg);
-        }
-
-        .expand-btn,
         .remove-btn {
           width: 28px;
           height: 28px;
@@ -203,92 +194,121 @@ function CompetitorCard({
           align-items: center;
           justify-content: center;
           background: transparent;
-          border: 1px solid var(--color-border-default);
+          border: 1px solid var(--border-default);
           border-radius: 6px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           cursor: pointer;
           font-size: 12px;
+          transition: all 0.2s;
         }
 
-        .expand-btn:hover {
-          background: var(--color-accent-subtle);
-          color: var(--color-accent-fg);
+        .remove-btn:hover:not(:disabled) {
+          background: rgba(248, 81, 73, 0.15);
+          color: var(--accent-red);
+          border-color: var(--accent-red);
         }
 
-        .remove-btn:hover {
-          background: var(--color-danger-subtle);
-          color: var(--color-danger-fg);
-          border-color: var(--color-danger-fg);
+        .remove-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
 
-        .competitor-url {
-          margin-top: 8px;
+        .card-content {
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
         }
 
-        .competitor-url input {
+        .form-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .form-field label,
+        .section-label {
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--text-secondary);
+        }
+
+        .optional-badge {
+          font-size: 10px;
+          font-weight: 400;
+          color: var(--text-muted);
+          background: var(--bg-tertiary);
+          padding: 2px 6px;
+          border-radius: 4px;
+          margin-left: 6px;
+        }
+
+        .form-field input,
+        .form-field textarea {
           width: 100%;
-          padding: 8px 12px;
-          font-size: 13px;
-          background: var(--color-canvas-default);
-          border: 1px solid var(--color-border-default);
+          padding: 10px 12px;
+          font-size: 14px;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-default);
           border-radius: 6px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
+          transition: border-color 0.2s;
         }
 
-        .competitor-url input:focus {
+        .form-field input:focus,
+        .form-field textarea:focus {
           outline: none;
-          border-color: var(--color-accent-fg);
+          border-color: var(--accent-blue);
         }
 
-        .competitor-details {
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid var(--color-border-default);
+        .form-field input:disabled,
+        .form-field textarea:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .form-field textarea {
+          resize: vertical;
+          min-height: 60px;
+        }
+
+        .social-section {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .social-links-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 12px;
-          margin-bottom: 12px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
         }
 
-        .social-input label {
-          display: block;
-          font-size: 11px;
-          font-weight: 500;
-          color: var(--color-fg-muted);
-          margin-bottom: 4px;
-        }
-
-        .social-input input {
+        .social-links-grid input {
           width: 100%;
-          padding: 6px 10px;
-          font-size: 12px;
-          background: var(--color-canvas-default);
-          border: 1px solid var(--color-border-default);
-          border-radius: 4px;
-          color: var(--color-fg-default);
-        }
-
-        .notes-input label {
-          display: block;
-          font-size: 11px;
-          font-weight: 500;
-          color: var(--color-fg-muted);
-          margin-bottom: 4px;
-        }
-
-        .notes-input textarea {
-          width: 100%;
-          min-height: 60px;
           padding: 8px 10px;
           font-size: 13px;
-          background: var(--color-canvas-default);
-          border: 1px solid var(--color-border-default);
-          border-radius: 4px;
-          color: var(--color-fg-default);
-          resize: vertical;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-default);
+          border-radius: 6px;
+          color: var(--text-primary);
+          transition: border-color 0.2s;
+        }
+
+        .social-links-grid input:focus {
+          outline: none;
+          border-color: var(--accent-blue);
+        }
+
+        .social-links-grid input:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+          .social-links-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </div>
@@ -303,7 +323,7 @@ export function CompetitorInputForm({
   competitors,
   onChange,
   disabled = false,
-  maxCompetitors = 5,
+  maxCompetitors = 10,
 }: CompetitorInputFormProps) {
   const handleAdd = () => {
     if (competitors.length >= maxCompetitors) return;
@@ -325,6 +345,7 @@ export function CompetitorInputForm({
 
   return (
     <div className="competitor-form">
+      {/* Header */}
       <div className="form-header">
         <h4>Конкуренты</h4>
         <span className="count">
@@ -332,23 +353,21 @@ export function CompetitorInputForm({
         </span>
       </div>
 
-      {competitors.length === 0 && (
-        <div className="empty-state">
-          <p>Добавьте конкурентов для сравнительного анализа</p>
-        </div>
-      )}
+      {/* Competitor Cards */}
+      <div className="competitors-list">
+        {competitors.map((competitor, index) => (
+          <CompetitorCard
+            key={index}
+            competitor={competitor}
+            index={index}
+            onUpdate={handleUpdate}
+            onRemove={handleRemove}
+            disabled={disabled}
+          />
+        ))}
+      </div>
 
-      {competitors.map((competitor, index) => (
-        <CompetitorCard
-          key={index}
-          competitor={competitor}
-          index={index}
-          onUpdate={handleUpdate}
-          onRemove={handleRemove}
-          disabled={disabled}
-        />
-      ))}
-
+      {/* Add Button */}
       {competitors.length < maxCompetitors && (
         <button
           type="button"
@@ -356,69 +375,87 @@ export function CompetitorInputForm({
           onClick={handleAdd}
           disabled={disabled}
         >
-          + Добавить конкурента
+          <span className="add-icon">+</span>
+          <span>Добавить конкурента</span>
         </button>
+      )}
+
+      {/* Empty state hint */}
+      {competitors.length === 0 && (
+        <p className="hint">
+          Добавьте конкурентов для более точного анализа позиционирования
+        </p>
       )}
 
       <style jsx>{`
         .competitor-form {
-          margin-bottom: 24px;
+          margin-bottom: 16px;
         }
 
         .form-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
         }
 
         .form-header h4 {
           font-size: 14px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 0;
         }
 
         .count {
           font-size: 12px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
+          background: var(--bg-tertiary);
+          padding: 4px 10px;
+          border-radius: 12px;
         }
 
-        .empty-state {
-          padding: 24px;
-          text-align: center;
-          background: var(--color-canvas-subtle);
-          border: 1px dashed var(--color-border-default);
-          border-radius: 6px;
-          margin-bottom: 12px;
-        }
-
-        .empty-state p {
-          color: var(--color-fg-muted);
-          margin: 0;
-          font-size: 13px;
+        .competitors-list {
+          margin-bottom: 16px;
         }
 
         .add-btn {
           width: 100%;
-          padding: 12px;
+          padding: 14px 20px;
           font-size: 14px;
-          background: transparent;
-          border: 1px dashed var(--color-border-default);
-          border-radius: 6px;
-          color: var(--color-fg-muted);
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          background: var(--bg-secondary);
+          border: 2px dashed var(--border-default);
+          border-radius: 8px;
+          color: var(--text-secondary);
           cursor: pointer;
+          transition: all 0.2s;
         }
 
         .add-btn:hover:not(:disabled) {
-          background: var(--color-accent-subtle);
-          border-color: var(--color-accent-fg);
-          color: var(--color-accent-fg);
+          background: rgba(88, 166, 255, 0.1);
+          border-color: var(--accent-blue);
+          color: var(--accent-blue);
         }
 
         .add-btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
+        }
+
+        .add-icon {
+          font-size: 18px;
+          font-weight: 300;
+        }
+
+        .hint {
+          text-align: center;
+          font-size: 13px;
+          color: var(--text-muted);
+          margin: 12px 0 0 0;
         }
       `}</style>
     </div>

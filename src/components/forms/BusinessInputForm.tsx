@@ -48,10 +48,10 @@ export function BusinessInputForm({
   const charCount = value.description.length;
   const charCountColor =
     charCount < MIN_DESCRIPTION_LENGTH
-      ? 'var(--color-danger-fg)'
+      ? 'var(--accent-red)'
       : charCount > MAX_DESCRIPTION_LENGTH * 0.9
-      ? 'var(--color-attention-fg)'
-      : 'var(--color-fg-muted)';
+      ? 'var(--accent-orange)'
+      : 'var(--text-muted)';
 
   // Update description
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -292,22 +292,22 @@ export function BusinessInputForm({
 
         .form-label {
           font-size: 14px;
-          font-weight: 500;
-          color: var(--color-fg-default);
+          font-weight: 600;
+          color: var(--text-primary);
         }
 
         .required {
-          color: var(--color-danger-fg);
+          color: var(--accent-red);
         }
 
         .optional {
           font-weight: 400;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
         }
 
         .form-hint {
-          font-size: 12px;
-          color: var(--color-fg-muted);
+          font-size: 13px;
+          color: var(--text-secondary);
           margin: 0;
         }
 
@@ -316,23 +316,27 @@ export function BusinessInputForm({
           padding: 12px;
           font-size: 14px;
           line-height: 1.5;
-          border: 1px solid var(--color-border-default);
+          border: 1px solid var(--border-default);
           border-radius: 6px;
-          background: var(--color-canvas-default);
-          color: var(--color-fg-default);
+          background: var(--bg-primary);
+          color: var(--text-primary);
           resize: vertical;
           font-family: inherit;
         }
 
         .form-textarea:focus {
           outline: none;
-          border-color: var(--color-accent-fg);
-          box-shadow: 0 0 0 3px var(--color-accent-subtle);
+          border-color: var(--accent-blue);
+          box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
         }
 
         .form-textarea:disabled {
           opacity: 0.6;
           cursor: not-allowed;
+        }
+
+        .form-textarea::placeholder {
+          color: var(--text-muted);
         }
 
         .char-counter {
@@ -360,27 +364,39 @@ export function BusinessInputForm({
           display: flex;
           align-items: center;
           gap: 8px;
+          padding: 8px 12px;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-default);
+          border-radius: 6px;
+          transition: border-color 0.2s;
+        }
+
+        .social-field:focus-within {
+          border-color: var(--accent-blue);
         }
 
         .social-icon {
           font-size: 16px;
           width: 24px;
           text-align: center;
+          flex-shrink: 0;
         }
 
         .social-input {
           flex: 1;
-          padding: 8px 12px;
+          padding: 0;
           font-size: 13px;
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
-          background: var(--color-canvas-default);
-          color: var(--color-fg-default);
+          border: none;
+          background: transparent;
+          color: var(--text-primary);
         }
 
         .social-input:focus {
           outline: none;
-          border-color: var(--color-accent-fg);
+        }
+
+        .social-input::placeholder {
+          color: var(--text-muted);
         }
 
         .social-input:disabled {
@@ -389,22 +405,23 @@ export function BusinessInputForm({
         }
 
         .drop-zone {
-          border: 2px dashed var(--color-border-default);
-          border-radius: 6px;
+          border: 2px dashed var(--border-default);
+          border-radius: 8px;
           padding: 32px;
           text-align: center;
           cursor: pointer;
           transition: all 0.2s ease;
+          background: var(--bg-primary);
         }
 
         .drop-zone:hover:not(.disabled) {
-          border-color: var(--color-accent-fg);
-          background: var(--color-canvas-subtle);
+          border-color: var(--accent-blue);
+          background: var(--bg-secondary);
         }
 
         .drop-zone.active {
-          border-color: var(--color-accent-fg);
-          background: var(--color-accent-subtle);
+          border-color: var(--accent-blue);
+          background: rgba(88, 166, 255, 0.1);
         }
 
         .drop-zone.disabled {
@@ -420,26 +437,27 @@ export function BusinessInputForm({
         }
 
         .drop-icon {
-          font-size: 32px;
+          font-size: 36px;
           margin-bottom: 8px;
+          opacity: 0.8;
         }
 
         .drop-text {
           font-size: 14px;
           font-weight: 500;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 0;
         }
 
         .drop-hint {
-          font-size: 12px;
-          color: var(--color-fg-muted);
+          font-size: 13px;
+          color: var(--text-secondary);
           margin: 0;
         }
 
         .drop-formats {
-          font-size: 11px;
-          color: var(--color-fg-muted);
+          font-size: 12px;
+          color: var(--text-muted);
           margin: 8px 0 0 0;
         }
 
@@ -458,9 +476,9 @@ export function BusinessInputForm({
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 8px 12px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
+          padding: 10px 12px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
           border-radius: 6px;
         }
 
@@ -471,7 +489,7 @@ export function BusinessInputForm({
         .file-name {
           flex: 1;
           font-size: 13px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -479,7 +497,7 @@ export function BusinessInputForm({
 
         .file-size {
           font-size: 12px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
         }
 
         .file-remove {
@@ -490,14 +508,15 @@ export function BusinessInputForm({
           line-height: 1;
           border: none;
           background: transparent;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           cursor: pointer;
           border-radius: 4px;
+          transition: all 0.2s;
         }
 
         .file-remove:hover:not(:disabled) {
-          background: var(--color-danger-subtle);
-          color: var(--color-danger-fg);
+          background: rgba(248, 81, 73, 0.1);
+          color: var(--accent-red);
         }
 
         .file-remove:disabled {

@@ -20,9 +20,9 @@ interface GapsViewProps {
 
 function SeverityBadge({ severity }: { severity: Gap['type'] }) {
   const config = {
-    critical: { emoji: '🔴', label: 'Critical', color: 'var(--color-danger-fg)' },
-    warning: { emoji: '🟡', label: 'Warning', color: 'var(--color-attention-fg)' },
-    info: { emoji: '🟢', label: 'Info', color: 'var(--color-success-fg)' },
+    critical: { emoji: '🔴', label: 'Critical', color: 'var(--accent-red)' },
+    warning: { emoji: '🟡', label: 'Warning', color: 'var(--accent-orange)' },
+    info: { emoji: '🟢', label: 'Info', color: 'var(--accent-green)' },
   };
 
   const { emoji, label, color } = config[severity];
@@ -132,9 +132,9 @@ function GapCard({ gap }: { gap: Gap }) {
 
 function TaskCard({ task, index }: { task: GapTask; index: number }) {
   const priorityColors = {
-    high: 'var(--color-danger-fg)',
-    medium: 'var(--color-attention-fg)',
-    low: 'var(--color-success-fg)',
+    high: 'var(--accent-red)',
+    medium: 'var(--accent-orange)',
+    low: 'var(--accent-green)',
   };
 
   return (
@@ -240,34 +240,34 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .stat-item {
           flex: 1;
           padding: 16px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
           text-align: center;
         }
 
         .stat-item.critical {
-          border-left: 3px solid var(--color-danger-fg);
+          border-left: 3px solid var(--accent-red);
         }
 
         .stat-item.warning {
-          border-left: 3px solid var(--color-attention-fg);
+          border-left: 3px solid var(--accent-orange);
         }
 
         .stat-item.info {
-          border-left: 3px solid var(--color-success-fg);
+          border-left: 3px solid var(--accent-green);
         }
 
         .stat-number {
           display: block;
           font-size: 24px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
         }
 
         .stat-label {
           font-size: 12px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -275,7 +275,7 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .section-title {
           font-size: 14px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 0 0 16px 0;
         }
 
@@ -285,22 +285,22 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
 
         .gap-card {
           padding: 16px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
           margin-bottom: 12px;
         }
 
         .gap-card.severity-critical {
-          border-left: 3px solid var(--color-danger-fg);
+          border-left: 3px solid var(--accent-red);
         }
 
         .gap-card.severity-warning {
-          border-left: 3px solid var(--color-attention-fg);
+          border-left: 3px solid var(--accent-orange);
         }
 
         .gap-card.severity-info {
-          border-left: 3px solid var(--color-success-fg);
+          border-left: 3px solid var(--accent-green);
         }
 
         .gap-header {
@@ -318,8 +318,8 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .category-badge {
           font-size: 11px;
           padding: 2px 8px;
-          background: var(--color-neutral-subtle);
-          color: var(--color-fg-muted);
+          background: var(--bg-tertiary);
+          color: var(--text-muted);
           border-radius: 12px;
         }
 
@@ -334,23 +334,23 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .gap-section-label {
           font-size: 11px;
           font-weight: 500;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .gap-section-text {
           font-size: 13px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 4px 0 0 0;
           line-height: 1.5;
         }
 
         .gap-section-text.highlight {
-          background: var(--color-accent-subtle);
+          background: rgba(88, 166, 255, 0.1);
           padding: 8px;
           border-radius: 4px;
-          border-left: 2px solid var(--color-accent-fg);
+          border-left: 2px solid var(--accent-blue);
         }
 
         .gap-footer {
@@ -366,7 +366,7 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
 
         .level-label {
           font-size: 11px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
         }
 
         .level-dots {
@@ -378,37 +378,37 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: var(--color-neutral-muted);
+          background: var(--bg-tertiary);
         }
 
         .dot.active {
-          background: var(--color-accent-fg);
+          background: var(--accent-blue);
         }
 
         .gap-resources {
           margin-top: 12px;
           padding-top: 12px;
-          border-top: 1px solid var(--color-border-default);
+          border-top: 1px solid var(--border-default);
         }
 
         .resources-label {
           font-size: 11px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           margin-right: 8px;
         }
 
         .gap-resources a {
           font-size: 12px;
-          color: var(--color-accent-fg);
+          color: var(--accent-blue);
           margin-right: 12px;
         }
 
         .no-gaps {
           text-align: center;
           padding: 32px;
-          background: var(--color-success-subtle);
-          border: 1px solid var(--color-success-muted);
-          border-radius: 6px;
+          background: rgba(35, 134, 54, 0.1);
+          border: 1px solid rgba(35, 134, 54, 0.3);
+          border-radius: 8px;
         }
 
         .no-gaps-icon {
@@ -418,7 +418,7 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         }
 
         .no-gaps p {
-          color: var(--color-success-fg);
+          color: var(--accent-green);
           margin: 0;
         }
 
@@ -436,9 +436,9 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
           display: flex;
           gap: 12px;
           padding: 12px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
         }
 
         .task-number {
@@ -447,8 +447,8 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: var(--color-accent-subtle);
-          color: var(--color-accent-fg);
+          background: rgba(88, 166, 255, 0.15);
+          color: var(--accent-blue);
           border-radius: 50%;
           font-size: 12px;
           font-weight: 600;
@@ -469,7 +469,7 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .task-title {
           font-size: 14px;
           font-weight: 500;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
         }
 
         .task-priority {
@@ -478,7 +478,7 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
 
         .task-description {
           font-size: 13px;
-          color: var(--color-fg-muted);
+          color: var(--text-secondary);
           margin: 4px 0 8px 0;
           line-height: 1.4;
         }
@@ -491,23 +491,23 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .task-category {
           font-size: 11px;
           padding: 2px 6px;
-          background: var(--color-neutral-subtle);
-          color: var(--color-fg-muted);
+          background: var(--bg-tertiary);
+          color: var(--text-muted);
           border-radius: 4px;
         }
 
         .task-time {
           font-size: 11px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
         }
 
         .next-milestone {
           display: flex;
           gap: 12px;
           padding: 16px;
-          background: var(--color-accent-subtle);
-          border: 1px solid var(--color-accent-muted);
-          border-radius: 6px;
+          background: rgba(88, 166, 255, 0.1);
+          border: 1px solid rgba(88, 166, 255, 0.3);
+          border-radius: 8px;
         }
 
         .milestone-icon {
@@ -521,14 +521,14 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         .milestone-label {
           font-size: 11px;
           font-weight: 500;
-          color: var(--color-accent-fg);
+          color: var(--accent-blue);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .milestone-text {
           font-size: 14px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 4px 0 0 0;
         }
       `}</style>

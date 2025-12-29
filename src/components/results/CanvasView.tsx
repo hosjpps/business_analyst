@@ -20,11 +20,11 @@ interface CanvasViewProps {
 
 function StageBadge({ stage }: { stage: BusinessStage }) {
   const stageColors: Record<BusinessStage, { bg: string; fg: string; emoji: string }> = {
-    idea: { bg: 'var(--color-neutral-subtle)', fg: 'var(--color-fg-muted)', emoji: '💡' },
-    building: { bg: 'var(--color-accent-subtle)', fg: 'var(--color-accent-fg)', emoji: '🔨' },
-    early_traction: { bg: 'var(--color-attention-subtle)', fg: 'var(--color-attention-fg)', emoji: '🌱' },
-    growing: { bg: 'var(--color-success-subtle)', fg: 'var(--color-success-fg)', emoji: '📈' },
-    scaling: { bg: 'var(--color-done-subtle)', fg: 'var(--color-done-fg)', emoji: '🚀' },
+    idea: { bg: 'var(--bg-tertiary)', fg: 'var(--text-muted)', emoji: '💡' },
+    building: { bg: 'rgba(88, 166, 255, 0.15)', fg: 'var(--accent-blue)', emoji: '🔨' },
+    early_traction: { bg: 'rgba(210, 153, 34, 0.15)', fg: 'var(--accent-orange)', emoji: '🌱' },
+    growing: { bg: 'rgba(35, 134, 54, 0.15)', fg: 'var(--accent-green)', emoji: '📈' },
+    scaling: { bg: 'rgba(163, 113, 247, 0.15)', fg: 'var(--accent-purple)', emoji: '🚀' },
   };
 
   const { bg, fg, emoji } = stageColors[stage];
@@ -72,9 +72,9 @@ function CanvasBlock({ title, titleRu, items, color, gridArea }: CanvasBlockProp
 
       <style jsx>{`
         .canvas-block {
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-left: 3px solid var(--color-border-default);
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-left: 3px solid var(--border-default);
           border-radius: 6px;
           padding: 12px;
           min-height: 100px;
@@ -88,14 +88,14 @@ function CanvasBlock({ title, titleRu, items, color, gridArea }: CanvasBlockProp
           display: block;
           font-size: 12px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .block-title-en {
           font-size: 10px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
         }
 
         .block-list {
@@ -106,20 +106,20 @@ function CanvasBlock({ title, titleRu, items, color, gridArea }: CanvasBlockProp
 
         .block-list li {
           font-size: 13px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           padding: 4px 0;
           line-height: 1.4;
         }
 
         .block-list li::before {
           content: '•';
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           margin-right: 6px;
         }
 
         .block-empty {
           font-size: 12px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           font-style: italic;
           margin: 0;
         }
@@ -139,15 +139,15 @@ export function CanvasView({
   recommendations,
 }: CanvasViewProps) {
   const blockColors = {
-    partners: 'var(--color-accent-fg)',
-    activities: 'var(--color-success-fg)',
-    resources: 'var(--color-success-fg)',
-    value: 'var(--color-done-fg)',
-    relationships: 'var(--color-attention-fg)',
-    channels: 'var(--color-attention-fg)',
-    segments: 'var(--color-danger-fg)',
-    costs: 'var(--color-neutral-emphasis)',
-    revenue: 'var(--color-success-fg)',
+    partners: 'var(--accent-blue)',
+    activities: 'var(--accent-green)',
+    resources: 'var(--accent-green)',
+    value: 'var(--accent-purple)',
+    relationships: 'var(--accent-orange)',
+    channels: 'var(--accent-orange)',
+    segments: 'var(--accent-red)',
+    costs: 'var(--text-muted)',
+    revenue: 'var(--accent-green)',
   };
 
   return (
@@ -273,7 +273,7 @@ export function CanvasView({
         .canvas-title {
           font-size: 18px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 0;
         }
 
@@ -327,15 +327,15 @@ export function CanvasView({
         .canvas-gaps {
           margin-top: 24px;
           padding: 16px;
-          background: var(--color-attention-subtle);
-          border: 1px solid var(--color-attention-muted);
-          border-radius: 6px;
+          background: rgba(210, 153, 34, 0.1);
+          border: 1px solid rgba(210, 153, 34, 0.3);
+          border-radius: 8px;
         }
 
         .gaps-title {
           font-size: 14px;
           font-weight: 600;
-          color: var(--color-attention-fg);
+          color: var(--accent-orange);
           margin: 0 0 12px 0;
         }
 
@@ -347,13 +347,13 @@ export function CanvasView({
 
         .gaps-list li {
           font-size: 13px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           padding: 4px 0;
         }
 
         .gaps-list li::before {
           content: '•';
-          color: var(--color-attention-fg);
+          color: var(--accent-orange);
           margin-right: 8px;
         }
 
@@ -364,7 +364,7 @@ export function CanvasView({
         .recommendations-title {
           font-size: 14px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 0 0 12px 0;
         }
 
@@ -376,41 +376,41 @@ export function CanvasView({
 
         .recommendation-item {
           padding: 12px 16px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
           border-radius: 6px;
         }
 
         .recommendation-item.priority-high {
-          border-left: 3px solid var(--color-danger-fg);
+          border-left: 3px solid var(--accent-red);
         }
 
         .recommendation-item.priority-medium {
-          border-left: 3px solid var(--color-attention-fg);
+          border-left: 3px solid var(--accent-orange);
         }
 
         .recommendation-item.priority-low {
-          border-left: 3px solid var(--color-success-fg);
+          border-left: 3px solid var(--accent-green);
         }
 
         .rec-area {
           font-size: 11px;
           font-weight: 600;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
         .rec-text {
           font-size: 14px;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 4px 0 8px 0;
           line-height: 1.5;
         }
 
         .rec-priority {
           font-size: 11px;
-          color: var(--color-fg-muted);
+          color: var(--text-muted);
         }
       `}</style>
     </div>

@@ -54,7 +54,16 @@
 │                                                                             │
 │  ───────────────────────────────────────────────────────────────────────    │
 │                                                                             │
-│  ФАЗА 6: Weekly Reports                                        [ТЕКУЩАЯ]   │
+│  ФАЗА 6: Тесты и Качество                                     [DONE ✅]   │
+│  ══════════════════════════════                                             │
+│  • 150 unit тестов                                                          │
+│  • Покрытие всех API endpoints                                              │
+│  • Zod schema validation tests                                              │
+│  • UI improvements                                                          │
+│                                                                             │
+│  ───────────────────────────────────────────────────────────────────────    │
+│                                                                             │
+│  ФАЗА 7: Weekly Reports                                        [ТЕКУЩАЯ]   │
 │  ═════════════════════════                                                  │
 │  • Progress tracking                                                        │
 │  • Automated reports                                                        │
@@ -62,7 +71,7 @@
 │                                                                             │
 │  ───────────────────────────────────────────────────────────────────────    │
 │                                                                             │
-│  ФАЗА 7: Social Media Integration                              [FUTURE]    │
+│  ФАЗА 8: Social Media Integration                              [FUTURE]    │
 │  ═══════════════════════════════════                                        │
 │  • Instagram API                                                            │
 │  • LinkedIn API                                                             │
@@ -70,7 +79,7 @@
 │                                                                             │
 │  ───────────────────────────────────────────────────────────────────────    │
 │                                                                             │
-│  ФАЗА 8: AI Competitor Agent                                   [VISION]    │
+│  ФАЗА 9: AI Competitor Agent                                   [VISION]    │
 │  ═══════════════════════════════                                            │
 │  • Auto-discovery                                                           │
 │  • Market research                                                          │
@@ -499,7 +508,57 @@
 
 ---
 
-## ФАЗА 6: Weekly Reports
+## ФАЗА 6: Качество анализа + Тесты [DONE ✅]
+
+> **Цель:** Улучшить качество анализа и добавить comprehensive тесты.
+
+### 6.1 Тестирование (DONE ✅)
+
+**Создано 82 новых теста:**
+- [x] Code Analysis tests (15 тестов)
+- [x] Business Analysis tests (21 тест)
+- [x] Gap Detection tests (23 теста)
+- [x] Competitor Analysis tests (23 теста)
+
+**Общее покрытие: 150 тестов**
+
+### 6.2 Улучшения Business Analysis
+
+- [ ] Добавить реальные метрики (MRR, users, growth_rate, churn) для определения стадии
+- [ ] Валидация существования соцсетей
+- [ ] Реальный парсинг PDF/DOCX документов
+
+### 6.3 Улучшения Code Analysis
+
+- [ ] Security scanning (SQL injection, XSS detection)
+- [ ] Dependency vulnerability check (npm audit integration)
+- [ ] Code quality metrics (complexity, duplication)
+
+### 6.4 Улучшения Gap Detection
+
+- [ ] Weighted score formula с учётом приоритетов бизнес-целей
+- [ ] Учёт ресурсов команды при генерации задач
+- [ ] Улучшенная обработка отрицательных scores
+
+### 6.5 Улучшения Competitor Analysis
+
+- [ ] Реальный парсинг сайтов конкурентов (Cheerio)
+- [ ] Автоматическое извлечение features/pricing
+- [ ] Отслеживание изменений у конкурентов со временем
+
+### Чеклист Фазы 6
+
+```
+[x] 82 новых теста для всех типов анализа
+[x] Все 150 тестов проходят
+[ ] Business metrics integration
+[ ] Security scanning
+[ ] Real website parsing
+```
+
+---
+
+## ФАЗА 7: Weekly Reports
 
 > **Цель:** Автоматические отчёты о прогрессе.
 
@@ -512,7 +571,7 @@
 
 ---
 
-## ФАЗА 7: Social Media Integration
+## ФАЗА 8: Social Media Integration
 
 > **Цель:** Автоматический парсинг соцсетей.
 
@@ -525,7 +584,7 @@
 
 ---
 
-## ФАЗА 8: AI Competitor Agent
+## ФАЗА 9: AI Competitor Agent
 
 > **Цель:** Автоматический поиск и анализ конкурентов.
 

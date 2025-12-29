@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { Analysis, ChatResponse } from '@/types';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { usePersistedChatHistory } from '@/hooks/useLocalStorage';
@@ -17,6 +17,36 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
   const [streamingAnswer, setStreamingAnswer] = useState('');
   const [currentStreamingQuestion, setCurrentStreamingQuestion] = useState('');
   const [useStreaming] = useState(true); // Toggle for streaming mode
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+
+  // When chat history changes, expand only the last item
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      setExpandedItems(new Set([chatHistory.length - 1]));
+    }
+  }, [chatHistory.length]);
+
+  // Toggle item expansion
+  const toggleItem = (index: number) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
+  // Expand/collapse all
+  const toggleAll = () => {
+    if (expandedItems.size === chatHistory.length) {
+      setExpandedItems(new Set());
+    } else {
+      setExpandedItems(new Set(chatHistory.map((_, i) => i)));
+    }
+  };
 
   // Copy to clipboard
   const copyToClipboard = useCallback(async (text: string) => {
@@ -146,43 +176,60 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
 
   return (
     <div className="chat-section">
-      <h3>Задать вопрос</h3>
+      <div className="chat-header">
+        <h3>Задать вопрос</h3>
+        {chatHistory.length > 1 && (
+          <button className="toggle-all-btn" onClick={toggleAll}>
+            {expandedItems.size === chatHistory.length ? '▲ Свернуть все' : '▼ Развернуть все'}
+          </button>
+        )}
+      </div>
 
       {/* История чата */}
       {chatHistory.length > 0 && (
         <div className="chat-history">
-          {chatHistory.map((item, i) => (
-            <div key={i} className="chat-item">
-              <div className="chat-question">
-                <span className="chat-label">Вопрос:</span>
-                <p>{item.question}</p>
-              </div>
-              <div className="chat-answer">
-                <div className="chat-answer-header">
-                  <span className="chat-label">Ответ:</span>
-                  <button
-                    className="copy-button"
-                    onClick={() => copyToClipboard(item.answer)}
-                    title="Копировать"
-                  >
-                    📋 Копировать
-                  </button>
+          {chatHistory.map((item, i) => {
+            const isExpanded = expandedItems.has(i);
+            return (
+              <div key={i} className={`chat-item ${isExpanded ? 'expanded' : 'collapsed'}`}>
+                <div className="chat-question" onClick={() => toggleItem(i)}>
+                  <span className="chat-toggle">{isExpanded ? '▼' : '▶'}</span>
+                  <span className="chat-label">Вопрос {i + 1}:</span>
+                  <p className="chat-question-text">{item.question}</p>
                 </div>
-                <div className="chat-answer-content">
-                  <MarkdownRenderer content={item.answer} />
-                </div>
+                {isExpanded && (
+                  <div className="chat-answer">
+                    <div className="chat-answer-header">
+                      <span className="chat-label">Ответ:</span>
+                      <button
+                        className="copy-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyToClipboard(item.answer);
+                        }}
+                        title="Копировать"
+                      >
+                        📋 Копировать
+                      </button>
+                    </div>
+                    <div className="chat-answer-content">
+                      <MarkdownRenderer content={item.answer} />
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* Streaming answer */}
       {streamingAnswer && (
-        <div className="chat-item streaming">
+        <div className="chat-item streaming expanded">
           <div className="chat-question">
+            <span className="chat-toggle">▼</span>
             <span className="chat-label">Вопрос:</span>
-            <p>{currentStreamingQuestion}</p>
+            <p className="chat-question-text">{currentStreamingQuestion}</p>
           </div>
           <div className="chat-answer">
             <span className="chat-label">Ответ:</span>
@@ -207,6 +254,131 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
           {chatLoading ? '...' : 'Отправить'}
         </button>
       </div>
+
+      <style jsx>{`
+        .chat-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+
+        .chat-header h3 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+
+        .toggle-all-btn {
+          padding: 6px 12px;
+          font-size: 12px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          color: var(--text-secondary);
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .toggle-all-btn:hover {
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        .chat-item {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
+          margin-bottom: 12px;
+          overflow: hidden;
+          transition: all 0.2s;
+        }
+
+        .chat-item.collapsed {
+          background: var(--bg-primary);
+        }
+
+        .chat-question {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          padding: 12px 16px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .chat-item.collapsed .chat-question:hover {
+          background: var(--bg-secondary);
+        }
+
+        .chat-toggle {
+          color: var(--text-muted);
+          font-size: 10px;
+          flex-shrink: 0;
+          margin-top: 3px;
+          width: 12px;
+        }
+
+        .chat-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--text-muted);
+          text-transform: uppercase;
+          flex-shrink: 0;
+        }
+
+        .chat-question-text {
+          margin: 0;
+          font-size: 14px;
+          color: var(--text-primary);
+          flex: 1;
+        }
+
+        .chat-item.collapsed .chat-question-text {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .chat-answer {
+          padding: 0 16px 16px 36px;
+          border-top: 1px solid var(--border-muted);
+        }
+
+        .chat-answer-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 0 8px 0;
+        }
+
+        .copy-button {
+          padding: 4px 8px;
+          font-size: 11px;
+          background: transparent;
+          border: 1px solid var(--border-default);
+          color: var(--text-muted);
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .copy-button:hover {
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        .chat-answer-content {
+          font-size: 14px;
+          color: var(--text-primary);
+          line-height: 1.6;
+        }
+
+        .chat-item.streaming {
+          border-color: var(--accent-blue);
+        }
+      `}</style>
     </div>
   );
 }

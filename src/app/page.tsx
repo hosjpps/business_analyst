@@ -33,8 +33,8 @@ import { useAnalysisCache } from '@/hooks/useAnalysisCache';
 // ===========================================
 
 export default function Home() {
-  // Mode selection
-  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>('code');
+  // Mode selection - start with null (force selection)
+  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>(null);
 
   // Persisted state (localStorage) - for code analysis
   const [repoUrl, setRepoUrl] = usePersistedRepoUrl();
@@ -80,6 +80,7 @@ export default function Home() {
     setCompetitorResult(null);
     setError(null);
     setAnalysisStep('idle');
+    setAnalysisMode(null);
     window.location.reload();
   }, [clearAllCaches]);
 
@@ -282,12 +283,16 @@ export default function Home() {
       if (businessData.canvas && codeData.analysis) {
         setAnalysisStep('generating');
 
+        // Include competitors if provided
+        const validCompetitors = competitors.filter((c) => c.name.trim());
+
         const gapResponse = await fetch('/api/analyze-gaps', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             canvas: businessData.canvas,
             code_analysis: codeData.analysis,
+            competitors: validCompetitors.length > 0 ? validCompetitors : undefined,
           }),
         });
 
@@ -369,7 +374,7 @@ export default function Home() {
   const handleClarificationSubmit = async (answers: Record<string, string>) => {
     // Add answers to description and re-analyze
     const answersText = Object.entries(answers)
-      .map(([id, answer]) => `\n\n[Уточнение: ${answer}]`)
+      .map(([, answer]) => `\n\n[Уточнение: ${answer}]`)
       .join('');
 
     setBusinessInput((prev) => ({
@@ -444,169 +449,217 @@ export default function Home() {
         disabled={loading}
       />
 
-      {/* Business Input Form */}
-      {analysisMode === 'business' && (
-        <div className="form-section">
-          <BusinessInputForm
-            value={businessInput}
-            onChange={setBusinessInput}
-            onError={setError}
-            disabled={loading}
-          />
-        </div>
-      )}
-
-      {/* Code Input Form */}
-      {analysisMode === 'code' && (
+      {/* Forms - only show when mode is selected */}
+      {analysisMode && (
         <>
-          {/* GitHub URL */}
-          <div className="form-group">
-            <label htmlFor="repo-url">GitHub URL</label>
-            <input
-              id="repo-url"
-              type="text"
-              placeholder="https://github.com/username/repo"
-              value={repoUrl}
-              onChange={(e) => setRepoUrl(e.target.value)}
-              disabled={uploadedFiles.length > 0 || loading}
-            />
-          </div>
+          {/* Business Input Form */}
+          {analysisMode === 'business' && (
+            <div className="form-card">
+              <div className="form-card-header">
+                <h3>📊 Информация о бизнесе</h3>
+              </div>
+              <div className="form-card-content">
+                <BusinessInputForm
+                  value={businessInput}
+                  onChange={setBusinessInput}
+                  onError={setError}
+                  disabled={loading}
+                />
+              </div>
+            </div>
+          )}
 
-          <div className="divider">
-            <span>или</span>
-          </div>
+          {/* Code Input Form */}
+          {analysisMode === 'code' && (
+            <div className="form-card">
+              <div className="form-card-header">
+                <h3>💻 Код проекта</h3>
+              </div>
+              <div className="form-card-content">
+                {/* GitHub URL */}
+                <div className="form-group">
+                  <label htmlFor="repo-url">GitHub URL</label>
+                  <input
+                    id="repo-url"
+                    type="text"
+                    placeholder="https://github.com/username/repo"
+                    value={repoUrl}
+                    onChange={(e) => setRepoUrl(e.target.value)}
+                    disabled={uploadedFiles.length > 0 || loading}
+                  />
+                </div>
 
-          {/* File Upload */}
-          <UploadForm
-            files={uploadedFiles}
-            onFilesChange={setUploadedFiles}
-            onError={setError}
-            disabled={loading}
-          />
+                <div className="divider">
+                  <span>или</span>
+                </div>
 
-          {/* Project Description */}
-          <div className="form-group">
-            <label htmlFor="description">Опиши свой проект</label>
-            <textarea
-              id="description"
-              placeholder="Чем занимается твой проект? Какую проблему решает? Кто целевая аудитория?"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={loading}
-            />
+                {/* File Upload */}
+                <UploadForm
+                  files={uploadedFiles}
+                  onFilesChange={setUploadedFiles}
+                  onError={setError}
+                  disabled={loading}
+                />
+
+                {/* Project Description */}
+                <div className="form-group" style={{ marginTop: '16px' }}>
+                  <label htmlFor="description">Опишите свой проект</label>
+                  <textarea
+                    id="description"
+                    placeholder="Чем занимается твой проект? Какую проблему решает? Кто целевая аудитория?"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Full Analysis Form */}
+          {analysisMode === 'full' && (
+            <>
+              {/* Business Section */}
+              <div className="form-card step-card">
+                <div className="form-card-header">
+                  <h3>📊 Шаг 1: Бизнес</h3>
+                  <span className="form-card-badge">Обязательно</span>
+                </div>
+                <div className="form-card-content">
+                  <BusinessInputForm
+                    value={businessInput}
+                    onChange={setBusinessInput}
+                    onError={setError}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
+              {/* Code Section */}
+              <div className="form-card step-card">
+                <div className="form-card-header">
+                  <h3>💻 Шаг 2: Код</h3>
+                  <span className="form-card-badge">Обязательно</span>
+                </div>
+                <div className="form-card-content">
+                  {/* GitHub URL */}
+                  <div className="form-group">
+                    <label htmlFor="repo-url-full">GitHub URL</label>
+                    <input
+                      id="repo-url-full"
+                      type="text"
+                      placeholder="https://github.com/username/repo"
+                      value={repoUrl}
+                      onChange={(e) => setRepoUrl(e.target.value)}
+                      disabled={uploadedFiles.length > 0 || loading}
+                    />
+                  </div>
+
+                  <div className="divider">
+                    <span>или</span>
+                  </div>
+
+                  {/* File Upload */}
+                  <UploadForm
+                    files={uploadedFiles}
+                    onFilesChange={setUploadedFiles}
+                    onError={setError}
+                    disabled={loading}
+                  />
+
+                  {/* Project Description */}
+                  <div className="form-group" style={{ marginTop: '16px' }}>
+                    <label htmlFor="description-full">Опишите свой проект</label>
+                    <textarea
+                      id="description-full"
+                      placeholder="Чем занимается твой проект? Какую проблему решает?"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Competitors Section - Optional */}
+              <div className="form-card step-card optional">
+                <div className="form-card-header">
+                  <h3>🎯 Шаг 3: Конкуренты</h3>
+                  <span className="form-card-badge optional">Опционально</span>
+                </div>
+                <div className="form-card-content">
+                  <p className="form-hint">
+                    Добавьте конкурентов для более точного анализа разрывов и позиционирования.
+                  </p>
+                  <CompetitorInputForm
+                    competitors={competitors}
+                    onChange={setCompetitors}
+                    disabled={loading}
+                    maxCompetitors={10}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Competitor Analysis Form */}
+          {analysisMode === 'competitor' && (
+            <div className="form-card">
+              <div className="form-card-header">
+                <h3>🎯 Анализ конкурентов</h3>
+              </div>
+              <div className="form-card-content">
+                <p className="form-hint">
+                  Добавьте конкурентов для сравнительного анализа. Система проанализирует их
+                  сайты и сравнит с вашим продуктом.
+                </p>
+
+                {/* Optional: Your product description */}
+                <div className="form-group">
+                  <label htmlFor="competitor-product">Опишите ваш продукт (опционально)</label>
+                  <textarea
+                    id="competitor-product"
+                    placeholder="Кратко опишите ваш продукт для более точного сравнения..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    disabled={loading}
+                    rows={3}
+                  />
+                </div>
+
+                {/* Competitor Input Form */}
+                <CompetitorInputForm
+                  competitors={competitors}
+                  onChange={setCompetitors}
+                  disabled={loading}
+                  maxCompetitors={5}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <div className="submit-section">
+            <button
+              className="submit-btn"
+              onClick={handleAnalyze}
+              disabled={loading || !canSubmit}
+            >
+              {loading
+                ? analysisMode === 'full'
+                  ? 'Полный анализ...'
+                  : analysisMode === 'competitor'
+                  ? 'Анализ конкурентов...'
+                  : 'Анализирую...'
+                : analysisMode === 'full'
+                ? '⚡ Запустить полный анализ'
+                : analysisMode === 'competitor'
+                ? '🎯 Анализировать конкурентов'
+                : '🚀 Анализировать'}
+            </button>
           </div>
         </>
       )}
-
-      {/* Full Analysis Form */}
-      {analysisMode === 'full' && (
-        <>
-          {/* Business Section */}
-          <div className="form-section">
-            <h3 className="section-header">Шаг 1: Опишите бизнес</h3>
-            <BusinessInputForm
-              value={businessInput}
-              onChange={setBusinessInput}
-              onError={setError}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="divider">
-            <span>+</span>
-          </div>
-
-          {/* Code Section */}
-          <div className="form-section">
-            <h3 className="section-header">Шаг 2: Укажите код</h3>
-
-            {/* GitHub URL */}
-            <div className="form-group">
-              <label htmlFor="repo-url-full">GitHub URL</label>
-              <input
-                id="repo-url-full"
-                type="text"
-                placeholder="https://github.com/username/repo"
-                value={repoUrl}
-                onChange={(e) => setRepoUrl(e.target.value)}
-                disabled={uploadedFiles.length > 0 || loading}
-              />
-            </div>
-
-            <div className="divider-small">
-              <span>или</span>
-            </div>
-
-            {/* File Upload */}
-            <UploadForm
-              files={uploadedFiles}
-              onFilesChange={setUploadedFiles}
-              onError={setError}
-              disabled={loading}
-            />
-
-            {/* Project Description */}
-            <div className="form-group">
-              <label htmlFor="description-full">Опиши свой проект</label>
-              <textarea
-                id="description-full"
-                placeholder="Чем занимается твой проект? Какую проблему решает?"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Competitor Analysis Form */}
-      {analysisMode === 'competitor' && (
-        <div className="form-section">
-          <div className="competitor-intro">
-            <p>
-              Добавьте конкурентов для сравнительного анализа. Система проанализирует их
-              сайты и сравнит с вашим продуктом.
-            </p>
-          </div>
-
-          {/* Optional: Your product description */}
-          <div className="form-group">
-            <label htmlFor="competitor-product">Опишите ваш продукт (опционально)</label>
-            <textarea
-              id="competitor-product"
-              placeholder="Кратко опишите ваш продукт для более точного сравнения..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={loading}
-              rows={3}
-            />
-          </div>
-
-          {/* Competitor Input Form */}
-          <CompetitorInputForm
-            competitors={competitors}
-            onChange={setCompetitors}
-            disabled={loading}
-            maxCompetitors={5}
-          />
-        </div>
-      )}
-
-      {/* Submit Button */}
-      <button onClick={handleAnalyze} disabled={loading || !canSubmit}>
-        {loading
-          ? analysisMode === 'full'
-            ? 'Полный анализ...'
-            : analysisMode === 'competitor'
-            ? 'Анализ конкурентов...'
-            : 'Анализирую...'
-          : analysisMode === 'full'
-          ? 'Запустить полный анализ'
-          : analysisMode === 'competitor'
-          ? 'Анализировать конкурентов'
-          : 'Анализировать'}
-      </button>
 
       {/* Error */}
       {error && <div className="error">{error}</div>}
@@ -751,7 +804,7 @@ export default function Home() {
           {/* Business Canvas (collapsible) */}
           {businessResult?.canvas && (
             <details className="results-section">
-              <summary>Business Canvas</summary>
+              <summary>📊 Business Canvas</summary>
               <CanvasView
                 canvas={businessResult.canvas}
                 businessStage={businessResult.business_stage}
@@ -764,7 +817,7 @@ export default function Home() {
           {/* Code Analysis (collapsible) */}
           {codeResult?.analysis && (
             <details className="results-section">
-              <summary>Анализ кода</summary>
+              <summary>💻 Анализ кода</summary>
               <AnalysisView analysis={codeResult.analysis} />
             </details>
           )}
@@ -804,76 +857,105 @@ export default function Home() {
         .clear-btn {
           padding: 6px 12px;
           font-size: 13px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          color: var(--color-fg-muted);
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          color: var(--text-secondary);
           border-radius: 6px;
           cursor: pointer;
         }
         .clear-btn:hover {
-          background: var(--color-danger-subtle);
-          border-color: var(--color-danger-fg);
-          color: var(--color-danger-fg);
+          background: rgba(248, 81, 73, 0.15);
+          border-color: var(--accent-red);
+          color: var(--accent-red);
         }
-        .form-section {
+
+        /* Form Cards */
+        .form-card {
+          background: var(--bg-primary);
+          border: 1px solid var(--border-default);
+          border-radius: 12px;
+          margin-bottom: 16px;
+          overflow: hidden;
+        }
+        .form-card.step-card {
           margin-bottom: 24px;
+          border: 2px solid var(--border-default);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
-        .competitor-intro {
-          padding: 16px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 8px;
-          margin-bottom: 20px;
+        .form-card.step-card.optional {
+          border-style: dashed;
+          opacity: 0.9;
         }
-        .competitor-intro p {
+        .form-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 20px;
+          background: var(--bg-secondary);
+          border-bottom: 1px solid var(--border-default);
+        }
+        .form-card.step-card .form-card-header {
+          background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+          padding: 20px 24px;
+        }
+        .form-card-header h3 {
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--text-primary);
           margin: 0;
+        }
+        .form-card.step-card .form-card-header h3 {
+          font-size: 17px;
+        }
+        .form-card-badge {
+          font-size: 11px;
+          padding: 4px 10px;
+          background: rgba(88, 166, 255, 0.15);
+          color: var(--accent-blue);
+          border-radius: 4px;
+          font-weight: 500;
+        }
+        .form-card-badge.optional {
+          background: rgba(139, 148, 158, 0.15);
+          color: var(--text-muted);
+        }
+        .form-card-content {
+          padding: 20px;
+        }
+        .form-hint {
           font-size: 14px;
-          color: var(--color-fg-muted);
+          color: var(--text-secondary);
+          margin: 0 0 16px 0;
           line-height: 1.5;
         }
-        .coming-soon {
-          text-align: center;
-          padding: 48px 24px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 8px;
-          margin-bottom: 24px;
+
+        /* Submit Section */
+        .submit-section {
+          margin-top: 8px;
         }
-        .coming-soon-icon {
-          font-size: 48px;
-          display: block;
-          margin-bottom: 16px;
-        }
-        .coming-soon p {
-          color: var(--color-fg-muted);
-          margin: 0 0 8px 0;
-        }
-        .coming-soon-hint {
-          font-size: 13px;
-        }
-        .section-header {
-          font-size: 14px;
+        .submit-btn {
+          width: 100%;
+          padding: 14px 24px;
+          font-size: 15px;
           font-weight: 600;
-          color: var(--color-fg-default);
-          margin: 0 0 16px 0;
+          background: var(--accent-green);
+          border: none;
+          border-radius: 8px;
+          color: white;
+          cursor: pointer;
+          transition: all 0.2s;
         }
-        .divider-small {
-          display: flex;
-          align-items: center;
-          text-align: center;
-          margin: 12px 0;
-          color: var(--color-fg-muted);
-          font-size: 12px;
+        .submit-btn:hover:not(:disabled) {
+          background: #2ea043;
+          transform: translateY(-1px);
         }
-        .divider-small::before,
-        .divider-small::after {
-          content: '';
-          flex: 1;
-          border-bottom: 1px solid var(--color-border-default);
+        .submit-btn:disabled {
+          background: var(--bg-tertiary);
+          color: var(--text-muted);
+          cursor: not-allowed;
+          transform: none;
         }
-        .divider-small span {
-          padding: 0 12px;
-        }
+
         .full-results {
           margin-top: 24px;
         }
@@ -883,7 +965,7 @@ export default function Home() {
         .full-results-header h3 {
           font-size: 18px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           margin: 0;
         }
         .score-section {
@@ -892,23 +974,23 @@ export default function Home() {
         .results-section {
           margin: 24px 0;
           padding: 16px;
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
         }
         .results-section summary {
           font-size: 14px;
           font-weight: 600;
-          color: var(--color-fg-default);
+          color: var(--text-primary);
           cursor: pointer;
           padding: 8px 0;
         }
         .results-section summary:hover {
-          color: var(--color-accent-fg);
+          color: var(--accent-blue);
         }
         .results-section[open] summary {
           margin-bottom: 16px;
-          border-bottom: 1px solid var(--color-border-default);
+          border-bottom: 1px solid var(--border-default);
           padding-bottom: 12px;
         }
       `}</style>

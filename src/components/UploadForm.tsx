@@ -163,60 +163,222 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
   };
 
   return (
-    <div className="form-group">
-      <label>Загрузить файлы или ZIP-архив</label>
+    <div className="upload-form">
+      <label className="upload-label">Загрузить файлы или ZIP-архив</label>
       <div
-        className={`file-upload ${dragOver ? 'drag-over' : ''}`}
+        className={`upload-zone ${dragOver ? 'drag-over' : ''} ${disabled ? 'disabled' : ''}`}
         onDragOver={e => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
       >
-        <p>Перетащите файлы или ZIP-архив сюда</p>
-        <p style={{ fontSize: 14, color: '#888', marginTop: 8 }}>
-          Файлы до 1MB, ZIP до 5MB
-        </p>
+        <span className="upload-icon">📁</span>
+        <p className="upload-text">Перетащите файлы или ZIP-архив сюда</p>
+        <p className="upload-hint">или нажмите для выбора</p>
+        <p className="upload-limits">Файлы до 1MB, ZIP до 5MB</p>
         {uploadStatus && (
-          <p style={{ fontSize: 14, color: '#0070f3', marginTop: 8 }}>
-            {uploadStatus}
-          </p>
+          <p className="upload-status">{uploadStatus}</p>
         )}
         <input
           ref={fileInputRef}
           type="file"
           multiple
           accept="*/*,.zip"
-          style={{ display: 'none' }}
+          className="upload-input"
           onChange={e => e.target.files && handleFiles(e.target.files)}
           disabled={disabled}
         />
       </div>
 
       {files.length > 0 && (
-        <div className="file-list">
-          <div className="file-list-header">
-            <span>{files.length} файлов загружено</span>
-            <button className="clear-files" onClick={clearAllFiles}>
+        <div className="upload-file-list">
+          <div className="upload-file-list-header">
+            <span className="upload-file-count">{files.length} файлов загружено</span>
+            <button className="upload-clear-btn" onClick={clearAllFiles}>
               Очистить все
             </button>
           </div>
-          <div className="file-list-items">
+          <div className="upload-file-items">
             {files.slice(0, 20).map((file, i) => (
-              <div key={i} className="file-item">
-                <span>{file.path}</span>
-                <button className="remove-file" onClick={() => removeFile(i)}>
-                  ✕
+              <div key={i} className="upload-file-item">
+                <span className="upload-file-name">{file.path}</span>
+                <button className="upload-file-remove" onClick={() => removeFile(i)}>
+                  ×
                 </button>
               </div>
             ))}
             {files.length > 20 && (
-              <div className="file-item" style={{ color: '#888' }}>
+              <div className="upload-file-item upload-file-more">
                 ... и ещё {files.length - 20} файлов
               </div>
             )}
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .upload-form {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .upload-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+
+        .upload-zone {
+          border: 2px dashed var(--border-default);
+          border-radius: 8px;
+          padding: 32px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          background: var(--bg-primary);
+        }
+
+        .upload-zone:hover:not(.disabled) {
+          border-color: var(--accent-blue);
+          background: var(--bg-secondary);
+        }
+
+        .upload-zone.drag-over {
+          border-color: var(--accent-blue);
+          background: rgba(88, 166, 255, 0.1);
+        }
+
+        .upload-zone.disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .upload-icon {
+          font-size: 36px;
+          display: block;
+          margin-bottom: 12px;
+          opacity: 0.8;
+        }
+
+        .upload-text {
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          margin: 0;
+        }
+
+        .upload-hint {
+          font-size: 13px;
+          color: var(--text-secondary);
+          margin: 4px 0 0 0;
+        }
+
+        .upload-limits {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 8px 0 0 0;
+        }
+
+        .upload-status {
+          font-size: 13px;
+          color: var(--accent-blue);
+          margin: 12px 0 0 0;
+          font-weight: 500;
+        }
+
+        .upload-input {
+          display: none;
+        }
+
+        .upload-file-list {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
+          overflow: hidden;
+        }
+
+        .upload-file-list-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--border-default);
+          background: var(--bg-tertiary);
+        }
+
+        .upload-file-count {
+          font-size: 13px;
+          color: var(--text-secondary);
+        }
+
+        .upload-clear-btn {
+          font-size: 12px;
+          padding: 4px 8px;
+          background: transparent;
+          border: 1px solid var(--border-default);
+          color: var(--text-secondary);
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .upload-clear-btn:hover {
+          background: rgba(248, 81, 73, 0.1);
+          border-color: var(--accent-red);
+          color: var(--accent-red);
+        }
+
+        .upload-file-items {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+
+        .upload-file-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 16px;
+          font-size: 13px;
+          border-bottom: 1px solid var(--border-muted);
+        }
+
+        .upload-file-item:last-child {
+          border-bottom: none;
+        }
+
+        .upload-file-name {
+          color: var(--text-primary);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .upload-file-more {
+          color: var(--text-muted);
+          font-style: italic;
+        }
+
+        .upload-file-remove {
+          width: 20px;
+          height: 20px;
+          padding: 0;
+          font-size: 16px;
+          line-height: 1;
+          border: none;
+          background: transparent;
+          color: var(--text-muted);
+          cursor: pointer;
+          border-radius: 4px;
+          transition: all 0.2s;
+          flex-shrink: 0;
+        }
+
+        .upload-file-remove:hover {
+          background: rgba(248, 81, 73, 0.1);
+          color: var(--accent-red);
+        }
+      `}</style>
     </div>
   );
 }

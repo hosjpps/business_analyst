@@ -6,16 +6,14 @@ import { useState } from 'react';
 // Types
 // ===========================================
 
-export type AnalysisMode = 'business' | 'code' | 'full' | 'competitor';
+export type AnalysisMode = 'business' | 'code' | 'full' | 'competitor' | null;
 
 interface ModeConfig {
-  id: AnalysisMode;
+  id: Exclude<AnalysisMode, null>;
   icon: string;
   title: string;
   subtitle: string;
-  description: string;
   features: string[];
-  disabled?: boolean;
   recommended?: boolean;
 }
 
@@ -33,53 +31,49 @@ const MODES: ModeConfig[] = [
   {
     id: 'business',
     icon: '📊',
-    title: 'РАЗБОР БИЗНЕСА',
-    subtitle: 'Расскажите о своём деле — получите план, что улучшить',
-    description: 'Анализ бизнес-модели без кода',
+    title: 'Разбор бизнеса',
+    subtitle: 'Расскажите о своём деле — получите карту бизнеса и план действий',
     features: [
-      'Карта бизнеса — кто клиенты, как зарабатываете',
-      'Стадия развития — идея, MVP или уже растёте',
-      'Слабые места — что мешает расти',
-      'Что делать дальше — конкретные шаги',
+      'Business Model Canvas — 9 блоков',
+      'Стадия развития',
+      'Слабые места в модели',
+      'Рекомендации',
     ],
   },
   {
     id: 'code',
     icon: '💻',
-    title: 'ПРОВЕРКА САЙТА/ПРИЛОЖЕНИЯ',
-    subtitle: 'Покажите код — узнаете, что работает и что починить',
-    description: 'Технический анализ репозитория',
+    title: 'Проверка кода',
+    subtitle: 'Покажите репозиторий — узнаете, что работает и что починить',
     features: [
-      'Технологии — что используете',
-      'Сильные стороны — что хорошо сделано',
-      'Проблемы — что нужно исправить',
-      'Задачи на неделю — с приоритетами',
+      'Технологический стек',
+      'Сильные стороны',
+      'Проблемы и риски',
+      'Задачи на неделю',
     ],
   },
   {
     id: 'competitor',
     icon: '🎯',
-    title: 'СРАВНЕНИЕ С КОНКУРЕНТАМИ',
-    subtitle: 'Добавьте конкурентов — покажем, чем вы лучше и хуже',
-    description: 'Анализ конкурентов',
+    title: 'Анализ конкурентов',
+    subtitle: 'Добавьте конкурентов — покажем ваши преимущества',
     features: [
-      'Парсинг сайтов конкурентов',
-      'Сравнение функций и цен',
-      'Ваши преимущества и слабые места',
-      'Рекомендации по позиционированию',
+      'Парсинг сайтов',
+      'Сравнение функций',
+      'Ваши преимущества',
+      'Позиционирование',
     ],
   },
   {
     id: 'full',
     icon: '⚡',
-    title: 'ПОЛНАЯ КАРТИНА',
-    subtitle: 'Всё вместе → конкретный список дел на неделю',
-    description: 'Бизнес + Код + Рекомендации',
+    title: 'Полный анализ',
+    subtitle: 'Бизнес + Код + Gap Detection → конкретный план на неделю',
     features: [
-      'Карта бизнеса',
+      'Business Canvas',
       'Анализ кода',
-      'Поиск разрывов между планами и реальностью',
-      'Персональные задачи на неделю',
+      'Поиск разрывов',
+      'Персональные задачи',
     ],
     recommended: true,
   },
@@ -94,25 +88,125 @@ export function AnalysisModeSelector({
   onModeChange,
   disabled = false,
 }: AnalysisModeSelectorProps) {
-  const [expandedMode, setExpandedMode] = useState<AnalysisMode | null>(null);
+  const [isExpanded, setIsExpanded] = useState(selectedMode === null);
 
-  const handleModeClick = (mode: ModeConfig) => {
-    if (mode.disabled || disabled) return;
-
-    // Toggle expand/collapse
-    if (expandedMode === mode.id) {
-      setExpandedMode(null);
-    } else {
-      setExpandedMode(mode.id);
-    }
-  };
-
-  const handleSelect = (mode: AnalysisMode) => {
+  const handleSelect = (mode: Exclude<AnalysisMode, null>) => {
     if (disabled) return;
     onModeChange(mode);
-    setExpandedMode(null);
+    setIsExpanded(false);
   };
 
+  const handleChangeMode = () => {
+    setIsExpanded(true);
+  };
+
+  const selectedModeConfig = selectedMode ? MODES.find(m => m.id === selectedMode) : null;
+
+  // Collapsed view - show current selection
+  if (!isExpanded && selectedModeConfig) {
+    return (
+      <div className="mode-selected">
+        <div className="mode-selected-info">
+          <span className="mode-selected-icon">{selectedModeConfig.icon}</span>
+          <div className="mode-selected-text">
+            <span className="mode-selected-title">{selectedModeConfig.title}</span>
+            <span className="mode-selected-subtitle">{selectedModeConfig.subtitle}</span>
+          </div>
+        </div>
+        <button
+          className="mode-change-btn"
+          onClick={handleChangeMode}
+          disabled={disabled}
+        >
+          Сменить режим
+        </button>
+
+        <style jsx>{`
+          .mode-selected {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            gap: 16px;
+          }
+
+          .mode-selected-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+          }
+
+          .mode-selected-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+          }
+
+          .mode-selected-text {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+          }
+
+          .mode-selected-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+          }
+
+          .mode-selected-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .mode-change-btn {
+            flex-shrink: 0;
+            padding: 8px 16px;
+            font-size: 13px;
+            background: transparent;
+            border: 1px solid var(--border-default);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+
+          .mode-change-btn:hover:not(:disabled) {
+            background: var(--bg-tertiary);
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+          }
+
+          .mode-change-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+
+          @media (max-width: 640px) {
+            .mode-selected {
+              flex-direction: column;
+              align-items: stretch;
+            }
+            .mode-selected-subtitle {
+              white-space: normal;
+            }
+            .mode-change-btn {
+              width: 100%;
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // Expanded view - show all modes
   return (
     <div className="mode-selector">
       <h2 className="mode-selector-title">Выберите режим анализа</h2>
@@ -121,55 +215,39 @@ export function AnalysisModeSelector({
         {MODES.map((mode) => (
           <div
             key={mode.id}
-            className={`mode-card ${selectedMode === mode.id ? 'selected' : ''} ${
-              mode.disabled ? 'disabled' : ''
-            } ${expandedMode === mode.id ? 'expanded' : ''}`}
-            onClick={() => handleModeClick(mode)}
+            className={`mode-card ${selectedMode === mode.id ? 'selected' : ''}`}
+            onClick={() => handleSelect(mode.id)}
           >
-            {/* Header */}
             <div className="mode-card-header">
-              <div className="mode-card-title-row">
-                <span className="mode-icon">{mode.icon}</span>
-                <span className="mode-title">{mode.title}</span>
-                {mode.recommended && <span className="mode-badge">★ ЛУЧШИЙ</span>}
-                {mode.disabled && <span className="mode-badge disabled">СКОРО</span>}
+              <span className="mode-icon">{mode.icon}</span>
+              <div className="mode-card-titles">
+                <span className="mode-title">
+                  {mode.title}
+                  {mode.recommended && <span className="mode-badge">Рекомендуем</span>}
+                </span>
+                <span className="mode-subtitle">{mode.subtitle}</span>
               </div>
-              <span className="mode-expand-icon">
-                {expandedMode === mode.id ? '[▲]' : '[▼]'}
-              </span>
             </div>
 
-            {/* Subtitle (always visible) */}
-            <p className="mode-subtitle">{mode.subtitle}</p>
+            <ul className="mode-features">
+              {mode.features.map((feature, idx) => (
+                <li key={idx}>
+                  <span className="feature-check">✓</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
 
-            {/* Expanded content */}
-            {expandedMode === mode.id && !mode.disabled && (
-              <div className="mode-card-content">
-                <div className="mode-divider" />
-
-                <p className="mode-section-title">Что вы получите:</p>
-                <ul className="mode-features">
-                  {mode.features.map((feature, idx) => (
-                    <li key={idx}>
-                      <span className="feature-check">✓</span> {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  className={`mode-select-btn ${
-                    selectedMode === mode.id ? 'selected' : ''
-                  }`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelect(mode.id);
-                  }}
-                  disabled={disabled}
-                >
-                  {selectedMode === mode.id ? '✓ Выбрано' : `Выбрать ${mode.title.toLowerCase()}`}
-                </button>
-              </div>
-            )}
+            <button
+              className={`mode-select-btn ${selectedMode === mode.id ? 'selected' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelect(mode.id);
+              }}
+              disabled={disabled}
+            >
+              {selectedMode === mode.id ? '✓ Выбрано' : 'Выбрать'}
+            </button>
           </div>
         ))}
       </div>
@@ -180,18 +258,16 @@ export function AnalysisModeSelector({
         }
 
         .mode-selector-title {
-          font-size: 14px;
-          font-weight: 500;
-          color: var(--color-fg-muted);
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--text-primary);
           margin-bottom: 16px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
         }
 
         .mode-cards {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
+          gap: 16px;
         }
 
         @media (max-width: 768px) {
@@ -201,160 +277,112 @@ export function AnalysisModeSelector({
         }
 
         .mode-card {
-          background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
-          border-radius: 6px;
-          padding: 16px;
+          background: var(--bg-primary);
+          border: 2px solid var(--border-default);
+          border-radius: 12px;
+          padding: 20px;
           cursor: pointer;
           transition: all 0.2s ease;
+          display: flex;
+          flex-direction: column;
         }
 
-        .mode-card:hover:not(.disabled) {
-          border-color: var(--color-border-muted);
-          background: var(--color-canvas-inset);
+        .mode-card:hover {
+          border-color: var(--accent-blue);
+          background: var(--bg-secondary);
         }
 
         .mode-card.selected {
-          border-color: var(--color-accent-fg);
-          background: var(--color-canvas-inset);
-        }
-
-        .mode-card.selected::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 3px;
-          background: var(--color-accent-fg);
-          border-radius: 6px 0 0 6px;
-        }
-
-        .mode-card.disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .mode-card.expanded {
-          grid-column: span 2;
-        }
-
-        @media (max-width: 768px) {
-          .mode-card.expanded {
-            grid-column: span 1;
-          }
+          border-color: var(--accent-green);
+          background: rgba(35, 134, 54, 0.1);
         }
 
         .mode-card-header {
           display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 8px;
+          gap: 12px;
+          margin-bottom: 16px;
         }
 
-        .mode-card-title-row {
+        .mode-icon {
+          font-size: 28px;
+          flex-shrink: 0;
+        }
+
+        .mode-card-titles {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .mode-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--text-primary);
           display: flex;
           align-items: center;
           gap: 8px;
           flex-wrap: wrap;
         }
 
-        .mode-icon {
-          font-size: 16px;
-        }
-
-        .mode-title {
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--color-fg-default);
-          letter-spacing: 0.5px;
-        }
-
         .mode-badge {
           font-size: 10px;
-          padding: 2px 6px;
-          border-radius: 3px;
-          background: var(--color-success-subtle);
-          color: var(--color-success-fg);
+          padding: 2px 8px;
+          border-radius: 4px;
+          background: var(--accent-green);
+          color: white;
           font-weight: 500;
-        }
-
-        .mode-badge.disabled {
-          background: var(--color-neutral-subtle);
-          color: var(--color-fg-muted);
-        }
-
-        .mode-expand-icon {
-          font-size: 12px;
-          color: var(--color-fg-muted);
-          font-family: monospace;
+          text-transform: uppercase;
         }
 
         .mode-subtitle {
           font-size: 13px;
-          color: var(--color-fg-muted);
-          margin: 0;
+          color: var(--text-secondary);
           line-height: 1.4;
-        }
-
-        .mode-card-content {
-          margin-top: 12px;
-        }
-
-        .mode-divider {
-          height: 1px;
-          background: var(--color-border-muted);
-          margin: 12px 0;
-        }
-
-        .mode-section-title {
-          font-size: 12px;
-          color: var(--color-fg-muted);
-          margin: 0 0 8px 0;
         }
 
         .mode-features {
           list-style: none;
           padding: 0;
           margin: 0 0 16px 0;
+          flex-grow: 1;
         }
 
         .mode-features li {
           font-size: 13px;
-          color: var(--color-fg-default);
+          color: var(--text-secondary);
           padding: 4px 0;
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: 8px;
         }
 
         .feature-check {
-          color: var(--color-success-fg);
-          flex-shrink: 0;
+          color: var(--accent-green);
+          font-weight: bold;
         }
 
         .mode-select-btn {
           width: 100%;
           padding: 10px 16px;
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 500;
-          border: 1px solid var(--color-border-default);
+          border: 1px solid var(--border-default);
           border-radius: 6px;
-          background: var(--color-canvas-default);
-          color: var(--color-fg-default);
+          background: var(--bg-secondary);
+          color: var(--text-primary);
           cursor: pointer;
           transition: all 0.2s ease;
         }
 
         .mode-select-btn:hover:not(:disabled) {
-          background: var(--color-canvas-subtle);
-          border-color: var(--color-accent-fg);
+          background: var(--bg-tertiary);
+          border-color: var(--accent-blue);
         }
 
         .mode-select-btn.selected {
-          background: var(--color-success-subtle);
-          border-color: var(--color-success-fg);
-          color: var(--color-success-fg);
+          background: var(--accent-green);
+          border-color: var(--accent-green);
+          color: white;
         }
 
         .mode-select-btn:disabled {

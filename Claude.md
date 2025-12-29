@@ -118,7 +118,7 @@
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
-- [x] 68+ unit тестов
+- [x] 150 unit тестов (полное покрытие API)
 
 ---
 
@@ -131,9 +131,10 @@
 | 3 | Full Integration | ✅ Завершена |
 | 4 | Competitor Snapshot | ✅ Завершена |
 | 5 | Auth + Database | ✅ Завершена |
-| 6 | Weekly Reports | Планируется |
-| 7 | Social Media API | Future |
-| 8 | AI Competitor Agent | Vision |
+| 6 | Тесты и Качество | ✅ Завершена |
+| 7 | Weekly Reports | Планируется |
+| 8 | Social Media API | Future |
+| 9 | AI Competitor Agent | Vision |
 
 Детальный план с задачами: [ROADMAP.md](./ROADMAP.md)
 
@@ -252,7 +253,13 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 
 **Тестирование:**
 - Vitest
-- 68+ unit тестов
+- 150 unit тестов:
+  - Code Analysis: 15 тестов
+  - Business Analysis: 21 тест
+  - Gap Detection: 23 теста
+  - Competitor Analysis: 23 теста
+  - Components: 16 тестов
+  - Utils: 52 теста
 
 ---
 
