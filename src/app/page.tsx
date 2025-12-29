@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import type { AnalyzeResponse, FileInput } from '@/types';
 import type { BusinessInput, BusinessAnalyzeResponse } from '@/types/business';
 import type { GapAnalyzeResponse } from '@/types/gaps';
+import type { CompetitorInput, CompetitorAnalyzeResponse } from '@/types/competitor';
 import { UploadForm } from '@/components/UploadForm';
 import { ProgressIndicator, type AnalysisStep } from '@/components/ProgressIndicator';
 import { AnalysisView } from '@/components/AnalysisView';
@@ -11,11 +12,13 @@ import { ChatSection } from '@/components/ChatSection';
 import { ExportButtons } from '@/components/ExportButtons';
 import { AnalysisModeSelector, type AnalysisMode } from '@/components/forms/AnalysisModeSelector';
 import { BusinessInputForm } from '@/components/forms/BusinessInputForm';
+import { CompetitorInputForm } from '@/components/forms/CompetitorInputForm';
 import { CanvasView } from '@/components/results/CanvasView';
 import { ClarificationQuestions } from '@/components/forms/ClarificationQuestions';
 import { GapsView } from '@/components/results/GapsView';
 import { AlignmentScore } from '@/components/results/AlignmentScore';
 import { VerdictBadge } from '@/components/results/VerdictBadge';
+import { CompetitorComparisonView } from '@/components/results/CompetitorComparisonView';
 import {
   usePersistedDescription,
   usePersistedRepoUrl,
@@ -48,6 +51,10 @@ export default function Home() {
   // Gap analysis state (for full mode)
   const [gapResult, setGapResult] = useState<GapAnalyzeResponse | null>(null);
 
+  // Competitor analysis state
+  const [competitors, setCompetitors] = useState<CompetitorInput[]>([]);
+  const [competitorResult, setCompetitorResult] = useState<CompetitorAnalyzeResponse | null>(null);
+
   // Non-persisted state
   const [uploadedFiles, setUploadedFiles] = useState<FileInput[]>([]);
   const [loading, setLoading] = useState(false);
@@ -68,6 +75,8 @@ export default function Home() {
     setBusinessInput({ description: '', social_links: {}, documents: [] });
     setBusinessResult(null);
     setGapResult(null);
+    setCompetitors([]);
+    setCompetitorResult(null);
     setError(null);
     setAnalysisStep('idle');
     window.location.reload();
@@ -303,6 +312,56 @@ export default function Home() {
   };
 
   // ===========================================
+  // Competitor Analysis Handler
+  // ===========================================
+
+  const handleCompetitorAnalyze = async () => {
+    // Validate inputs
+    const validCompetitors = competitors.filter((c) => c.name.trim());
+    if (validCompetitors.length === 0) {
+      setError('Добавьте хотя бы одного конкурента');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setCompetitorResult(null);
+    setAnalysisStep('fetching');
+
+    try {
+      setTimeout(() => setAnalysisStep('analyzing'), 500);
+
+      const response = await fetch('/api/analyze-competitors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          competitors: validCompetitors,
+          canvas: businessResult?.canvas || null,
+          product_description: businessInput.description || description || '',
+        }),
+      });
+
+      setAnalysisStep('generating');
+
+      const data: CompetitorAnalyzeResponse = await response.json();
+
+      if (!data.success) {
+        setError(data.error || 'Ошибка анализа конкурентов');
+        setAnalysisStep('error');
+      } else {
+        setCompetitorResult(data);
+        setAnalysisStep('complete');
+      }
+    } catch (err) {
+      setError('Не удалось выполнить запрос');
+      setAnalysisStep('error');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ===========================================
   // Handle clarification answers
   // ===========================================
 
@@ -333,6 +392,8 @@ export default function Home() {
       handleBusinessAnalyze();
     } else if (analysisMode === 'full') {
       handleFullAnalyze();
+    } else if (analysisMode === 'competitor') {
+      handleCompetitorAnalyze();
     }
   };
 
@@ -346,13 +407,16 @@ export default function Home() {
       ? businessInput.description.length >= 50 &&
         (repoUrl || uploadedFiles.length > 0) &&
         description.trim()
+      : analysisMode === 'competitor'
+      ? competitors.filter((c) => c.name.trim()).length > 0
       : false;
 
   // Has any result
   const hasCodeResult = codeResult && codeResult.success;
   const hasBusinessResult = businessResult && businessResult.success;
   const hasGapResult = gapResult && gapResult.success;
-  const hasAnyResult = hasCodeResult || hasBusinessResult || hasGapResult;
+  const hasCompetitorResult = competitorResult && competitorResult.success;
+  const hasAnyResult = hasCodeResult || hasBusinessResult || hasGapResult || hasCompetitorResult;
 
   return (
     <div className="container">
@@ -492,18 +556,53 @@ export default function Home() {
         </>
       )}
 
-      {/* Submit Button */}
-      {analysisMode !== 'competitor' && (
-        <button onClick={handleAnalyze} disabled={loading || !canSubmit}>
-          {loading
-            ? analysisMode === 'full'
-              ? 'Полный анализ...'
-              : 'Анализирую...'
-            : analysisMode === 'full'
-            ? 'Запустить полный анализ'
-            : 'Анализировать'}
-        </button>
+      {/* Competitor Analysis Form */}
+      {analysisMode === 'competitor' && (
+        <div className="form-section">
+          <div className="competitor-intro">
+            <p>
+              Добавьте конкурентов для сравнительного анализа. Система проанализирует их
+              сайты и сравнит с вашим продуктом.
+            </p>
+          </div>
+
+          {/* Optional: Your product description */}
+          <div className="form-group">
+            <label htmlFor="competitor-product">Опишите ваш продукт (опционально)</label>
+            <textarea
+              id="competitor-product"
+              placeholder="Кратко опишите ваш продукт для более точного сравнения..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={loading}
+              rows={3}
+            />
+          </div>
+
+          {/* Competitor Input Form */}
+          <CompetitorInputForm
+            competitors={competitors}
+            onChange={setCompetitors}
+            disabled={loading}
+            maxCompetitors={5}
+          />
+        </div>
       )}
+
+      {/* Submit Button */}
+      <button onClick={handleAnalyze} disabled={loading || !canSubmit}>
+        {loading
+          ? analysisMode === 'full'
+            ? 'Полный анализ...'
+            : analysisMode === 'competitor'
+            ? 'Анализ конкурентов...'
+            : 'Анализирую...'
+          : analysisMode === 'full'
+          ? 'Запустить полный анализ'
+          : analysisMode === 'competitor'
+          ? 'Анализировать конкурентов'
+          : 'Анализировать'}
+      </button>
 
       {/* Error */}
       {error && <div className="error">{error}</div>}
@@ -598,6 +697,13 @@ export default function Home() {
           {codeResult.analysis && (
             <ChatSection analysis={codeResult.analysis} onError={setError} />
           )}
+        </div>
+      )}
+
+      {/* Competitor Analysis Results */}
+      {competitorResult && analysisMode === 'competitor' && (
+        <div className="results">
+          <CompetitorComparisonView result={competitorResult} />
         </div>
       )}
 
@@ -702,6 +808,19 @@ export default function Home() {
         }
         .form-section {
           margin-bottom: 24px;
+        }
+        .competitor-intro {
+          padding: 16px;
+          background: var(--color-canvas-subtle);
+          border: 1px solid var(--color-border-default);
+          border-radius: 8px;
+          margin-bottom: 20px;
+        }
+        .competitor-intro p {
+          margin: 0;
+          font-size: 14px;
+          color: var(--color-fg-muted);
+          line-height: 1.5;
         }
         .coming-soon {
           text-align: center;
