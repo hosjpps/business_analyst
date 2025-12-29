@@ -142,20 +142,29 @@ export async function POST(request: NextRequest) {
         // Check cache
         const cachedResult = analysisCache.get(cacheKey) as AnalyzeResponse | null;
         if (cachedResult) {
-          // Return cached result with updated duration
-          return NextResponse.json({
-            ...cachedResult,
-            metadata: {
-              ...cachedResult.metadata,
-              analysis_duration_ms: Date.now() - startTime,
-              cached: true
-            }
-          }, {
-            headers: {
-              'X-Cache': 'HIT',
-              'X-Cache-Key': cacheKey
-            }
-          });
+          // Validate cached result has proper analysis data
+          const hasValidAnalysis = cachedResult.analysis || cachedResult.needs_clarification;
+
+          if (hasValidAnalysis) {
+            // Return cached result with updated duration
+            return NextResponse.json({
+              ...cachedResult,
+              metadata: {
+                ...cachedResult.metadata,
+                analysis_duration_ms: Date.now() - startTime,
+                cached: true
+              }
+            }, {
+              headers: {
+                'X-Cache': 'HIT',
+                'X-Cache-Key': cacheKey
+              }
+            });
+          } else {
+            // Invalid cache entry (missing analysis), delete it
+            console.log('Cache entry invalid (no analysis), re-analyzing:', cacheKey);
+            analysisCache.delete(cacheKey);
+          }
         }
       }
     }
