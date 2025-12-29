@@ -934,7 +934,20 @@ function Home() {
           )}
 
           {/* Analysis */}
-          {codeResult.analysis && <AnalysisView analysis={codeResult.analysis} />}
+          {codeResult.analysis ? (
+            <AnalysisView analysis={codeResult.analysis} />
+          ) : codeResult.success ? (
+            <div className="analysis-error">
+              <h3>⚠️ Анализ не выполнен</h3>
+              <p>LLM не смог сгенерировать анализ. Возможные причины:</p>
+              <ul>
+                <li>Слишком большой или сложный проект</li>
+                <li>Недостаточно токенов для полного ответа</li>
+                <li>Временная ошибка API</li>
+              </ul>
+              <p>Попробуйте запустить анализ ещё раз или уменьшить размер проекта.</p>
+            </div>
+          ) : null}
 
           {/* Export Buttons */}
           <ExportButtons result={codeResult} />

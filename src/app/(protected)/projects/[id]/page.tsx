@@ -408,17 +408,30 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
             {project.analyses.map(analysis => {
               const badge = getAnalysisTypeBadge(analysis.type);
               const resultData = analysis.result as {
-                analysis?: { project_summary?: string };
+                analysis?: {
+                  project_summary?: string;
+                  detected_stage?: string;
+                  tech_stack?: string[];
+                  strengths?: Array<{ area: string; detail: string }>;
+                  issues?: Array<{ severity: string; area: string; detail: string; file_path?: string }>;
+                  tasks?: Array<{ title: string; description: string; priority: string; category?: string; estimated_minutes?: number }>;
+                  next_milestone?: string;
+                };
+                gaps?: Array<{ category: string; severity: string; title: string; detail: string }>;
+                tasks?: Array<{ title: string; description: string; priority: string; category?: string }>;
                 alignment_score?: number;
                 verdict?: string;
                 canvas?: { value_proposition?: string };
                 success?: boolean;
               };
-              const summary = resultData?.analysis?.project_summary ||
+              const codeAnalysis = resultData?.analysis;
+              const summary = codeAnalysis?.project_summary ||
                             resultData?.canvas?.value_proposition ||
                             null;
               const alignmentScore = resultData?.alignment_score;
               const verdict = resultData?.verdict;
+              const gaps = resultData?.gaps;
+              const tasks = resultData?.tasks || codeAnalysis?.tasks;
 
               return (
                 <div key={analysis.id} className="analysis-card">
@@ -463,8 +476,83 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                     </p>
                   )}
 
+                  {/* Tech Stack */}
+                  {codeAnalysis?.tech_stack && codeAnalysis.tech_stack.length > 0 && (
+                    <div className="analysis-tech-stack">
+                      {codeAnalysis.tech_stack.slice(0, 6).map((tech, i) => (
+                        <span key={i} className="tech-tag">{tech}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Gaps Summary */}
+                  {gaps && gaps.length > 0 && (
+                    <div className="analysis-gaps-summary">
+                      <h4>🔍 Разрывы</h4>
+                      <div className="gaps-list">
+                        {gaps.slice(0, 3).map((gap, i) => (
+                          <div key={i} className={`gap-item gap-${gap.severity}`}>
+                            <span className="gap-title">{gap.title}</span>
+                            <span className={`gap-severity severity-${gap.severity}`}>
+                              {gap.severity === 'critical' ? '🔴' : gap.severity === 'warning' ? '🟡' : '🔵'}
+                            </span>
+                          </div>
+                        ))}
+                        {gaps.length > 3 && (
+                          <p className="more-items">и ещё {gaps.length - 3} разрывов...</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Issues Summary */}
+                  {codeAnalysis?.issues && codeAnalysis.issues.length > 0 && (
+                    <div className="analysis-issues-summary">
+                      <h4>⚠️ Проблемы</h4>
+                      <div className="issues-list">
+                        {codeAnalysis.issues.slice(0, 3).map((issue, i) => (
+                          <div key={i} className={`issue-item-mini issue-${issue.severity}`}>
+                            <span className="issue-title">{issue.area}</span>
+                            <span className={`issue-severity severity-${issue.severity}`}>
+                              {issue.severity}
+                            </span>
+                          </div>
+                        ))}
+                        {codeAnalysis.issues.length > 3 && (
+                          <p className="more-items">и ещё {codeAnalysis.issues.length - 3} проблем...</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tasks Summary */}
+                  {tasks && tasks.length > 0 && (
+                    <div className="analysis-tasks-summary">
+                      <h4>📋 Рекомендуемые задачи</h4>
+                      <div className="tasks-preview-list">
+                        {tasks.slice(0, 3).map((task, i) => (
+                          <div key={i} className={`task-item-mini priority-${task.priority}`}>
+                            <span className="task-number">{i + 1}.</span>
+                            <span className="task-title">{task.title}</span>
+                          </div>
+                        ))}
+                        {tasks.length > 3 && (
+                          <p className="more-items">и ещё {tasks.length - 3} задач...</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Next Milestone */}
+                  {codeAnalysis?.next_milestone && (
+                    <div className="analysis-milestone">
+                      <span className="milestone-label">🎯 Следующая цель:</span>
+                      <span className="milestone-text">{codeAnalysis.next_milestone}</span>
+                    </div>
+                  )}
+
                   <details className="analysis-details">
-                    <summary>Показать детали</summary>
+                    <summary>Показать полные данные (JSON)</summary>
                     <div className="analysis-preview">
                       <pre>
                         {JSON.stringify(analysis.result, null, 2)}
@@ -952,6 +1040,131 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           margin: 0;
           font-size: 0.75rem;
           color: #8b949e;
+        }
+
+        /* Analysis Details - Tech Stack, Gaps, Issues, Tasks */
+        .analysis-tech-stack {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin: 0.75rem 0;
+        }
+
+        .tech-tag {
+          background: rgba(88, 166, 255, 0.1);
+          color: #58a6ff;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .analysis-gaps-summary,
+        .analysis-issues-summary,
+        .analysis-tasks-summary {
+          margin: 1rem 0;
+          padding: 0.75rem;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 6px;
+          border: 1px solid #21262d;
+        }
+
+        .analysis-gaps-summary h4,
+        .analysis-issues-summary h4,
+        .analysis-tasks-summary h4 {
+          margin: 0 0 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #e6edf3;
+        }
+
+        .gaps-list,
+        .issues-list,
+        .tasks-preview-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.375rem;
+        }
+
+        .gap-item,
+        .issue-item-mini,
+        .task-item-mini {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.375rem 0.5rem;
+          background: #0d1117;
+          border-radius: 4px;
+          font-size: 0.8125rem;
+        }
+
+        .gap-item.gap-critical { border-left: 3px solid #f85149; }
+        .gap-item.gap-warning { border-left: 3px solid #d29922; }
+        .gap-item.gap-info { border-left: 3px solid #58a6ff; }
+
+        .issue-item-mini.issue-high { border-left: 3px solid #f85149; }
+        .issue-item-mini.issue-medium { border-left: 3px solid #d29922; }
+        .issue-item-mini.issue-low { border-left: 3px solid #3fb950; }
+
+        .task-item-mini.priority-critical,
+        .task-item-mini.priority-high { border-left: 3px solid #f85149; }
+        .task-item-mini.priority-medium { border-left: 3px solid #d29922; }
+        .task-item-mini.priority-low { border-left: 3px solid #3fb950; }
+
+        .gap-title,
+        .issue-title,
+        .task-title {
+          color: #c9d1d9;
+          flex: 1;
+        }
+
+        .task-number {
+          color: #8b949e;
+          margin-right: 0.5rem;
+          font-weight: 600;
+        }
+
+        .gap-severity,
+        .issue-severity {
+          font-size: 0.6875rem;
+          padding: 0.125rem 0.375rem;
+          border-radius: 3px;
+          text-transform: uppercase;
+          font-weight: 600;
+        }
+
+        .severity-critical,
+        .severity-high { color: #f85149; background: rgba(248, 81, 73, 0.15); }
+        .severity-warning,
+        .severity-medium { color: #d29922; background: rgba(210, 153, 34, 0.15); }
+        .severity-info,
+        .severity-low { color: #3fb950; background: rgba(63, 185, 80, 0.15); }
+
+        .more-items {
+          margin: 0.375rem 0 0;
+          font-size: 0.75rem;
+          color: #8b949e;
+          font-style: italic;
+        }
+
+        .analysis-milestone {
+          margin-top: 0.75rem;
+          padding: 0.5rem 0.75rem;
+          background: rgba(163, 113, 247, 0.1);
+          border: 1px solid rgba(163, 113, 247, 0.3);
+          border-radius: 6px;
+        }
+
+        .milestone-label {
+          font-size: 0.75rem;
+          color: #a371f7;
+          font-weight: 600;
+          margin-right: 0.5rem;
+        }
+
+        .milestone-text {
+          font-size: 0.8125rem;
+          color: #c9d1d9;
         }
 
         @media (max-width: 768px) {

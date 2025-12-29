@@ -7,6 +7,38 @@ interface AnalysisViewProps {
   analysis: Analysis;
 }
 
+/**
+ * Форматирует текст с нумерованными шагами, превращая "1. ... 2. ..." в список с переносами
+ */
+function formatStepsText(text: string): React.ReactNode {
+  // Проверяем есть ли нумерованные шаги типа "1. ", "2. " и т.д.
+  const hasNumberedSteps = /\d+\.\s/.test(text);
+
+  if (!hasNumberedSteps) {
+    return text;
+  }
+
+  // Разбиваем по номерам шагов (1., 2., 3., etc.)
+  const parts = text.split(/(?=\d+\.\s)/);
+
+  if (parts.length <= 1) {
+    return text;
+  }
+
+  return (
+    <ol className="task-steps-list">
+      {parts.map((part, index) => {
+        // Убираем номер из начала (он уже есть в <ol>)
+        const cleaned = part.replace(/^\d+\.\s*/, '').trim();
+        if (!cleaned) return null;
+        return (
+          <li key={index}>{cleaned}</li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function AnalysisView({ analysis }: AnalysisViewProps) {
   return (
     <>
@@ -84,7 +116,7 @@ export function AnalysisView({ analysis }: AnalysisViewProps) {
                   {' '}~{task.estimated_minutes} мин
                 </span>
               </div>
-              <p className="item-detail">{task.description}</p>
+              <div className="item-detail">{formatStepsText(task.description)}</div>
               {task.depends_on && (
                 <p className="item-meta" style={{ marginTop: 8 }}>
                   Зависит от: {task.depends_on}
