@@ -68,16 +68,16 @@ export async function sendToLLM(
             role: 'user',
             content: prompt
           },
-          // Prefill technique: start assistant response with { to force JSON continuation
+          // Prefill technique: start assistant response to force JSON continuation
           {
             role: 'assistant',
-            content: '{'
+            content: '{\n  "needs_clarification":'
           }
         ]
       });
 
-      // Prepend the { we used for prefill since Claude continues from it
-      const content = '{' + (response.choices[0]?.message?.content || '');
+      // Prepend the prefill since Claude continues from it
+      const content = '{\n  "needs_clarification":' + (response.choices[0]?.message?.content || '');
       const tokensUsed = response.usage?.total_tokens || 0;
 
       console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
