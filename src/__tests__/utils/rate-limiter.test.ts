@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { checkRateLimit, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
 
 describe('Rate Limiter', () => {

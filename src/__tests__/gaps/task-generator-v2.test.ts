@@ -39,6 +39,7 @@ function createGap(
     recommendation: `Fix ${category} issue`,
     current_state: 'Missing',
     effort,
+    impact: 'high',
     resources: [],
   };
 }

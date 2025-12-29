@@ -89,13 +89,13 @@ describe('SeverityBadge', () => {
   });
 
   it('should show icon by default', () => {
-    const { container } = render(<SeverityBadge severity="warning" />);
+    const { container } = render(<SeverityBadge severity="critical" />);
 
     expect(container.querySelector('svg')).toBeInTheDocument();
   });
 
   it('should hide icon when showIcon is false', () => {
-    const { container } = render(<SeverityBadge severity="warning" showIcon={false} />);
+    const { container } = render(<SeverityBadge severity="critical" showIcon={false} />);
 
     expect(container.querySelector('svg')).not.toBeInTheDocument();
   });
