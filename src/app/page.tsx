@@ -20,6 +20,7 @@ import { AlignmentScore } from '@/components/results/AlignmentScore';
 import { VerdictBadge } from '@/components/results/VerdictBadge';
 import { CompetitorComparisonView } from '@/components/results/CompetitorComparisonView';
 import { UserNav } from '@/components/UserNav';
+import { FAQList } from '@/components/ui/FAQ';
 import {
   usePersistedDescription,
   usePersistedRepoUrl,
@@ -27,6 +28,49 @@ import {
   clearAllAnalyzerData,
 } from '@/hooks/useLocalStorage';
 import { useAnalysisCache } from '@/hooks/useAnalysisCache';
+import type { FAQItem } from '@/types/ux';
+
+// ===========================================
+// FAQ Data
+// ===========================================
+
+const FAQ_ITEMS: FAQItem[] = [
+  {
+    id: 'what-is-this',
+    question: 'Что делает этот инструмент?',
+    answer: 'Анализирует ваш бизнес и код, находит разрывы между бизнес-целями и текущим состоянием продукта, и даёт конкретные рекомендации по улучшению.',
+    example: 'Вы хотите монетизировать продукт, но у вас нет платёжной системы — это разрыв, который мы поможем закрыть.',
+  },
+  {
+    id: 'what-is-alignment-score',
+    question: 'Что такое Alignment Score?',
+    answer: 'Оценка от 0 до 100, показывающая насколько ваш продукт соответствует бизнес-целям. 70+ = всё хорошо, 40-69 = нужны улучшения, <40 = требуется серьёзная доработка.',
+    example: 'Если вы на стадии роста, но у вас нет аналитики — это снижает скор, потому что без данных сложно масштабироваться.',
+  },
+  {
+    id: 'what-is-gap',
+    question: 'Что такое "разрыв" (Gap)?',
+    answer: 'Разрыв — это разница между тем, что нужно вашему бизнесу на текущей стадии, и тем, что есть в продукте. Разрывы бывают критические (срочно исправить), предупреждения (важно, но не срочно) и информационные (хорошо бы сделать).',
+    example: 'Нет способа принимать оплату = критический разрыв в монетизации.',
+  },
+  {
+    id: 'how-safe',
+    question: 'Безопасно ли загружать код?',
+    answer: 'Да, ваш код обрабатывается только для анализа и не сохраняется. Мы используем только публичные репозитории или файлы, которые вы явно загрузили. Анализ выполняется через зашифрованное соединение.',
+  },
+  {
+    id: 'what-modes',
+    question: 'Какие режимы анализа доступны?',
+    answer: 'Четыре режима: 1) Только код — быстрый технический анализ, 2) Только бизнес — Business Canvas и рекомендации, 3) Полный анализ — бизнес + код + поиск разрывов, 4) Конкуренты — сравнение с конкурентами.',
+    example: 'Для стартапа рекомендуем "Полный анализ" — это даст полную картину.',
+  },
+  {
+    id: 'how-long',
+    question: 'Сколько занимает анализ?',
+    answer: 'Обычно 15-60 секунд в зависимости от размера проекта. Для повторных анализов GitHub репозиториев используется кэширование — результат возвращается мгновенно, если код не менялся.',
+  },
+];
+
 
 // ===========================================
 // Main Component
@@ -842,6 +886,12 @@ export default function Home() {
         </div>
       )}
 
+      {/* FAQ Section - always visible at bottom */}
+      <div className="faq-section-wrapper">
+        <h2 className="faq-section-title">Частые вопросы</h2>
+        <FAQList items={FAQ_ITEMS} allowMultiple={true} />
+      </div>
+
       <style jsx>{`
         .header-row {
           display: flex;
@@ -992,6 +1042,20 @@ export default function Home() {
           margin-bottom: 16px;
           border-bottom: 1px solid var(--border-default);
           padding-bottom: 12px;
+        }
+
+        /* FAQ Section */
+        .faq-section-wrapper {
+          margin-top: 48px;
+          padding-top: 32px;
+          border-top: 1px solid var(--border-default);
+        }
+        .faq-section-title {
+          font-size: 20px;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin: 0 0 24px 0;
+          text-align: center;
         }
       `}</style>
     </div>

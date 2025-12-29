@@ -116,13 +116,13 @@
 - [x] GitHub Dark тема
 
 **UX Components (для нетехнической аудитории):**
-- [x] Tooltips система (термины MRR, LTV и др.)
+- [x] Tooltips система (термины MRR, LTV, Gap Severity и др.)
 - [x] Иконки и badges (20+ иконок, severity/category badges)
-- [x] Progress индикаторы (ScoreCircle, BusinessReadiness, StepProgress)
+- [x] Progress индикаторы (ScoreCircle в AlignmentScore, BusinessReadiness, StepProgress)
 - [x] Wizard с валидацией (пошаговый ввод)
-- [x] Checklist с persistence (localStorage)
+- [x] Checklist с persistence (localStorage) — интегрирован в GapsView
 - [x] ActionSteps с "Почему это важно"
-- [x] FAQ аккордеон (контекстные подсказки)
+- [x] FAQ аккордеон — на главной странице внизу
 - [x] Before/After сравнения (история анализов)
 - [x] PDF Export (настраиваемые разделы)
 

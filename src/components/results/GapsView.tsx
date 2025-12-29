@@ -3,6 +3,9 @@
 import type { Gap, GapTask } from '@/types/gaps';
 import { GAP_CATEGORY_LABELS } from '@/types/gaps';
 import { formatTimeEstimate } from '@/lib/gaps/task-generator';
+import { Checklist } from '@/components/ui/Checklist';
+import { TermTooltip } from '@/components/ui/TermTooltip';
+import type { ChecklistItem } from '@/types/ux';
 
 // ===========================================
 // Types
@@ -12,6 +15,26 @@ interface GapsViewProps {
   gaps: Gap[];
   tasks?: GapTask[];
   nextMilestone?: string;
+  projectId?: string; // For localStorage persistence of checklist
+}
+
+// ===========================================
+// Helper: Convert GapTask to ChecklistItem
+// ===========================================
+
+function convertTasksToChecklist(tasks: GapTask[], projectId?: string): ChecklistItem[] {
+  return tasks.map((task, idx) => ({
+    id: `task-${projectId || 'default'}-${idx}`,
+    title: task.title,
+    description: task.description,
+    priority: task.priority,
+    estimatedTime: formatTimeEstimate(task.estimated_minutes),
+    completed: false,
+    steps: [], // Tasks don't have sub-steps by default
+    whyImportant: task.addresses_gap
+      ? `Устраняет разрыв: ${GAP_CATEGORY_LABELS[task.addresses_gap as keyof typeof GAP_CATEGORY_LABELS] || task.addresses_gap}`
+      : undefined,
+  }));
 }
 
 // ===========================================
@@ -20,17 +43,34 @@ interface GapsViewProps {
 
 function SeverityBadge({ severity }: { severity: Gap['type'] }) {
   const config = {
-    critical: { emoji: '🔴', label: 'Critical', color: 'var(--accent-red)' },
-    warning: { emoji: '🟡', label: 'Warning', color: 'var(--accent-orange)' },
-    info: { emoji: '🟢', label: 'Info', color: 'var(--accent-green)' },
+    critical: {
+      emoji: '🔴',
+      label: 'Critical',
+      color: 'var(--accent-red)',
+      termKey: 'critical_gap',
+    },
+    warning: {
+      emoji: '🟡',
+      label: 'Warning',
+      color: 'var(--accent-orange)',
+      termKey: 'warning_gap',
+    },
+    info: {
+      emoji: '🟢',
+      label: 'Info',
+      color: 'var(--accent-green)',
+      termKey: 'info_gap',
+    },
   };
 
-  const { emoji, label, color } = config[severity];
+  const { emoji, label, color, termKey } = config[severity];
 
   return (
-    <span className="severity-badge" style={{ color }}>
-      {emoji} {label}
-    </span>
+    <TermTooltip termKey={termKey}>
+      <span className="severity-badge" style={{ color }}>
+        {emoji} {label}
+      </span>
+    </TermTooltip>
   );
 }
 
@@ -127,48 +167,18 @@ function GapCard({ gap }: { gap: Gap }) {
 }
 
 // ===========================================
-// Task Card
-// ===========================================
-
-function TaskCard({ task, index }: { task: GapTask; index: number }) {
-  const priorityColors = {
-    high: 'var(--accent-red)',
-    medium: 'var(--accent-orange)',
-    low: 'var(--accent-green)',
-  };
-
-  return (
-    <div className="task-card">
-      <div className="task-number">{index + 1}</div>
-      <div className="task-content">
-        <div className="task-header">
-          <span className="task-title">{task.title}</span>
-          <span
-            className="task-priority"
-            style={{ color: priorityColors[task.priority] }}
-          >
-            {task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢'}
-          </span>
-        </div>
-        <p className="task-description">{task.description}</p>
-        <div className="task-meta">
-          <span className="task-category">{task.category}</span>
-          <span className="task-time">{formatTimeEstimate(task.estimated_minutes)}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ===========================================
 // Main Component
 // ===========================================
 
-export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
+export function GapsView({ gaps, tasks, nextMilestone, projectId }: GapsViewProps) {
   // Group gaps by severity
   const criticalGaps = gaps.filter((g) => g.type === 'critical');
   const warningGaps = gaps.filter((g) => g.type === 'warning');
   const infoGaps = gaps.filter((g) => g.type === 'info');
+
+  // Convert tasks to checklist items
+  const checklistItems = tasks ? convertTasksToChecklist(tasks, projectId) : [];
+  const storageKey = projectId ? `checklist-${projectId}` : undefined;
 
   return (
     <div className="gaps-view">
@@ -203,15 +213,20 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
         </div>
       )}
 
-      {/* Tasks */}
-      {tasks && tasks.length > 0 && (
+      {/* Tasks as Checklist */}
+      {checklistItems.length > 0 && (
         <div className="tasks-section">
-          <h4 className="section-title">Рекомендуемые задачи</h4>
-          <div className="tasks-list">
-            {tasks.map((task, idx) => (
-              <TaskCard key={idx} task={task} index={idx} />
-            ))}
-          </div>
+          <h4 className="section-title">
+            <TermTooltip termKey="gap" showIcon={false}>
+              Рекомендуемые задачи
+            </TermTooltip>
+          </h4>
+          <Checklist
+            items={checklistItems}
+            storageKey={storageKey}
+            groupByPriority={true}
+            showProgress={true}
+          />
         </div>
       )}
 
@@ -424,81 +439,6 @@ export function GapsView({ gaps, tasks, nextMilestone }: GapsViewProps) {
 
         .tasks-section {
           margin-bottom: 24px;
-        }
-
-        .tasks-list {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .task-card {
-          display: flex;
-          gap: 12px;
-          padding: 12px;
-          background: var(--bg-secondary);
-          border: 1px solid var(--border-default);
-          border-radius: 8px;
-        }
-
-        .task-number {
-          width: 24px;
-          height: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(88, 166, 255, 0.15);
-          color: var(--accent-blue);
-          border-radius: 50%;
-          font-size: 12px;
-          font-weight: 600;
-          flex-shrink: 0;
-        }
-
-        .task-content {
-          flex: 1;
-        }
-
-        .task-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 8px;
-        }
-
-        .task-title {
-          font-size: 14px;
-          font-weight: 500;
-          color: var(--text-primary);
-        }
-
-        .task-priority {
-          font-size: 12px;
-        }
-
-        .task-description {
-          font-size: 13px;
-          color: var(--text-secondary);
-          margin: 4px 0 8px 0;
-          line-height: 1.4;
-        }
-
-        .task-meta {
-          display: flex;
-          gap: 12px;
-        }
-
-        .task-category {
-          font-size: 11px;
-          padding: 2px 6px;
-          background: var(--bg-tertiary);
-          color: var(--text-muted);
-          border-radius: 4px;
-        }
-
-        .task-time {
-          font-size: 11px;
-          color: var(--text-muted);
         }
 
         .next-milestone {

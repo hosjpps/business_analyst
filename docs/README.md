@@ -1,6 +1,6 @@
 # Documentation
 
-> Полная документация проекта Business & Code Analyzer v0.5.0
+> Полная документация проекта Business & Code Analyzer v0.6.0
 
 ---
 
@@ -29,7 +29,8 @@ docs/
 | 3 | Full Integration | ✅ Завершена |
 | 4 | Competitor Snapshot | ✅ Завершена |
 | 5 | Auth + Database | ✅ Завершена |
-| 6 | Weekly Reports | Планируется |
+| 6 | Тесты и UX | ✅ Завершена |
+| 7 | Weekly Reports | Планируется |
 
 ---
 
