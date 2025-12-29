@@ -960,7 +960,7 @@ function Home() {
               {/* Debug info */}
               <details style={{ marginTop: '16px', fontSize: '12px', color: 'var(--text-muted)' }}>
                 <summary>Техническая информация</summary>
-                <pre style={{ marginTop: '8px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto' }}>
+                <pre style={{ marginTop: '8px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto', maxHeight: '400px' }}>
                   {JSON.stringify({
                     needs_clarification: codeResult.needs_clarification,
                     has_questions: !!codeResult.questions?.length,
@@ -968,6 +968,19 @@ function Home() {
                     has_analysis: !!codeResult.analysis,
                   }, null, 2)}
                 </pre>
+                {/* Show raw LLM response if available */}
+                {(codeResult as { _debug?: { llm_response_length: number; llm_response_preview: string; llm_response_end: string } })._debug && (
+                  <>
+                    <p style={{ marginTop: '12px', fontWeight: 'bold' }}>Сырой ответ LLM ({(codeResult as { _debug: { llm_response_length: number } })._debug.llm_response_length} символов):</p>
+                    <pre style={{ marginTop: '4px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto', maxHeight: '300px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                      {(codeResult as { _debug: { llm_response_preview: string } })._debug.llm_response_preview}
+                    </pre>
+                    <p style={{ marginTop: '8px', fontWeight: 'bold' }}>Конец ответа:</p>
+                    <pre style={{ marginTop: '4px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto', maxHeight: '200px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                      {(codeResult as { _debug: { llm_response_end: string } })._debug.llm_response_end}
+                    </pre>
+                  </>
+                )}
               </details>
             </div>
           ) : null}

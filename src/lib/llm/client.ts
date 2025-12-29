@@ -59,7 +59,13 @@ export async function sendToLLM(
       const response = await client.chat.completions.create({
         model: modelToUse,
         max_tokens: getMaxTokens(),
+        // Force JSON output mode (supported by most models via OpenRouter)
+        response_format: { type: 'json_object' },
         messages: [
+          {
+            role: 'system',
+            content: 'You are a JSON API. You MUST respond with valid JSON only. No markdown, no text, no explanations. Start with { and end with }.'
+          },
           {
             role: 'user',
             content: prompt

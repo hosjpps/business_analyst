@@ -266,6 +266,14 @@ export async function POST(request: NextRequest) {
       questions: parsedResponse.questions,
       partial_analysis: parsedResponse.partial_analysis,
       analysis: parsedResponse.analysis,
+      // Debug: include raw LLM response preview if no analysis
+      ...((!parsedResponse.analysis && !parsedResponse.needs_clarification) ? {
+        _debug: {
+          llm_response_length: llmResponse.content.length,
+          llm_response_preview: llmResponse.content.slice(0, 1500),
+          llm_response_end: llmResponse.content.slice(-500),
+        }
+      } : {}),
       security_analysis: securityAnalysis,
       metadata: {
         files_analyzed: selectedFiles.length,
