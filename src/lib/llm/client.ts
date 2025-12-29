@@ -217,6 +217,9 @@ function extractJSONWithBalance(content: string): string | null {
 export function parseJSONResponse<T>(content: string): T {
   let cleaned = content.trim();
 
+  // Log original content length for debugging
+  console.log('parseJSONResponse: content length =', content.length);
+
   // Удаляем markdown блоки кода
   cleaned = cleaned.replace(/```json\s*/gi, '');
   cleaned = cleaned.replace(/```\s*/g, '');
@@ -224,10 +227,29 @@ export function parseJSONResponse<T>(content: string): T {
   // Удаляем markdown заголовки (# заголовки)
   cleaned = cleaned.replace(/^#+\s+.*$/gm, '');
 
+  // Удаляем типичные "thinking" или "explanation" преамбулы LLM
+  cleaned = cleaned.replace(/^(Here's|Here is|Based on|I've analyzed|Let me|I will|Analyzing|Looking at)[^{]*\n*/gi, '');
+
+  // Удаляем текст после закрывающей } если он есть (пояснения после JSON)
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (lastBrace !== -1 && lastBrace < cleaned.length - 1) {
+    const afterJson = cleaned.substring(lastBrace + 1).trim();
+    if (afterJson.length > 0 && !afterJson.startsWith('{')) {
+      console.log('parseJSONResponse: removing trailing text after JSON:', afterJson.slice(0, 100));
+      cleaned = cleaned.substring(0, lastBrace + 1);
+    }
+  }
+
   // Удаляем текст до первого { (LLM иногда пишет пояснения перед JSON)
   const firstBrace = cleaned.indexOf('{');
   if (firstBrace === -1) {
+    console.error('parseJSONResponse: no { found in content');
+    console.error('Content preview:', content.slice(0, 500));
     throw new Error('No JSON object found in response');
+  }
+
+  if (firstBrace > 0) {
+    console.log('parseJSONResponse: removing leading text:', cleaned.slice(0, firstBrace));
   }
   cleaned = cleaned.substring(firstBrace);
 
@@ -248,9 +270,9 @@ export function parseJSONResponse<T>(content: string): T {
   }
 
   // Попытка 2: Простая обрезка по последней }
-  const lastBrace = cleaned.lastIndexOf('}');
-  if (lastBrace !== -1) {
-    const simple = cleaned.substring(0, lastBrace + 1);
+  const lastBraceIdx = cleaned.lastIndexOf('}');
+  if (lastBraceIdx !== -1) {
+    const simple = cleaned.substring(0, lastBraceIdx + 1);
     try {
       return JSON.parse(simple);
     } catch {

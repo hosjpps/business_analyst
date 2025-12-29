@@ -10,8 +10,10 @@ import type { FileInput } from '@/types';
 // Approximate tokens per character (conservative estimate)
 const CHARS_PER_TOKEN = 4;
 
-// Default max tokens for file context (leaves room for prompt + response)
-const DEFAULT_MAX_TOKENS = 50000;
+// Default max tokens for file context
+// Reduced from 50K to 35K to leave more room for LLM response (~8K tokens)
+// and prompt overhead (~5K tokens for instructions)
+const DEFAULT_MAX_TOKENS = 35000;
 
 // File priority tiers (lower number = higher priority)
 const FILE_PRIORITY: Record<string, number> = {

@@ -141,24 +141,47 @@ export async function POST(
       estimated_minutes?: number;
     }> } };
 
+    console.log('Checking for tasks in result:', {
+      hasAnalysis: !!resultData.analysis,
+      hasTasks: !!resultData.analysis?.tasks,
+      tasksCount: resultData.analysis?.tasks?.length || 0,
+    });
+
     if (resultData.analysis?.tasks && resultData.analysis.tasks.length > 0) {
+      // Map priority from LLM format to DB format
+      const mapPriority = (p: string): 'critical' | 'high' | 'medium' | 'low' => {
+        const lowered = p.toLowerCase();
+        if (lowered === 'critical') return 'critical';
+        if (lowered === 'high') return 'high';
+        if (lowered === 'medium') return 'medium';
+        return 'low';
+      };
+
       const tasksToInsert = resultData.analysis.tasks.map(task => ({
         project_id: id,
         analysis_id: analysis.id,
         title: task.title,
         description: task.description || null,
-        priority: task.priority as 'critical' | 'high' | 'medium' | 'low',
+        priority: mapPriority(task.priority),
         status: 'pending' as const,
       }));
 
-      const { error: tasksError } = await supabase
+      console.log('Inserting tasks:', tasksToInsert.length, 'tasks');
+
+      const { data: insertedTasks, error: tasksError } = await supabase
         .from('tasks')
-        .insert(tasksToInsert);
+        .insert(tasksToInsert)
+        .select();
 
       if (tasksError) {
         console.error('Error creating tasks:', tasksError);
+        console.error('Tasks data:', JSON.stringify(tasksToInsert, null, 2));
         // Don't fail the whole request, just log the error
+      } else {
+        console.log('Successfully created tasks:', insertedTasks?.length || 0);
       }
+    } else {
+      console.log('No tasks found in analysis result');
     }
 
     return NextResponse.json({ analysis }, { status: 201 });
