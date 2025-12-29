@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, use } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Tables } from '@/types/database';
@@ -15,8 +15,8 @@ type ProjectWithRelations = Tables<'projects'> & {
   tasks: Task[];
 };
 
-export default function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function ProjectPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const router = useRouter();
   const supabase = createClient();
 
