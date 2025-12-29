@@ -334,11 +334,29 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
       {/* Analyses */}
       <section className="section">
-        <h2>📊 Анализы ({project?.analyses?.length || 0})</h2>
+        <div className="section-header">
+          <h2>📊 Анализы ({project?.analyses?.length || 0})</h2>
+          <button className="btn-analyze-small" onClick={() => router.push(`/?project=${id}`)}>
+            + Новый анализ
+          </button>
+        </div>
         {project?.analyses && project.analyses.length > 0 ? (
           <div className="analyses-list">
             {project.analyses.map(analysis => {
               const badge = getAnalysisTypeBadge(analysis.type);
+              const resultData = analysis.result as {
+                analysis?: { project_summary?: string };
+                alignment_score?: number;
+                verdict?: string;
+                canvas?: { value_proposition?: string };
+                success?: boolean;
+              };
+              const summary = resultData?.analysis?.project_summary ||
+                            resultData?.canvas?.value_proposition ||
+                            null;
+              const alignmentScore = resultData?.alignment_score;
+              const verdict = resultData?.verdict;
+
               return (
                 <div key={analysis.id} className="analysis-card">
                   <div className="analysis-header">
@@ -349,17 +367,47 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                     >
                       {badge.label}
                     </span>
+                    {verdict && (
+                      <span className={`verdict-badge verdict-${verdict.toLowerCase().replace('_', '-')}`}>
+                        {verdict === 'ON_TRACK' ? 'В порядке' :
+                         verdict === 'ITERATE' ? 'Улучшить' : 'Изменить'}
+                      </span>
+                    )}
                     <span className="analysis-date">
                       {formatDate(analysis.created_at)}
                     </span>
                   </div>
-                  {analysis.result && (
-                    <div className="analysis-preview">
-                      <pre>
-                        {JSON.stringify(analysis.result, null, 2).slice(0, 200)}...
-                      </pre>
+
+                  {typeof alignmentScore === 'number' && (
+                    <div className="alignment-score-mini">
+                      <div className="score-bar">
+                        <div
+                          className="score-fill"
+                          style={{
+                            width: `${alignmentScore}%`,
+                            backgroundColor: alignmentScore >= 70 ? '#3fb950' :
+                                           alignmentScore >= 40 ? '#d29922' : '#f85149'
+                          }}
+                        />
+                      </div>
+                      <span className="score-value">{Math.round(alignmentScore)}%</span>
                     </div>
                   )}
+
+                  {summary && (
+                    <p className="analysis-summary">
+                      {summary.slice(0, 200)}{summary.length > 200 ? '...' : ''}
+                    </p>
+                  )}
+
+                  <details className="analysis-details">
+                    <summary>Показать детали</summary>
+                    <div className="analysis-preview">
+                      <pre>
+                        {JSON.stringify(analysis.result, null, 2)}
+                      </pre>
+                    </div>
+                  </details>
                 </div>
               );
             })}
@@ -640,9 +688,35 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           border-bottom: 1px solid #30363d;
         }
 
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+        }
+
         .section h2 {
           margin: 0 0 1.5rem;
           font-size: 1.25rem;
+        }
+
+        .section-header h2 {
+          margin: 0;
+        }
+
+        .btn-analyze-small {
+          background: rgba(35, 134, 54, 0.15);
+          color: #3fb950;
+          border: 1px solid #3fb950;
+          padding: 0.375rem 0.75rem;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .btn-analyze-small:hover {
+          background: rgba(35, 134, 54, 0.25);
         }
 
         .empty-section {
@@ -702,6 +776,85 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           color: #8b949e;
           white-space: pre-wrap;
           word-break: break-all;
+          max-height: 400px;
+          overflow: auto;
+        }
+
+        .verdict-badge {
+          font-size: 0.625rem;
+          padding: 0.125rem 0.5rem;
+          border-radius: 4px;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        .verdict-on-track {
+          background: rgba(63, 185, 80, 0.15);
+          color: #3fb950;
+        }
+
+        .verdict-iterate {
+          background: rgba(210, 153, 34, 0.15);
+          color: #d29922;
+        }
+
+        .verdict-pivot {
+          background: rgba(248, 81, 73, 0.15);
+          color: #f85149;
+        }
+
+        .alignment-score-mini {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin: 0.75rem 0;
+        }
+
+        .score-bar {
+          flex: 1;
+          height: 6px;
+          background: #21262d;
+          border-radius: 3px;
+          overflow: hidden;
+        }
+
+        .score-fill {
+          height: 100%;
+          border-radius: 3px;
+          transition: width 0.3s ease;
+        }
+
+        .score-value {
+          font-size: 0.875rem;
+          font-weight: 600;
+          min-width: 40px;
+          text-align: right;
+        }
+
+        .analysis-summary {
+          margin: 0.75rem 0;
+          font-size: 0.875rem;
+          color: #8b949e;
+          line-height: 1.5;
+        }
+
+        .analysis-details {
+          margin-top: 0.75rem;
+        }
+
+        .analysis-details summary {
+          font-size: 0.75rem;
+          color: #58a6ff;
+          cursor: pointer;
+          padding: 0.5rem 0;
+        }
+
+        .analysis-details summary:hover {
+          text-decoration: underline;
+        }
+
+        .analysis-details[open] .analysis-preview {
+          margin-top: 0.5rem;
         }
 
         .tasks-list {

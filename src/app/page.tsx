@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import type { AnalyzeResponse, FileInput } from '@/types';
 import type { BusinessInput, BusinessAnalyzeResponse } from '@/types/business';
 import type { GapAnalyzeResponse } from '@/types/gaps';
@@ -21,6 +22,7 @@ import { VerdictBadge } from '@/components/results/VerdictBadge';
 import { CompetitorComparisonView } from '@/components/results/CompetitorComparisonView';
 import { UserNav } from '@/components/UserNav';
 import { FAQList } from '@/components/ui/FAQ';
+import { createClient } from '@/lib/supabase/client';
 import {
   usePersistedDescription,
   usePersistedRepoUrl,
@@ -29,6 +31,15 @@ import {
 } from '@/hooks/useLocalStorage';
 import { useAnalysisCache } from '@/hooks/useAnalysisCache';
 import type { FAQItem } from '@/types/ux';
+
+// ===========================================
+// Project Types
+// ===========================================
+
+interface SimpleProject {
+  id: string;
+  name: string;
+}
 
 // ===========================================
 // FAQ Data
@@ -76,7 +87,11 @@ const FAQ_ITEMS: FAQItem[] = [
 // Main Component
 // ===========================================
 
-export default function Home() {
+function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const supabase = createClient();
+
   // Mode selection - start with null (force selection)
   const [analysisMode, setAnalysisMode] = useState<AnalysisMode>(null);
 
@@ -84,6 +99,47 @@ export default function Home() {
   const [repoUrl, setRepoUrl] = usePersistedRepoUrl();
   const [description, setDescription] = usePersistedDescription();
   const [persistedResult, setPersistedResult] = usePersistedResult();
+
+  // Project saving state
+  const [userProjects, setUserProjects] = useState<SimpleProject[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [saveToProject, setSaveToProject] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [savingToProject, setSavingToProject] = useState(false);
+  const [savedToProjectMessage, setSavedToProjectMessage] = useState<string | null>(null);
+
+  // Check for project param in URL and load projects
+  useEffect(() => {
+    const projectParam = searchParams.get('project');
+    if (projectParam) {
+      setSelectedProjectId(projectParam);
+      setSaveToProject(true);
+    }
+
+    // Load user projects if authenticated
+    const loadProjects = async () => {
+      if (!supabase) return;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsAuthenticated(true);
+        try {
+          const response = await fetch('/api/projects');
+          if (response.ok) {
+            const data = await response.json();
+            setUserProjects(data.projects.map((p: { id: string; name: string }) => ({
+              id: p.id,
+              name: p.name
+            })));
+          }
+        } catch (err) {
+          console.error('Failed to load projects:', err);
+        }
+      }
+    };
+
+    loadProjects();
+  }, [searchParams, supabase]);
 
   // Business analysis state
   const [businessInput, setBusinessInput] = useState<BusinessInput>({
@@ -127,6 +183,50 @@ export default function Home() {
     setAnalysisMode(null);
     window.location.reload();
   }, [clearAllCaches]);
+
+  // ===========================================
+  // Save Analysis to Project
+  // ===========================================
+
+  const saveAnalysisToProject = useCallback(async (
+    projectId: string,
+    type: 'code' | 'business' | 'full' | 'competitor',
+    result: AnalyzeResponse | BusinessAnalyzeResponse | GapAnalyzeResponse | CompetitorAnalyzeResponse
+  ) => {
+    setSavingToProject(true);
+    setSavedToProjectMessage(null);
+
+    try {
+      const response = await fetch(`/api/projects/${projectId}/analyses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          result,
+          metadata: {
+            saved_at: new Date().toISOString(),
+            analysis_mode: analysisMode,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save analysis');
+      }
+
+      const projectName = userProjects.find(p => p.id === projectId)?.name || 'проект';
+      setSavedToProjectMessage(`Сохранено в "${projectName}"`);
+
+      // Clear message after 5 seconds
+      setTimeout(() => setSavedToProjectMessage(null), 5000);
+    } catch (err) {
+      console.error('Failed to save analysis:', err);
+      setError(err instanceof Error ? err.message : 'Не удалось сохранить анализ');
+    } finally {
+      setSavingToProject(false);
+    }
+  }, [analysisMode, userProjects]);
 
   // ===========================================
   // Code Analysis Handler (existing)
@@ -203,6 +303,11 @@ export default function Home() {
         }
         setPersistedResult(data);
         setAnalysisStep('complete');
+
+        // Save to project if enabled
+        if (saveToProject && selectedProjectId) {
+          await saveAnalysisToProject(selectedProjectId, 'code', data);
+        }
       }
     } catch (err) {
       setError('Не удалось выполнить запрос');
@@ -247,6 +352,11 @@ export default function Home() {
       } else {
         setBusinessResult(data);
         setAnalysisStep('complete');
+
+        // Save to project if enabled
+        if (saveToProject && selectedProjectId) {
+          await saveAnalysisToProject(selectedProjectId, 'business', data);
+        }
       }
     } catch (err) {
       setError('Не удалось выполнить запрос');
@@ -349,6 +459,11 @@ export default function Home() {
         }
 
         setGapResult(gapData);
+
+        // Save to project if enabled - save the gap result for full analysis
+        if (saveToProject && selectedProjectId) {
+          await saveAnalysisToProject(selectedProjectId, 'full', gapData);
+        }
       }
 
       setAnalysisStep('complete');
@@ -401,6 +516,11 @@ export default function Home() {
       } else {
         setCompetitorResult(data);
         setAnalysisStep('complete');
+
+        // Save to project if enabled
+        if (saveToProject && selectedProjectId) {
+          await saveAnalysisToProject(selectedProjectId, 'competitor', data);
+        }
       }
     } catch (err) {
       setError('Не удалось выполнить запрос');
@@ -682,12 +802,43 @@ export default function Home() {
             </div>
           )}
 
+          {/* Save to Project Toggle */}
+          {isAuthenticated && userProjects.length > 0 && (
+            <div className="save-to-project-section">
+              <label className="save-toggle">
+                <input
+                  type="checkbox"
+                  checked={saveToProject}
+                  onChange={(e) => setSaveToProject(e.target.checked)}
+                  disabled={loading}
+                />
+                <span className="toggle-label">Сохранить в проект</span>
+              </label>
+
+              {saveToProject && (
+                <select
+                  className="project-selector"
+                  value={selectedProjectId || ''}
+                  onChange={(e) => setSelectedProjectId(e.target.value || null)}
+                  disabled={loading}
+                >
+                  <option value="">Выберите проект...</option>
+                  {userProjects.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
+
           {/* Submit Button */}
           <div className="submit-section">
             <button
               className="submit-btn"
               onClick={handleAnalyze}
-              disabled={loading || !canSubmit}
+              disabled={loading || !canSubmit || (saveToProject && !selectedProjectId)}
             >
               {loading
                 ? analysisMode === 'full'
@@ -701,6 +852,20 @@ export default function Home() {
                 ? '🎯 Анализировать конкурентов'
                 : '🚀 Анализировать'}
             </button>
+
+            {/* Saved to project notification */}
+            {savedToProjectMessage && (
+              <div className="saved-notification">
+                ✅ {savedToProjectMessage}
+              </div>
+            )}
+
+            {/* Saving indicator */}
+            {savingToProject && (
+              <div className="saving-indicator">
+                💾 Сохранение в проект...
+              </div>
+            )}
           </div>
         </>
       )}
@@ -979,9 +1144,85 @@ export default function Home() {
           line-height: 1.5;
         }
 
+        /* Save to Project Section */
+        .save-to-project-section {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 16px 20px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
+          margin-bottom: 16px;
+        }
+        .save-toggle {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          user-select: none;
+        }
+        .save-toggle input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          accent-color: var(--accent-blue);
+          cursor: pointer;
+        }
+        .toggle-label {
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+        }
+        .project-selector {
+          flex: 1;
+          max-width: 300px;
+          padding: 10px 14px;
+          font-size: 14px;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-default);
+          border-radius: 6px;
+          color: var(--text-primary);
+          cursor: pointer;
+        }
+        .project-selector:focus {
+          outline: none;
+          border-color: var(--accent-blue);
+        }
+        .project-selector option {
+          background: var(--bg-primary);
+          color: var(--text-primary);
+        }
+
         /* Submit Section */
         .submit-section {
           margin-top: 8px;
+        }
+        .saved-notification {
+          margin-top: 12px;
+          padding: 10px 14px;
+          background: rgba(63, 185, 80, 0.15);
+          border: 1px solid var(--accent-green);
+          border-radius: 6px;
+          color: var(--accent-green);
+          font-size: 14px;
+          font-weight: 500;
+          text-align: center;
+        }
+        .saving-indicator {
+          margin-top: 12px;
+          padding: 10px 14px;
+          background: rgba(88, 166, 255, 0.15);
+          border: 1px solid var(--accent-blue);
+          border-radius: 6px;
+          color: var(--accent-blue);
+          font-size: 14px;
+          font-weight: 500;
+          text-align: center;
+          animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
         }
         .submit-btn {
           width: 100%;
@@ -1059,5 +1300,31 @@ export default function Home() {
         }
       `}</style>
     </div>
+  );
+}
+
+// ===========================================
+// Wrapper with Suspense for useSearchParams
+// ===========================================
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="container">
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          <div className="loading-spinner" style={{
+            width: '40px',
+            height: '40px',
+            margin: '0 auto',
+            border: '3px solid var(--border-default)',
+            borderTopColor: 'var(--accent-blue)',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+        </div>
+      </div>
+    }>
+      <Home />
+    </Suspense>
   );
 }
