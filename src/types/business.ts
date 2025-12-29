@@ -198,3 +198,106 @@ export const LLMBusinessCanvasResponseSchema = z.object({
   gaps_in_model: z.array(z.string()).optional(),
   recommendations: z.array(BusinessRecommendationSchema).optional(),
 });
+
+// ===========================================
+// Business Metrics (extracted from text)
+// ===========================================
+
+export type MetricType =
+  | 'mrr'
+  | 'arr'
+  | 'users'
+  | 'customers'
+  | 'growth_rate'
+  | 'churn_rate'
+  | 'funding'
+  | 'team_size'
+  | 'revenue';
+
+export const MetricTypeSchema = z.enum([
+  'mrr',
+  'arr',
+  'users',
+  'customers',
+  'growth_rate',
+  'churn_rate',
+  'funding',
+  'team_size',
+  'revenue',
+]);
+
+export interface MetricMatch {
+  raw: string;
+  value: number;
+  unit?: string;
+  type: MetricType;
+  confidence: 'high' | 'medium' | 'low';
+}
+
+export const MetricMatchSchema = z.object({
+  raw: z.string(),
+  value: z.number(),
+  unit: z.string().optional(),
+  type: MetricTypeSchema,
+  confidence: z.enum(['high', 'medium', 'low']),
+});
+
+export interface BusinessMetrics {
+  mrr?: number;
+  arr?: number;
+  users?: number;
+  customers?: number;
+  growth_rate?: number;
+  churn_rate?: number;
+  funding?: number;
+  team_size?: number;
+  revenue?: number;
+  raw_matches: MetricMatch[];
+}
+
+export const BusinessMetricsSchema = z.object({
+  mrr: z.number().optional(),
+  arr: z.number().optional(),
+  users: z.number().optional(),
+  customers: z.number().optional(),
+  growth_rate: z.number().optional(),
+  churn_rate: z.number().optional(),
+  funding: z.number().optional(),
+  team_size: z.number().optional(),
+  revenue: z.number().optional(),
+  raw_matches: z.array(MetricMatchSchema),
+});
+
+// ===========================================
+// Social Link Validation
+// ===========================================
+
+export interface SocialLinkValidation {
+  url: string;
+  platform: string;
+  exists: boolean;
+  error?: string;
+}
+
+export const SocialLinkValidationSchema = z.object({
+  url: z.string(),
+  platform: z.string(),
+  exists: z.boolean(),
+  error: z.string().optional(),
+});
+
+// ===========================================
+// Metrics Analysis Result
+// ===========================================
+
+export interface MetricsAnalysisResult {
+  metrics: BusinessMetrics;
+  inferred_stage?: BusinessStage;
+  social_validations?: SocialLinkValidation[];
+}
+
+export const MetricsAnalysisResultSchema = z.object({
+  metrics: BusinessMetricsSchema,
+  inferred_stage: BusinessStageSchema.optional(),
+  social_validations: z.array(SocialLinkValidationSchema).optional(),
+});

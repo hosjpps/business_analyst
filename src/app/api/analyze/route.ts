@@ -12,6 +12,7 @@ import type {
 import { fetchRepoFiles, getLatestCommitSha } from '@/lib/github/fetcher';
 import { analyzeStructure, detectTechStack, detectStage, countTotalLines } from '@/lib/analyzers/structure';
 import { selectFilesForAnalysis, getExcludedFilesSummary } from '@/lib/analyzers/file-selector';
+import { analyzeSecurityPatterns } from '@/lib/analyzers/security';
 import { buildAnalysisPrompt } from '@/lib/llm/prompts';
 import { sendToLLM, parseAndValidateAnalysisResponse, type LLMAnalysisResponse } from '@/lib/llm/client';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
@@ -220,6 +221,9 @@ export async function POST(request: NextRequest) {
     const detectedStage = detectStage(selectedFiles, structure);
     const totalLines = countTotalLines(selectedFiles);
 
+    // Run security analysis (pattern-based, no LLM)
+    const securityAnalysis = analyzeSecurityPatterns(selectedFiles);
+
     // Build prompt and send to LLM
     const prompt = buildAnalysisPrompt(
       selectedFiles,
@@ -249,6 +253,7 @@ export async function POST(request: NextRequest) {
       questions: parsedResponse.questions,
       partial_analysis: parsedResponse.partial_analysis,
       analysis: parsedResponse.analysis,
+      security_analysis: securityAnalysis,
       metadata: {
         files_analyzed: selectedFiles.length,
         files_total: originalFileCount,

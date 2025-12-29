@@ -1,14 +1,71 @@
-import type { Gap, Verdict, ScoreBonuses, GapSeverity } from '@/types/gaps';
+import type { Gap, Verdict, ScoreBonuses, GapSeverity, GapCategory } from '@/types/gaps';
+import type { BusinessStage } from '@/types/business';
 
 // ===========================================
-// Score Penalties by Severity
+// Score Penalties by Severity (v2 - lower base for weighted)
 // ===========================================
 
 const SEVERITY_PENALTIES: Record<GapSeverity, number> = {
-  critical: 20,
-  warning: 10,
-  info: 5,
+  critical: 15, // was 20
+  warning: 8,   // was 10
+  info: 3,      // was 5
 };
+
+// ===========================================
+// Category Weights (v2)
+// ===========================================
+
+const CATEGORY_WEIGHTS: Record<GapCategory, number> = {
+  monetization: 1.5,   // High impact on business
+  security: 1.4,       // Critical for trust
+  growth: 1.3,         // Important for scaling
+  infrastructure: 1.2, // Foundation
+  ux: 1.0,             // Baseline
+  marketing: 0.9,      // Can be outsourced
+  scalability: 0.8,    // Future concern
+  testing: 0.8,        // Quality
+  documentation: 0.7,  // Nice to have
+};
+
+// ===========================================
+// Stage Modifiers (v2)
+// ===========================================
+
+const STAGE_MODIFIERS: Record<BusinessStage, Partial<Record<GapCategory, number>>> = {
+  idea: {
+    documentation: 1.5,  // Need clear vision
+    monetization: 0.5,   // Not critical yet
+    scalability: 0.3,    // Premature
+  },
+  building: {
+    infrastructure: 1.3,
+    testing: 1.2,
+    documentation: 1.0,
+  },
+  early_traction: {
+    monetization: 1.3,
+    growth: 1.2,
+    ux: 1.2,
+  },
+  growing: {
+    monetization: 1.5,
+    security: 1.5,
+    growth: 1.4,
+    infrastructure: 1.3,
+  },
+  scaling: {
+    scalability: 1.8,
+    security: 1.6,
+    infrastructure: 1.5,
+    monetization: 1.3,
+  },
+};
+
+// ===========================================
+// Max Penalties per Category (prevents over-penalization)
+// ===========================================
+
+const MAX_CRITICAL_PER_CATEGORY = 2;
 
 // ===========================================
 // Bonus Points
@@ -19,10 +76,30 @@ const BONUS_POINTS = {
   has_analytics: 5,
   has_tests: 5,
   has_documentation: 5,
+  small_team_clean: 5, // New: bonus for small team with no gaps
 };
 
 // ===========================================
-// Calculate Alignment Score
+// Score Breakdown Type (v2)
+// ===========================================
+
+export interface ScoreBreakdown {
+  base_score: number;
+  penalties: {
+    total: number;
+    by_category: Record<string, number>;
+    by_severity: Record<GapSeverity, number>;
+  };
+  bonuses: {
+    total: number;
+    applied: string[];
+  };
+  final_score: number;
+  stage_used?: BusinessStage;
+}
+
+// ===========================================
+// Calculate Alignment Score (Legacy - backward compatible)
 // ===========================================
 
 export function calculateAlignmentScore(
@@ -47,6 +124,119 @@ export function calculateAlignmentScore(
 
   // Clamp to 0-100
   return Math.max(0, Math.min(100, score));
+}
+
+// ===========================================
+// Calculate Alignment Score V2 (Weighted)
+// ===========================================
+
+export function calculateAlignmentScoreV2(
+  gaps: Gap[],
+  options?: {
+    stage?: BusinessStage;
+    bonuses?: Partial<ScoreBonuses>;
+    teamSize?: number;
+  }
+): ScoreBreakdown {
+  const { stage, bonuses, teamSize } = options || {};
+
+  const breakdown: ScoreBreakdown = {
+    base_score: 100,
+    penalties: {
+      total: 0,
+      by_category: {},
+      by_severity: { critical: 0, warning: 0, info: 0 },
+    },
+    bonuses: {
+      total: 0,
+      applied: [],
+    },
+    final_score: 100,
+    stage_used: stage,
+  };
+
+  // Track critical count per category for capping
+  const criticalCountByCategory: Record<string, number> = {};
+
+  // Calculate penalties with weights
+  for (const gap of gaps) {
+    const basePenalty = SEVERITY_PENALTIES[gap.type];
+    const categoryWeight = CATEGORY_WEIGHTS[gap.category] || 1.0;
+
+    // Get stage modifier if stage is provided
+    let stageModifier = 1.0;
+    if (stage && STAGE_MODIFIERS[stage]) {
+      stageModifier = STAGE_MODIFIERS[stage][gap.category] || 1.0;
+    }
+
+    // Apply cap for critical issues per category
+    if (gap.type === 'critical') {
+      criticalCountByCategory[gap.category] = (criticalCountByCategory[gap.category] || 0) + 1;
+      if (criticalCountByCategory[gap.category] > MAX_CRITICAL_PER_CATEGORY) {
+        // Skip this penalty - already at cap for this category
+        continue;
+      }
+    }
+
+    // Calculate weighted penalty
+    const weightedPenalty = basePenalty * categoryWeight * stageModifier;
+
+    // Track by category
+    breakdown.penalties.by_category[gap.category] =
+      (breakdown.penalties.by_category[gap.category] || 0) + weightedPenalty;
+
+    // Track by severity
+    breakdown.penalties.by_severity[gap.type] += weightedPenalty;
+
+    // Add to total
+    breakdown.penalties.total += weightedPenalty;
+  }
+
+  // Apply bonuses
+  if (bonuses) {
+    if (bonuses.has_deployment) {
+      breakdown.bonuses.total += BONUS_POINTS.has_deployment;
+      breakdown.bonuses.applied.push('deployment');
+    }
+    if (bonuses.has_analytics) {
+      breakdown.bonuses.total += BONUS_POINTS.has_analytics;
+      breakdown.bonuses.applied.push('analytics');
+    }
+    if (bonuses.has_tests) {
+      breakdown.bonuses.total += BONUS_POINTS.has_tests;
+      breakdown.bonuses.applied.push('tests');
+    }
+    if (bonuses.has_documentation) {
+      breakdown.bonuses.total += BONUS_POINTS.has_documentation;
+      breakdown.bonuses.applied.push('documentation');
+    }
+  }
+
+  // Small team bonus: if team <= 3 and no critical gaps
+  if (teamSize && teamSize <= 3 && gaps.filter(g => g.type === 'critical').length === 0) {
+    breakdown.bonuses.total += BONUS_POINTS.small_team_clean;
+    breakdown.bonuses.applied.push('small_team_clean');
+  }
+
+  // Calculate final score
+  breakdown.final_score = Math.max(
+    0,
+    Math.min(100, breakdown.base_score - breakdown.penalties.total + breakdown.bonuses.total)
+  );
+
+  return breakdown;
+}
+
+// ===========================================
+// Get Weighted Score (Simple wrapper)
+// ===========================================
+
+export function getWeightedScore(
+  gaps: Gap[],
+  stage?: BusinessStage,
+  bonuses?: Partial<ScoreBonuses>
+): number {
+  return calculateAlignmentScoreV2(gaps, { stage, bonuses }).final_score;
 }
 
 // ===========================================

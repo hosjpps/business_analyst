@@ -520,25 +520,50 @@
 - [x] Gap Detection tests (23 теста)
 - [x] Competitor Analysis tests (23 теста)
 
-**Общее покрытие: 150 тестов**
+**Общее покрытие: 310 тестов** (после Phase 6.2)
 
-### 6.2 Улучшения Business Analysis
+### 6.2 Улучшения Business Analysis [DONE ✅]
 
-- [ ] Добавить реальные метрики (MRR, users, growth_rate, churn) для определения стадии
-- [ ] Валидация существования соцсетей
-- [ ] Реальный парсинг PDF/DOCX документов
+- [x] Добавить реальные метрики (MRR, users, growth_rate, churn) для определения стадии
+- [x] Валидация существования соцсетей
+- [ ] Реальный парсинг PDF/DOCX документов (частично - есть парсинг текста)
 
-### 6.3 Улучшения Code Analysis
+**Реализовано:**
+- `src/lib/business/metrics-extractor.ts` - извлечение MRR, ARR, users, churn, funding, team_size из текста
+- Regex паттерны для различных форматов ($10K, $10,000, "MRR is $10K")
+- Автоматический inference стадии бизнеса из метрик
+- HTTP HEAD валидация соцсетей с timeout
+- 50 тестов в `src/__tests__/business/metrics-extractor.test.ts`
 
-- [ ] Security scanning (SQL injection, XSS detection)
+### 6.3 Улучшения Code Analysis [DONE ✅]
+
+- [x] Security scanning (SQL injection, XSS detection)
 - [ ] Dependency vulnerability check (npm audit integration)
 - [ ] Code quality metrics (complexity, duplication)
 
-### 6.4 Улучшения Gap Detection
+**Реализовано:**
+- `src/lib/analyzers/security.ts` - pattern-based security scanner
+- Детекция: SQL injection, XSS, hardcoded secrets, command injection, path traversal
+- CWE ID для каждого типа уязвимости
+- Интеграция в `/api/analyze` endpoint
+- 42 теста в `src/__tests__/analyzers/security.test.ts`
 
-- [ ] Weighted score formula с учётом приоритетов бизнес-целей
-- [ ] Учёт ресурсов команды при генерации задач
-- [ ] Улучшенная обработка отрицательных scores
+### 6.4 Улучшения Gap Detection [DONE ✅]
+
+- [x] Weighted score formula с учётом приоритетов бизнес-целей
+- [x] Учёт ресурсов команды при генерации задач
+- [x] Улучшенная обработка отрицательных scores
+
+**Реализовано:**
+- `calculateAlignmentScoreV2()` - взвешенный скоринг по категориям
+- Category weights: monetization (1.5), security (1.4), growth (1.3), etc.
+- Stage modifiers: разные веса для idea/building/growing/scaling
+- Critical cap: max 2 critical issues per category
+- Small team bonus (+5 для команд <= 3 без critical gaps)
+- `generateTasksWithResources()` - resource-aware task generation
+- Solo dev multiplier (1.5x estimates)
+- Sprint capacity estimation (comfortable/tight/overloaded)
+- 68 тестов в `src/__tests__/gaps/scorer-v2.test.ts` и `task-generator-v2.test.ts`
 
 ### 6.5 Улучшения Competitor Analysis
 
@@ -550,10 +575,13 @@
 
 ```
 [x] 82 новых теста для всех типов анализа
-[x] Все 150 тестов проходят
-[ ] Business metrics integration
-[ ] Security scanning
-[ ] Real website parsing
+[x] Все 310 тестов проходят
+[x] Business metrics integration (MRR, ARR, users, growth, churn, funding, team_size)
+[x] Security scanning (SQL injection, XSS, secrets, command injection)
+[x] Weighted gap scoring v2 с category weights и stage modifiers
+[x] Resource-aware task generation с solo dev multiplier
+[x] Sprint capacity estimation
+[ ] Real website parsing (Cheerio) - будет в след. итерации
 ```
 
 ---

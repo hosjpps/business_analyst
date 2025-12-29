@@ -241,3 +241,186 @@ export function deriveNextMilestone(tasks: GapTask[], gaps: Gap[]): string {
 
   return `Polish product by addressing ${gaps.length} minor improvements`;
 }
+
+// ===========================================
+// Resource Awareness Types
+// ===========================================
+
+export interface ResourceOptions {
+  teamSize: number;
+  weeklyHoursAvailable: number;
+  focusCategories?: string[];
+  soloDevMultiplier?: number; // Default 1.5 for solo devs
+}
+
+export interface SprintCapacity {
+  weeksToComplete: number;
+  tasksPerWeek: number;
+  totalMinutes: number;
+  recommendation: string;
+  feasibility: 'comfortable' | 'tight' | 'overloaded';
+}
+
+export interface ResourceAwareTasks {
+  tasks: GapTask[];
+  excluded: GapTask[];
+  capacity: SprintCapacity;
+  adjustedEstimates: boolean;
+}
+
+// ===========================================
+// Generate Tasks with Resource Awareness
+// ===========================================
+
+export function generateTasksWithResources(
+  gaps: Gap[],
+  options: ResourceOptions
+): ResourceAwareTasks {
+  const { teamSize, weeklyHoursAvailable, focusCategories, soloDevMultiplier = 1.5 } = options;
+
+  // Generate base tasks
+  const baseTasks = generateTasksQuick(gaps);
+
+  // Adjust estimates for solo devs
+  const adjustedTasks = baseTasks.map((task) => {
+    if (teamSize === 1) {
+      return {
+        ...task,
+        estimated_minutes: Math.round(task.estimated_minutes * soloDevMultiplier),
+      };
+    }
+    return task;
+  });
+
+  // Filter by focus categories if provided
+  let filteredTasks = adjustedTasks;
+  if (focusCategories && focusCategories.length > 0) {
+    const focusSet = new Set(focusCategories);
+    filteredTasks = adjustedTasks.filter(
+      (t) => focusSet.has(t.addresses_gap || '') || t.priority === 'high'
+    );
+  }
+
+  // Prioritize tasks
+  const prioritized = prioritizeTasks(filteredTasks);
+
+  // Calculate weekly capacity in minutes
+  const weeklyCapacityMinutes = weeklyHoursAvailable * 60;
+
+  // Select tasks that fit within weekly capacity
+  const selectedTasks: GapTask[] = [];
+  const excludedTasks: GapTask[] = [];
+  let totalMinutes = 0;
+
+  for (const task of prioritized) {
+    if (totalMinutes + task.estimated_minutes <= weeklyCapacityMinutes) {
+      selectedTasks.push(task);
+      totalMinutes += task.estimated_minutes;
+    } else {
+      excludedTasks.push(task);
+    }
+  }
+
+  // Calculate sprint capacity
+  const allTasksMinutes = prioritized.reduce((sum, t) => sum + t.estimated_minutes, 0);
+  const capacity = estimateSprintCapacity(
+    prioritized,
+    teamSize,
+    weeklyHoursAvailable
+  );
+
+  return {
+    tasks: selectedTasks,
+    excluded: excludedTasks,
+    capacity,
+    adjustedEstimates: teamSize === 1,
+  };
+}
+
+// ===========================================
+// Estimate Sprint Capacity
+// ===========================================
+
+export function estimateSprintCapacity(
+  tasks: GapTask[],
+  teamSize: number,
+  hoursPerWeek: number
+): SprintCapacity {
+  const totalMinutes = tasks.reduce((sum, t) => sum + t.estimated_minutes, 0);
+  const weeklyCapacityMinutes = hoursPerWeek * 60 * teamSize;
+
+  const weeksToComplete = weeklyCapacityMinutes > 0
+    ? Math.ceil(totalMinutes / weeklyCapacityMinutes)
+    : 0;
+
+  const tasksPerWeek = weeksToComplete > 0
+    ? Math.round((tasks.length / weeksToComplete) * 10) / 10
+    : 0;
+
+  // Determine feasibility
+  let feasibility: SprintCapacity['feasibility'];
+  let recommendation: string;
+
+  const utilizationRatio = totalMinutes / weeklyCapacityMinutes;
+
+  if (utilizationRatio <= 0.7) {
+    feasibility = 'comfortable';
+    recommendation = 'Good capacity. Consider adding stretch goals or technical debt reduction.';
+  } else if (utilizationRatio <= 1.0) {
+    feasibility = 'tight';
+    recommendation = 'Tight schedule. Prioritize high-impact tasks and minimize context switching.';
+  } else {
+    feasibility = 'overloaded';
+    const overflow = Math.round((utilizationRatio - 1) * 100);
+    recommendation = `Overloaded by ${overflow}%. Reduce scope or extend timeline. Focus only on critical items.`;
+  }
+
+  return {
+    weeksToComplete,
+    tasksPerWeek,
+    totalMinutes,
+    recommendation,
+    feasibility,
+  };
+}
+
+// ===========================================
+// Get Category Priority for Stage
+// ===========================================
+
+const STAGE_CATEGORY_PRIORITY: Record<string, string[]> = {
+  idea: ['documentation', 'ux', 'infrastructure'],
+  building: ['infrastructure', 'testing', 'security'],
+  early_traction: ['monetization', 'growth', 'ux'],
+  growing: ['monetization', 'security', 'growth', 'scalability'],
+  scaling: ['scalability', 'security', 'infrastructure'],
+};
+
+export function getCategoryPriorityForStage(stage: string): string[] {
+  return STAGE_CATEGORY_PRIORITY[stage] || ['security', 'monetization', 'growth'];
+}
+
+// ===========================================
+// Filter Tasks by Budget
+// ===========================================
+
+export function filterTasksByTimeBudget(
+  tasks: GapTask[],
+  maxMinutes: number
+): { selected: GapTask[]; remaining: GapTask[] } {
+  const prioritized = prioritizeTasks(tasks);
+  const selected: GapTask[] = [];
+  const remaining: GapTask[] = [];
+  let usedMinutes = 0;
+
+  for (const task of prioritized) {
+    if (usedMinutes + task.estimated_minutes <= maxMinutes) {
+      selected.push(task);
+      usedMinutes += task.estimated_minutes;
+    } else {
+      remaining.push(task);
+    }
+  }
+
+  return { selected, remaining };
+}

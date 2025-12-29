@@ -104,6 +104,7 @@ export interface AnalyzeResponse {
   questions?: Question[];
   partial_analysis?: PartialAnalysis;
   analysis?: Analysis;
+  security_analysis?: SecurityAnalysisResult;
   metadata: Metadata;
   error?: string;
 }
@@ -179,4 +180,80 @@ export const AnalysisSchema = z.object({
   issues: z.array(IssueSchema),
   tasks: z.array(TaskSchema),
   next_milestone: z.string(),
+});
+
+// ===========================================
+// Security Analysis Types
+// ===========================================
+
+export type SecurityIssueType =
+  | 'sql_injection'
+  | 'xss'
+  | 'hardcoded_secret'
+  | 'command_injection'
+  | 'path_traversal'
+  | 'insecure_random'
+  | 'sensitive_data_exposure';
+
+export type SecuritySeverity = 'critical' | 'high' | 'medium' | 'low';
+
+export interface SecurityFinding {
+  id: string;
+  type: SecurityIssueType;
+  severity: SecuritySeverity;
+  file_path: string;
+  line_number?: number;
+  code_snippet?: string;
+  description: string;
+  recommendation: string;
+  cwe_id?: string;
+}
+
+export interface SecurityAnalysisResult {
+  findings: SecurityFinding[];
+  stats: {
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+    files_scanned: number;
+  };
+  has_critical_issues: boolean;
+}
+
+// Zod schemas for security types
+export const SecurityIssueTypeSchema = z.enum([
+  'sql_injection',
+  'xss',
+  'hardcoded_secret',
+  'command_injection',
+  'path_traversal',
+  'insecure_random',
+  'sensitive_data_exposure',
+]);
+
+export const SecuritySeveritySchema = z.enum(['critical', 'high', 'medium', 'low']);
+
+export const SecurityFindingSchema = z.object({
+  id: z.string(),
+  type: SecurityIssueTypeSchema,
+  severity: SecuritySeveritySchema,
+  file_path: z.string(),
+  line_number: z.number().optional(),
+  code_snippet: z.string().optional(),
+  description: z.string(),
+  recommendation: z.string(),
+  cwe_id: z.string().optional(),
+});
+
+export const SecurityAnalysisResultSchema = z.object({
+  findings: z.array(SecurityFindingSchema),
+  stats: z.object({
+    critical: z.number(),
+    high: z.number(),
+    medium: z.number(),
+    low: z.number(),
+    files_scanned: z.number(),
+  }),
+  has_critical_issues: z.boolean(),
 });

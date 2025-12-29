@@ -1,6 +1,7 @@
 import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
 import { parseDocuments } from './document-parser';
 import { buildFullCanvasPrompt } from './prompts';
+import { extractMetrics, inferStageFromMetrics } from './metrics-extractor';
 import {
   BusinessInput,
   BusinessAnalysisResult,
@@ -8,6 +9,7 @@ import {
   type BusinessCanvas,
   type BusinessStage,
   type BusinessRecommendation,
+  type BusinessMetrics,
 } from '@/types/business';
 import type { Question } from '@/types';
 
@@ -21,6 +23,8 @@ export interface BuildCanvasResult {
   questions?: Question[];
   canvas?: BusinessCanvas;
   business_stage?: BusinessStage;
+  inferred_stage?: BusinessStage;
+  extracted_metrics?: BusinessMetrics;
   gaps_in_model?: string[];
   recommendations?: BusinessRecommendation[];
   model_used: string;
@@ -42,6 +46,15 @@ export async function buildCanvas(input: BusinessInput): Promise<BuildCanvasResu
   const parseResult = input.documents
     ? await parseDocuments(input.documents)
     : { documents: [], total_text_length: 0, errors: [] };
+
+  // Step 1.5: Extract metrics from description (before LLM call)
+  const combinedText = [
+    input.description,
+    ...parseResult.documents.map(d => d.text)
+  ].join('\n');
+
+  const extractedMetrics = extractMetrics(combinedText);
+  const inferredStage = inferStageFromMetrics(extractedMetrics);
 
   // Step 2: Build prompts
   const { system, user } = buildFullCanvasPrompt(input, parseResult.documents);
@@ -74,6 +87,8 @@ export async function buildCanvas(input: BusinessInput): Promise<BuildCanvasResu
         why: `Validation errors: ${errors.slice(0, 3).join('; ')}`,
       }],
       ...partialResult,
+      inferred_stage: inferredStage,
+      extracted_metrics: extractedMetrics.raw_matches.length > 0 ? extractedMetrics : undefined,
       model_used: llmResponse.model,
       tokens_used: llmResponse.tokens_used,
       analysis_duration_ms: durationMs,
@@ -85,12 +100,17 @@ export async function buildCanvas(input: BusinessInput): Promise<BuildCanvasResu
 
   const data = validation.data;
 
+  // Use inferred stage as fallback if LLM didn't provide one
+  const finalStage = data.business_stage || inferredStage;
+
   return {
     success: true,
     needs_clarification: data.needs_clarification,
     questions: data.questions,
     canvas: data.canvas,
-    business_stage: data.business_stage,
+    business_stage: finalStage,
+    inferred_stage: inferredStage,
+    extracted_metrics: extractedMetrics.raw_matches.length > 0 ? extractedMetrics : undefined,
     gaps_in_model: data.gaps_in_model,
     recommendations: data.recommendations,
     model_used: llmResponse.model,
