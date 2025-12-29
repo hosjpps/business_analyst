@@ -19,6 +19,7 @@ import { GapsView } from '@/components/results/GapsView';
 import { AlignmentScore } from '@/components/results/AlignmentScore';
 import { VerdictBadge } from '@/components/results/VerdictBadge';
 import { CompetitorComparisonView } from '@/components/results/CompetitorComparisonView';
+import { UserNav } from '@/components/UserNav';
 import {
   usePersistedDescription,
   usePersistedRepoUrl,
@@ -423,11 +424,14 @@ export default function Home() {
       {/* Header */}
       <div className="header-row">
         <h1>Business & Code Analyzer</h1>
-        {(hasAnyResult || description || repoUrl || businessInput.description) && (
-          <button className="clear-btn" onClick={handleClearAll} title="Очистить все данные">
-            Очистить
-          </button>
-        )}
+        <div className="header-actions">
+          {(hasAnyResult || description || repoUrl || businessInput.description) && (
+            <button className="clear-btn" onClick={handleClearAll} title="Очистить все данные">
+              Очистить
+            </button>
+          )}
+          <UserNav />
+        </div>
       </div>
       <p className="subtitle">
         Ультимативная платформа для улучшения бизнеса
@@ -791,6 +795,11 @@ export default function Home() {
           justify-content: space-between;
           align-items: center;
           gap: 16px;
+        }
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
         }
         .clear-btn {
           padding: 6px 12px;

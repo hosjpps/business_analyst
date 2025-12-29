@@ -15,7 +15,18 @@
       "Bash(git fetch:*)",
       "mcp__github__list_commits",
       "Bash(npm run test:run:*)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(npm update:*)",
+      "mcp__filesystem__directory_tree",
+      "mcp__filesystem__read_text_file",
+      "mcp__memory__create_entities",
+      "mcp__memory__add_observations",
+      "mcp__filesystem__list_directory",
+      "Bash(git remote:*)",
+      "mcp__plugin_supabase_supabase__list_projects",
+      "mcp__plugin_supabase_supabase__list_organizations",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__get-library-docs"
     ]
   }
 }
