@@ -34,7 +34,7 @@ export function validateEnv(): EnvConfig {
   // Optional with defaults
   const githubToken = process.env.GITHUB_TOKEN;
   const llmModel = process.env.LLM_MODEL || 'anthropic/claude-sonnet-4';
-  const llmMaxTokens = parseInt(process.env.LLM_MAX_TOKENS || '4000', 10);
+  const llmMaxTokens = parseInt(process.env.LLM_MAX_TOKENS || '8000', 10);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   // Validate formats

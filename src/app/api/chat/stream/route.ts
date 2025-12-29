@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     // Create streaming response
     const client = getClient();
     const model = process.env.LLM_MODEL || 'anthropic/claude-sonnet-4';
-    const maxTokens = parseInt(process.env.LLM_MAX_TOKENS || '4000', 10);
+    const maxTokens = parseInt(process.env.LLM_MAX_TOKENS || '8000', 10);
 
     const stream = await client.chat.completions.create({
       model,

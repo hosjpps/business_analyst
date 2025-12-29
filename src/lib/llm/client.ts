@@ -33,7 +33,7 @@ function getDefaultModel(): string {
 }
 
 function getMaxTokens(): number {
-  return parseInt(process.env.LLM_MAX_TOKENS || '4000', 10);
+  return parseInt(process.env.LLM_MAX_TOKENS || '8000', 10);
 }
 
 // ===========================================
@@ -289,7 +289,22 @@ export function parseJSONResponse<T>(content: string): T {
   console.error('Content preview (first 500 chars):', content.slice(0, 500));
   console.error('Content preview (last 300 chars):', content.slice(-300));
 
-  throw new Error(`Failed to parse LLM response as JSON. Response may not contain valid JSON.`);
+  // Определяем вероятную причину ошибки для пользователя
+  let errorHint = '';
+
+  if (content.length === 0) {
+    errorHint = 'LLM returned empty response. Try again.';
+  } else if (content.includes('error') || content.includes('Error')) {
+    errorHint = 'LLM returned an error instead of analysis.';
+  } else if (!content.includes('{')) {
+    errorHint = 'LLM response does not contain JSON. The model may have misunderstood the prompt.';
+  } else if (content.lastIndexOf('}') < content.lastIndexOf('{')) {
+    errorHint = 'Response appears truncated (JSON not closed). Try analyzing fewer files or increase LLM_MAX_TOKENS.';
+  } else {
+    errorHint = 'Response contains invalid JSON structure.';
+  }
+
+  throw new Error(`No JSON object found in response. ${errorHint}`);
 }
 
 /**

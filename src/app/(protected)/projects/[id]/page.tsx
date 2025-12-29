@@ -3,7 +3,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Checklist } from '@/components/ui/Checklist';
 import type { Tables } from '@/types/database';
+import type { ChecklistItem } from '@/types/ux';
 
 type Analysis = Tables<'analyses'>;
 type BusinessCanvas = Tables<'business_canvases'>;
@@ -161,10 +163,71 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
       pending: { color: '#8b949e', label: 'Ожидает' },
       in_progress: { color: '#58a6ff', label: 'В работе' },
       completed: { color: '#3fb950', label: 'Готово' },
-      cancelled: { color: '#f85149', label: 'Отменено' },
+      skipped: { color: '#f85149', label: 'Пропущено' },
     };
     return styles[status] || { color: '#8b949e', label: status };
   };
+
+  // Convert DB tasks to ChecklistItem format
+  const convertTasksToChecklist = (tasks: Task[]): ChecklistItem[] => {
+    return tasks.map(task => ({
+      id: task.id,
+      title: task.title,
+      description: task.description || '',
+      steps: [], // No sub-steps for project tasks
+      priority: (task.priority === 'critical' ? 'high' : task.priority) as 'high' | 'medium' | 'low',
+      category: undefined,
+      estimatedTime: '', // Not stored in DB
+      whyImportant: undefined,
+      completed: task.status === 'completed',
+    }));
+  };
+
+  // Handle task completion toggle
+  const handleTasksChange = useCallback(async (updatedItems: ChecklistItem[]) => {
+    if (!project) return;
+
+    // Find changed items
+    for (const item of updatedItems) {
+      const originalTask = project.tasks.find(t => t.id === item.id);
+      if (!originalTask) continue;
+
+      const wasCompleted = originalTask.status === 'completed';
+      const isNowCompleted = item.completed;
+
+      if (wasCompleted !== isNowCompleted) {
+        // Update in DB
+        try {
+          const response = await fetch(`/api/projects/${id}/tasks/${item.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              status: isNowCompleted ? 'completed' : 'pending',
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Failed to update task status');
+          } else {
+            // Update local state
+            setProject(prev => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                tasks: prev.tasks.map(t =>
+                  t.id === item.id
+                    ? { ...t, status: isNowCompleted ? 'completed' : 'pending' }
+                    : t
+                ),
+              };
+            });
+          }
+        } catch (err) {
+          console.error('Error updating task:', err);
+        }
+      }
+    }
+  }, [project, id]);
 
   if (loading) {
     return (
@@ -423,51 +486,15 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
       </section>
 
       {/* Tasks */}
-      <section className="section">
+      <section className="section tasks-section">
         <h2>📋 Задачи ({project?.tasks?.length || 0})</h2>
         {project?.tasks && project.tasks.length > 0 ? (
-          <div className="tasks-list">
-            {project.tasks.map(task => {
-              const priorityStyle = getTaskPriorityStyle(task.priority);
-              const statusStyle = getTaskStatusStyle(task.status);
-              return (
-                <div
-                  key={task.id}
-                  className="task-card"
-                  style={{ borderLeftColor: priorityStyle.color }}
-                >
-                  <div className="task-header">
-                    <span className="task-title">{task.title}</span>
-                    <span
-                      className="task-status"
-                      style={{ color: statusStyle.color }}
-                    >
-                      {statusStyle.label}
-                    </span>
-                  </div>
-                  {task.description && (
-                    <p className="task-description">{task.description}</p>
-                  )}
-                  <div className="task-meta">
-                    <span
-                      className="task-priority"
-                      style={{
-                        color: priorityStyle.color,
-                        backgroundColor: priorityStyle.bg,
-                      }}
-                    >
-                      {task.priority}
-                    </span>
-                    {task.due_date && (
-                      <span className="task-due">
-                        До: {new Date(task.due_date).toLocaleDateString('ru-RU')}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <Checklist
+            items={convertTasksToChecklist(project.tasks)}
+            onChange={handleTasksChange}
+            groupByPriority={true}
+            showProgress={true}
+          />
         ) : (
           <div className="empty-section">
             <p>Пока нет задач. Запустите анализ для генерации рекомендаций.</p>
