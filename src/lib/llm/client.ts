@@ -59,21 +59,25 @@ export async function sendToLLM(
       const response = await client.chat.completions.create({
         model: modelToUse,
         max_tokens: getMaxTokens(),
-        // Force JSON output mode (supported by most models via OpenRouter)
-        response_format: { type: 'json_object' },
         messages: [
           {
             role: 'system',
-            content: 'You are a JSON API. You MUST respond with valid JSON only. No markdown, no text, no explanations. Start with { and end with }.'
+            content: 'You are a JSON-only API. You respond EXCLUSIVELY with valid JSON objects. Never use markdown, never add explanations, never add text before or after JSON. Your entire response must be parseable by JSON.parse().'
           },
           {
             role: 'user',
             content: prompt
+          },
+          // Prefill technique: start assistant response with { to force JSON continuation
+          {
+            role: 'assistant',
+            content: '{'
           }
         ]
       });
 
-      const content = response.choices[0]?.message?.content || '';
+      // Prepend the { we used for prefill since Claude continues from it
+      const content = '{' + (response.choices[0]?.message?.content || '');
       const tokensUsed = response.usage?.total_tokens || 0;
 
       console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
