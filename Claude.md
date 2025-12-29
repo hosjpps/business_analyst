@@ -1,6 +1,6 @@
 # Business & Code Analyzer
 
-> Ультимативная платформа для улучшения бизнеса: анализ бизнеса + код + gap detection.
+> Ультимативная платформа для улучшения бизнеса: анализ бизнеса + код + gap detection + конкуренты.
 
 ---
 
@@ -11,8 +11,9 @@
 1. **Понять свой бизнес** — через структурированный анализ (Business Model Canvas)
 2. **Оценить код/продукт** — что есть, чего не хватает
 3. **Найти разрывы** — между бизнес-целями и реальным состоянием продукта
-4. **Получить план действий** — конкретные задачи на неделю
-5. **Отслеживать прогресс** — история, дашборды, еженедельные отчёты
+4. **Сравнить с конкурентами** — преимущества, слабые места, позиционирование
+5. **Получить план действий** — конкретные задачи на неделю
+6. **Отслеживать прогресс** — история, дашборды, сохранение проектов
 
 **Ключевая идея:** Когда система понимает бизнес-контекст, рекомендации становятся в разы точнее.
 
@@ -24,8 +25,9 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    РЕЖИМЫ АНАЛИЗА                           │
 ├─────────────────────────────────────────────────────────────┤
-│  [ ] Только репозиторий — быстрый анализ кода              │
-│  [ ] Только бизнес — Business Canvas + рекомендации        │
+│  [x] Только репозиторий — быстрый анализ кода              │
+│  [x] Только бизнес — Business Canvas + рекомендации        │
+│  [x] Сравнение с конкурентами — матрица, позиционирование  │
 │  [x] Полный анализ — Бизнес → Код → Gap Detection → Tasks  │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -39,31 +41,31 @@
       │
       ├── Бизнес: описание + соцсети + документы
       ├── Код: GitHub URL или файлы
-      └── Конкуренты: ссылки (опционально)
+      └── Конкуренты: URL сайтов
       │
       ▼
-┌─────────────────┐     ┌─────────────────┐
-│ Business Canvas │     │  Code Analysis  │
-│       AI        │     │                 │
-└────────┬────────┘     └────────┬────────┘
-         │                       │
-         └───────────┬───────────┘
-                     ▼
-              ┌─────────────┐
-              │ GAP DETECTOR│
-              └──────┬──────┘
-                     ▼
-              ┌─────────────┐
-              │   TASKS +   │
-              │   VERDICT   │
-              └─────────────┘
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│ Business Canvas │     │  Code Analysis  │     │   Competitor    │
+│       AI        │     │                 │     │    Analysis     │
+└────────┬────────┘     └────────┬────────┘     └────────┬────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 ▼
+                          ┌─────────────┐
+                          │ GAP DETECTOR│
+                          └──────┬──────┘
+                                 ▼
+                          ┌─────────────┐
+                          │   TASKS +   │
+                          │   VERDICT   │
+                          └─────────────┘
 ```
 
 Детальная архитектура: [docs/ARCHITECTURE_DETAILED.md](./docs/ARCHITECTURE_DETAILED.md)
 
 ---
 
-## Текущий статус: v0.4.0
+## Текущий статус: v0.5.0
 
 ### Готово
 
@@ -75,11 +77,36 @@
 - [x] Определение стадии проекта
 - [x] Генерация задач на неделю
 
+**Бизнес-анализ:**
+- [x] Business Canvas AI (9 блоков BMC)
+- [x] Загрузка документов (PDF, DOCX)
+- [x] Уточняющие вопросы
+- [x] Определение стадии бизнеса
+
+**Gap Detection:**
+- [x] Поиск разрывов между бизнесом и кодом
+- [x] Alignment Score (0-100)
+- [x] Verdict (ON_TRACK / ITERATE / PIVOT)
+- [x] Генерация задач по приоритетам
+
+**Анализ конкурентов:**
+- [x] Ручной ввод конкурентов (URL + описание)
+- [x] Парсинг сайтов (title, description, features)
+- [x] Матрица сравнения
+- [x] Market Position (leader/challenger/niche/newcomer)
+- [x] Рекомендации по позиционированию
+
+**Auth & Database:**
+- [x] Supabase интеграция
+- [x] Email аутентификация (login/signup)
+- [x] Dashboard с проектами
+- [x] CRUD операции для проектов
+- [x] RLS политики безопасности
+
 **LLM и качество:**
 - [x] Claude через OpenRouter
 - [x] Zod валидация ответов
 - [x] Retry с exponential backoff
-- [x] Уточняющие вопросы
 
 **UX:**
 - [x] Follow-up чат с SSE streaming
@@ -91,14 +118,7 @@
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
-- [x] 68 unit тестов
-
-### Фаза 1 (Завершена)
-
-- [x] Business Canvas AI
-- [x] Gap Detector
-- [x] Объединённый анализ (Full Analysis)
-- [x] Загрузка документов (PDF, DOCX)
+- [x] 68+ unit тестов
 
 ---
 
@@ -106,12 +126,14 @@
 
 | Фаза | Описание | Статус |
 |------|----------|--------|
-| 1 | Business Canvas AI + Gap Detector | ✅ Завершена |
-| 2 | Competitor Snapshot (ручной ввод) | **ТЕКУЩАЯ** |
-| 3 | Auth + Database + Dashboard | Планируется |
-| 4 | Weekly Reports | Future |
-| 5 | Social Media API Integration | Future |
-| 6 | AI Competitor Agent (автопоиск) | Vision |
+| 1 | Business Canvas AI | ✅ Завершена |
+| 2 | Gap Detector | ✅ Завершена |
+| 3 | Full Integration | ✅ Завершена |
+| 4 | Competitor Snapshot | ✅ Завершена |
+| 5 | Auth + Database | ✅ Завершена |
+| 6 | Weekly Reports | Планируется |
+| 7 | Social Media API | Future |
+| 8 | AI Competitor Agent | Vision |
 
 Детальный план с задачами: [ROADMAP.md](./ROADMAP.md)
 
@@ -133,13 +155,36 @@
 
 ## API Endpoints
 
+### Анализ
+
 | Method | Endpoint | Описание |
 |--------|----------|----------|
 | POST | `/api/analyze` | Анализ репозитория |
 | POST | `/api/analyze-business` | Анализ бизнеса → Canvas |
 | POST | `/api/analyze-gaps` | Gap Detection |
+| POST | `/api/analyze-competitors` | Анализ конкурентов |
+
+### Чат
+
+| Method | Endpoint | Описание |
+|--------|----------|----------|
 | POST | `/api/chat` | Follow-up вопросы |
 | POST | `/api/chat/stream` | Streaming чат (SSE) |
+
+### Проекты (требуют авторизации)
+
+| Method | Endpoint | Описание |
+|--------|----------|----------|
+| GET | `/api/projects` | Список проектов пользователя |
+| POST | `/api/projects` | Создать проект |
+| GET | `/api/projects/[id]` | Получить проект с анализами |
+| PATCH | `/api/projects/[id]` | Обновить проект |
+| DELETE | `/api/projects/[id]` | Удалить проект |
+
+### Утилиты
+
+| Method | Endpoint | Описание |
+|--------|----------|----------|
 | GET | `/api/commit-sha` | Получить SHA коммита |
 
 Детали и примеры: [docs/api-spec.md](./docs/api-spec.md)
@@ -167,26 +212,74 @@ npm run build
 ### Environment Variables
 
 ```bash
-OPENROUTER_API_KEY=sk-or-...    # Обязательно
-GITHUB_TOKEN=ghp_...             # Опционально, для приватных репо
+# Обязательно
+OPENROUTER_API_KEY=sk-or-...
+
+# Для Supabase (Auth + Database)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Опционально
+GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 ```
+
+### Настройка Supabase
+
+1. Создайте проект на [supabase.com](https://supabase.com)
+2. Скопируйте URL и anon key из Settings → API
+3. Добавьте их в `.env.local`
+4. Примените миграцию из `supabase/migrations/001_initial_schema.sql` через SQL Editor
 
 ---
 
 ## Стек технологий
 
-**Текущий:**
+**Frontend:**
 - Next.js 14 (App Router)
 - TypeScript
-- OpenRouter (Claude)
-- Octokit (GitHub API)
-- Zod (валидация)
-- Vitest (тесты)
+- CSS (GitHub Dark тема)
 
-**Планируется:**
-- Supabase (Auth + DB) — Фаза 3
-- pdf-parse, mammoth (документы) — Фаза 1
-- Cheerio (парсинг сайтов) — Фаза 2
+**Backend:**
+- Next.js API Routes
+- Supabase (Auth + PostgreSQL)
+- OpenRouter (Claude API)
+
+**Библиотеки:**
+- Zod (валидация)
+- Octokit (GitHub API)
+- pdf-parse, mammoth (документы)
+- Cheerio (парсинг сайтов)
+
+**Тестирование:**
+- Vitest
+- 68+ unit тестов
+
+---
+
+## Структура проекта
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (protected)/        # Защищённые маршруты (требуют auth)
+│   │   ├── dashboard/      # Список проектов
+│   │   └── projects/[id]/  # Детали проекта
+│   ├── api/                # API endpoints
+│   ├── login/              # Страница входа
+│   ├── signup/             # Страница регистрации
+│   └── page.tsx            # Главная страница анализа
+├── components/
+│   ├── auth/               # Компоненты аутентификации
+│   ├── forms/              # Формы ввода
+│   └── results/            # Компоненты результатов
+├── lib/
+│   ├── supabase/           # Supabase клиенты
+│   ├── business/           # Business Canvas логика
+│   ├── gaps/               # Gap Detection логика
+│   └── competitor/         # Competitor Analysis логика
+├── types/                  # TypeScript типы
+└── hooks/                  # React hooks
+```
 
 ---
 
@@ -239,6 +332,15 @@ GITHUB_TOKEN=ghp_...             # Опционально, для приватн
 70-100: ON_TRACK — всё хорошо
 ```
 
+### Market Position (Конкуренты)
+
+```
+leader     — лидер рынка
+challenger — претендент на лидерство
+niche      — нишевой игрок
+newcomer   — новичок
+```
+
 ---
 
 ## Deployment
@@ -252,3 +354,9 @@ npm run build && npm start
 ```
 
 Environment variables нужно добавить в Vercel Dashboard.
+
+### Переменные для Vercel:
+- `OPENROUTER_API_KEY` — обязательно
+- `NEXT_PUBLIC_SUPABASE_URL` — для auth
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — для auth
+- `GITHUB_TOKEN` — опционально

@@ -1,6 +1,6 @@
 # Documentation
 
-> Полная документация проекта Business & Code Analyzer.
+> Полная документация проекта Business & Code Analyzer v0.5.0
 
 ---
 
@@ -8,16 +8,28 @@
 
 ```
 docs/
-├── README.md              ← Вы здесь
-├── architecture.md        # Обзор архитектуры (legacy)
-├── ARCHITECTURE_DETAILED.md # Детальная архитектура
-├── api-spec.md            # Спецификация API
-├── data-models.md         # Модели данных + Zod схемы
-├── prompts.md             # LLM промпты
-├── ui-wireframes.md       # Структура UI
-├── changelog.md           # История изменений
-└── project-status.md      # Текущий статус
+├── README.md                 ← Вы здесь
+├── ARCHITECTURE_DETAILED.md  # Детальная архитектура
+├── api-spec.md               # Спецификация API
+├── data-models.md            # Модели данных + Zod схемы
+├── prompts.md                # LLM промпты
+├── ui-wireframes.md          # Структура UI
+├── changelog.md              # История изменений
+└── project-status.md         # Текущий статус
 ```
+
+---
+
+## Текущий статус
+
+| Фаза | Название | Статус |
+|------|----------|--------|
+| 1 | Business Canvas AI | ✅ Завершена |
+| 2 | Gap Detector | ✅ Завершена |
+| 3 | Full Integration | ✅ Завершена |
+| 4 | Competitor Snapshot | ✅ Завершена |
+| 5 | Auth + Database | ✅ Завершена |
+| 6 | Weekly Reports | Планируется |
 
 ---
 
@@ -27,8 +39,8 @@ docs/
 
 1. **Понять архитектуру**
    - Начни с [ARCHITECTURE_DETAILED.md](./ARCHITECTURE_DETAILED.md)
-   - Изучи граф зависимостей данных
-   - Пойми 4 сценария использования
+   - Изучи 5 режимов анализа
+   - Пойми flow данных
 
 2. **Понять API**
    - [api-spec.md](./api-spec.md) — все endpoints
@@ -38,7 +50,7 @@ docs/
 3. **Понять данные**
    - [data-models.md](./data-models.md) — все типы
    - Zod схемы для валидации
-   - Структура БД (future)
+   - Структура БД (Supabase)
 
 4. **Понять промпты**
    - [prompts.md](./prompts.md) — все LLM промпты
@@ -63,44 +75,48 @@ docs/
 
 ### CLAUDE.md (корень проекта)
 
-Инструкции для Claude Code:
+Главный README проекта:
 - Видение продукта
 - Режимы работы
 - API reference
-- Текущий статус
+- Quick Start
+- Deployment
 
 ---
 
-## Навигация по фазам
+## Режимы анализа
 
-### Фаза 1: Business Canvas AI (ТЕКУЩАЯ)
+### 1. Code Analysis
+Анализ репозитория (GitHub URL или файлы):
+- Определение технологий
+- Оценка структуры
+- Генерация задач
 
-| Документ | Секция |
-|----------|--------|
-| ROADMAP.md | §1.1-1.8 |
-| api-spec.md | POST /api/analyze-business |
-| data-models.md | BusinessInput, BusinessCanvas |
-| prompts.md | §1 Business Canvas Prompt |
-| ui-wireframes.md | §1 Main Page, §4.2 Canvas View |
+### 2. Business Analysis
+Бизнес-анализ → Business Model Canvas:
+- 9 блоков BMC
+- Загрузка документов (PDF, DOCX)
+- Определение стадии бизнеса
 
-### Фаза 2: Gap Detector
+### 3. Full Analysis
+Комбинированный анализ:
+- Бизнес + Код параллельно
+- Gap Detection
+- Alignment Score + Verdict
+- Приоритизированные задачи
 
-| Документ | Секция |
-|----------|--------|
-| ROADMAP.md | §2.1-2.6 |
-| api-spec.md | POST /api/analyze-gaps |
-| data-models.md | Gap, GapAnalysisResult |
-| prompts.md | §2 Gap Detection Prompt |
-| ui-wireframes.md | §4.3 Gaps View |
+### 4. Competitor Analysis
+Анализ конкурентов:
+- Ручной ввод URL
+- Парсинг сайтов
+- Матрица сравнения
+- Рекомендации по позиционированию
 
-### Фаза 3: Full Integration
-
-| Документ | Секция |
-|----------|--------|
-| ROADMAP.md | §3.1-3.4 |
-| api-spec.md | POST /api/analyze-full |
-| data-models.md | FullAnalysisResult |
-| ARCHITECTURE_DETAILED.md | §3 Сценарий C |
+### 5. Dashboard (Auth Required)
+Управление проектами:
+- Сохранение анализов
+- История
+- CRUD операции
 
 ---
 
@@ -111,6 +127,7 @@ docs/
 ```
 BusinessInput ──► Business Canvas AI ──┐
                                        │
+CompetitorInput ──► Competitor AI ─────┤
                                        ▼
                                   GAP DETECTOR ──► Tasks
                                        ▲
@@ -121,9 +138,20 @@ CodeInput ──────► Code Analysis ───────┘
 ### API Dependencies
 
 ```
-/analyze-business ─┐
-                   ├──► /analyze-gaps ──► Tasks
-/analyze (code) ───┘
+/analyze-business ───┐
+                     │
+/analyze (code) ─────┼──► /analyze-gaps ──► Tasks
+                     │
+/analyze-competitors─┘
+```
+
+### Auth Flow
+
+```
+/login ──► Supabase Auth ──► Session Cookie
+                                  │
+                                  ▼
+/dashboard ──► Check Auth ──► /api/projects
 ```
 
 ### Execution Flow (Full Analysis)
@@ -141,6 +169,24 @@ Request
                             ▼
                         Response
 ```
+
+---
+
+## Структура БД (Supabase)
+
+```
+profiles          # Профили пользователей
+    │
+    ▼
+projects          # Проекты
+    │
+    ├── analyses           # Анализы
+    ├── business_canvases  # Business Canvas
+    ├── competitors        # Конкуренты
+    └── tasks              # Задачи
+```
+
+Все таблицы защищены RLS политиками.
 
 ---
 
@@ -165,6 +211,34 @@ Request
 - Conventional commits
 - Feature branches
 - PR reviews
+
+---
+
+## Навигация по фазам
+
+### Фаза 1-3: Core Analysis
+
+| Документ | Что смотреть |
+|----------|--------------|
+| api-spec.md | `/api/analyze`, `/api/analyze-business`, `/api/analyze-gaps` |
+| data-models.md | BusinessCanvas, Gap, Analysis |
+| prompts.md | Canvas Prompt, Gap Detection Prompt |
+
+### Фаза 4: Competitors
+
+| Документ | Что смотреть |
+|----------|--------------|
+| api-spec.md | `/api/analyze-competitors` |
+| data-models.md | CompetitorInput, CompetitorAnalyzeResponse |
+| prompts.md | Competitor Analysis Prompt |
+
+### Фаза 5: Auth + Database
+
+| Документ | Что смотреть |
+|----------|--------------|
+| api-spec.md | `/api/projects/*` |
+| data-models.md | Database types |
+| CLAUDE.md | Supabase setup |
 
 ---
 

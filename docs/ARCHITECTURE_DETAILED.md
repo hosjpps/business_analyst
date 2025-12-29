@@ -1,6 +1,8 @@
-# Детальная архитектура: Business & Code Analyzer
+# Детальная архитектура: Business & Code Analyzer v0.5.0
 
 > Этот документ описывает полную архитектуру системы со всеми связями между компонентами.
+>
+> **Статус:** Фазы 1-5 завершены. Система полностью функциональна.
 
 ---
 
@@ -117,6 +119,60 @@
 └── Следующий milestone
 
 Выход: Report + Updated Tasks
+```
+
+### Сценарий E: Авторизованный пользователь (Dashboard)
+
+```
+Ситуация: Пользователь вошёл в систему
+
+Шаг 1: Регистрация/Вход
+├── /login — вход через email/пароль
+├── /signup — регистрация
+└── Supabase Auth → Session Cookie
+
+Шаг 2: Dashboard (/dashboard)
+├── Список проектов
+├── Создание нового проекта
+├── Удаление проекта
+└── Переход к деталям проекта
+
+Шаг 3: Детали проекта (/projects/:id)
+├── Информация о проекте
+├── История анализов
+├── Business Canvas (если есть)
+├── Список задач
+└── Редактирование проекта
+
+Шаг 4: Сохранение анализов
+├── Результаты анализа → БД
+├── Canvas → БД
+├── Задачи → БД
+└── Конкуренты → БД
+
+Выход: Персистентные данные с историей
+```
+
+### Сценарий F: Анализ конкурентов
+
+```
+Ситуация: Хочет понять рынок
+
+Шаг 1: Ввод данных
+├── Мой бизнес: имя + описание + фичи
+└── Конкуренты: 1-5 URL сайтов
+
+Шаг 2: Парсинг сайтов
+├── Cheerio парсит HTML
+├── Извлечение: title, meta, headings, pricing
+└── Timeout: 10s на сайт
+
+Шаг 3: AI-анализ
+├── Сравнение фич
+├── Определение позиции
+└── Генерация рекомендаций
+
+Выход: Матрица сравнения + позиционирование
 ```
 
 ---
@@ -875,158 +931,294 @@ interface AnalyzeFullResponse {
 
 ---
 
-## 8. Структура файлов (план реализации)
+## 8. Структура файлов (актуальная)
 
 ```
 src/
 ├── app/
 │   ├── api/
 │   │   ├── analyze/
-│   │   │   └── route.ts              # [существующий]
+│   │   │   └── route.ts              # Анализ кода
 │   │   ├── analyze-business/
-│   │   │   └── route.ts              # NEW
+│   │   │   └── route.ts              # Business Canvas AI
 │   │   ├── analyze-gaps/
-│   │   │   └── route.ts              # NEW
-│   │   ├── analyze-full/
-│   │   │   └── route.ts              # NEW
-│   │   └── chat/
-│   │       └── route.ts              # [расширить контекст]
+│   │   │   └── route.ts              # Gap Detection
+│   │   ├── analyze-competitors/
+│   │   │   └── route.ts              # Competitor Analysis
+│   │   ├── chat/
+│   │   │   ├── route.ts              # Follow-up чат
+│   │   │   └── stream/route.ts       # SSE streaming
+│   │   ├── projects/
+│   │   │   ├── route.ts              # GET/POST проекты
+│   │   │   └── [id]/route.ts         # GET/PATCH/DELETE проект
+│   │   └── commit-sha/
+│   │       └── route.ts              # Версия приложения
 │   │
-│   └── page.tsx                      # [переделать UI]
+│   ├── (protected)/                   # Protected routes (требуют auth)
+│   │   ├── layout.tsx                # force-dynamic
+│   │   ├── dashboard/
+│   │   │   └── page.tsx              # Dashboard с проектами
+│   │   └── projects/
+│   │       └── [id]/page.tsx         # Детали проекта
+│   │
+│   ├── login/page.tsx                # Страница входа
+│   ├── signup/page.tsx               # Страница регистрации
+│   ├── page.tsx                      # Главная (анализ)
+│   ├── layout.tsx                    # Root layout
+│   └── globals.css                   # Глобальные стили
 │
 ├── components/
 │   ├── forms/
-│   │   ├── BusinessInputForm.tsx     # NEW
-│   │   ├── CodeInputForm.tsx         # NEW (из UploadForm)
-│   │   ├── CompetitorInput.tsx       # NEW
-│   │   └── AnalysisModeSelector.tsx  # NEW
+│   │   ├── AnalysisModeSelector.tsx  # Выбор режима анализа
+│   │   ├── BusinessInputForm.tsx     # Форма бизнес-анализа
+│   │   ├── CompetitorInputForm.tsx   # Форма конкурентов
+│   │   └── ClarificationQuestions.tsx # Уточняющие вопросы
 │   │
 │   ├── results/
-│   │   ├── CanvasView.tsx            # NEW (визуализация Canvas)
-│   │   ├── GapsView.tsx              # NEW
-│   │   ├── AlignmentScore.tsx        # NEW
-│   │   ├── VerdictBadge.tsx          # NEW
-│   │   └── TaskList.tsx              # NEW (из AnalysisView)
+│   │   ├── CanvasView.tsx            # Визуализация Canvas
+│   │   ├── GapsView.tsx              # Карточки gaps
+│   │   ├── AlignmentScore.tsx        # Progress bar score
+│   │   ├── VerdictBadge.tsx          # ON_TRACK/ITERATE/PIVOT
+│   │   └── CompetitorComparisonView.tsx # Матрица сравнения
 │   │
-│   └── [существующие компоненты]
+│   ├── ui/
+│   │   └── TermTooltip.tsx           # Подсказки терминов
+│   │
+│   ├── AnalysisView.tsx              # Результаты кода
+│   ├── ChatSection.tsx               # Follow-up чат
+│   ├── ExportButton.tsx              # Экспорт JSON/MD
+│   ├── ProgressIndicator.tsx         # Индикатор этапов
+│   ├── QuestionSection.tsx           # Уточняющие вопросы
+│   ├── UploadForm.tsx                # Загрузка файлов/URL
+│   └── UserNav.tsx                   # Навигация авторизации
 │
 ├── lib/
+│   ├── supabase/
+│   │   ├── client.ts                 # Browser client (singleton)
+│   │   ├── server.ts                 # Server client
+│   │   └── middleware.ts             # Auth middleware
+│   │
 │   ├── business/
-│   │   ├── canvas-builder.ts         # NEW
-│   │   ├── document-parser.ts        # NEW (PDF, DOCX)
-│   │   ├── social-extractor.ts       # NEW (парсинг ссылок)
-│   │   └── types.ts                  # NEW
+│   │   ├── canvas-builder.ts         # Генерация Canvas
+│   │   ├── document-parser.ts        # PDF/DOCX парсинг
+│   │   └── prompts.ts                # LLM промпты
 │   │
 │   ├── gaps/
-│   │   ├── detector.ts               # NEW
-│   │   ├── scorer.ts                 # NEW (alignment score)
-│   │   ├── task-generator.ts         # NEW
-│   │   └── types.ts                  # NEW
+│   │   ├── detector.ts               # Поиск gaps
+│   │   ├── scorer.ts                 # Alignment Score
+│   │   └── task-generator.ts         # Генерация задач
 │   │
-│   ├── llm/
-│   │   ├── client.ts                 # [существующий]
-│   │   └── prompts.ts                # [расширить]
+│   ├── competitors/
+│   │   ├── parser.ts                 # Парсинг сайтов (Cheerio)
+│   │   ├── analyzer.ts               # AI-анализ
+│   │   └── prompts.ts                # LLM промпты
 │   │
-│   └── [существующие]
+│   ├── llm.ts                        # OpenRouter client
+│   ├── prompts.ts                    # Базовые промпты
+│   ├── github.ts                     # GitHub API (Octokit)
+│   ├── file-processor.ts             # Обработка файлов
+│   └── cache.ts                      # Кэширование
 │
-├── hooks/
-│   ├── useProjectState.ts            # NEW (управление состоянием)
-│   └── [существующие]
+├── types/
+│   ├── index.ts                      # Все типы
+│   ├── business.ts                   # Business Canvas types
+│   ├── gaps.ts                       # Gap Detection types
+│   ├── competitors.ts                # Competitor types
+│   └── database.ts                   # Supabase DB types
 │
-└── types/
-    └── index.ts                      # [расширить]
+├── middleware.ts                     # Next.js middleware (auth)
+│
+└── __tests__/                        # Тесты (68+)
+    ├── business/
+    ├── gaps/
+    ├── competitors/
+    └── api/
 ```
 
 ---
 
-## 9. Порядок реализации
+## 9. Статус реализации
 
-### Этап 1: Business Canvas AI (приоритет)
-
-```
-1.1 Типы данных
-    └── types/index.ts — новые интерфейсы
-
-1.2 Document Parser
-    └── lib/business/document-parser.ts
-    ├── PDF → текст (pdf-parse)
-    ├── DOCX → текст (mammoth)
-    └── Обработка ошибок
-
-1.3 Business Canvas Builder
-    └── lib/business/canvas-builder.ts
-    ├── Промпт для Canvas
-    ├── Валидация ответа (Zod)
-    └── Уточняющие вопросы
-
-1.4 API Endpoint
-    └── app/api/analyze-business/route.ts
-
-1.5 UI Компоненты
-    ├── BusinessInputForm.tsx
-    └── CanvasView.tsx
-
-1.6 Тесты
-    └── Минимум 10 тестов
-```
-
-### Этап 2: Gap Detector
+### Фаза 1: Business Canvas AI ✅
 
 ```
-2.1 Gap Detection Logic
-    └── lib/gaps/detector.ts
-    ├── Промпт
-    ├── Валидация
-    └── Категоризация
-
-2.2 Alignment Scorer
-    └── lib/gaps/scorer.ts
-    ├── Формула расчёта
-    └── Определение verdict
-
-2.3 Task Generator
-    └── lib/gaps/task-generator.ts
-    ├── Промпт
-    └── Приоритизация по gaps
-
-2.4 API Endpoint
-    └── app/api/analyze-gaps/route.ts
-
-2.5 UI Компоненты
-    ├── GapsView.tsx
-    ├── AlignmentScore.tsx
-    └── VerdictBadge.tsx
-
-2.6 Тесты
+✅ Типы данных — types/business.ts
+✅ Document Parser — lib/business/document-parser.ts
+✅ Business Canvas Builder — lib/business/canvas-builder.ts
+✅ API Endpoint — app/api/analyze-business/route.ts
+✅ UI Компоненты — BusinessInputForm, CanvasView
+✅ Тесты
 ```
 
-### Этап 3: Интеграция
+### Фаза 2: Gap Detector ✅
 
 ```
-3.1 Full Analysis Endpoint
-    └── app/api/analyze-full/route.ts
-    ├── Параллельный запуск
-    └── Объединение результатов
+✅ Gap Detection Logic — lib/gaps/detector.ts
+✅ Alignment Scorer — lib/gaps/scorer.ts
+✅ Task Generator — lib/gaps/task-generator.ts
+✅ API Endpoint — app/api/analyze-gaps/route.ts
+✅ UI Компоненты — GapsView, AlignmentScore, VerdictBadge
+✅ Тесты
+```
 
-3.2 Project State Hook
-    └── hooks/useProjectState.ts
-    └── Управление состоянием между этапами
+### Фаза 3: Full Integration ✅
 
-3.3 Обновлённый UI
-    └── app/page.tsx
-    ├── Mode selector
-    ├── Unified form
-    └── Combined results view
+```
+✅ Mode Selector — AnalysisModeSelector.tsx
+✅ 4 режима анализа на главной
+✅ Follow-up Chat с полным контекстом
+✅ Экспорт результатов (JSON + Markdown)
+✅ localStorage persistence
+```
 
-3.4 Follow-up Chat Update
-    └── Расширенный контекст
+### Фаза 4: Competitor Snapshot ✅
 
-3.5 E2E тесты
+```
+✅ Site Parser — lib/competitors/parser.ts (Cheerio)
+✅ AI Analyzer — lib/competitors/analyzer.ts
+✅ API Endpoint — app/api/analyze-competitors/route.ts
+✅ UI — CompetitorInputForm, CompetitorComparisonView
+✅ Feature matrix
+```
+
+### Фаза 5: Auth + Database ✅
+
+```
+✅ Supabase Auth (email/password)
+✅ Database схема (profiles, projects, analyses, tasks, canvases, competitors)
+✅ RLS политики (row-level security)
+✅ Projects API — app/api/projects/
+✅ Dashboard — app/(protected)/dashboard/
+✅ Project Details — app/(protected)/projects/[id]/
+✅ Login/Signup pages
+✅ UserNav component
+```
+
+### Фаза 6: Weekly Reports (Планируется)
+
+```
+⏳ Weekly digest генерация
+⏳ Email notifications
+⏳ Progress tracking
+⏳ API: /api/projects/:id/report
 ```
 
 ---
 
-## 10. Метрики успеха
+## 10. База данных (Supabase)
+
+### Схема таблиц
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      profiles                                │
+│ (создаётся автоматически при регистрации)                   │
+├─────────────────────────────────────────────────────────────┤
+│ id (uuid, PK, FK → auth.users.id)                          │
+│ email (text)                                                │
+│ created_at (timestamp)                                      │
+│ updated_at (timestamp)                                      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              │ 1:N
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       projects                               │
+├─────────────────────────────────────────────────────────────┤
+│ id (uuid, PK)                                               │
+│ user_id (uuid, FK → profiles.id)                            │
+│ name (text, NOT NULL)                                       │
+│ description (text)                                          │
+│ repo_url (text)                                             │
+│ created_at (timestamp)                                      │
+│ updated_at (timestamp)                                      │
+└─────────────────────────────────────────────────────────────┘
+          │                    │                    │
+          │ 1:N               │ 1:N               │ 1:N
+          ▼                    ▼                    ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│    analyses     │  │business_canvases│  │      tasks      │
+├─────────────────┤  ├─────────────────┤  ├─────────────────┤
+│ id (uuid)       │  │ id (uuid)       │  │ id (uuid)       │
+│ project_id (FK) │  │ project_id (FK) │  │ project_id (FK) │
+│ type (text)     │  │ canvas (jsonb)  │  │ title (text)    │
+│ result (jsonb)  │  │ stage (text)    │  │ description     │
+│ created_at      │  │ gaps (jsonb)    │  │ priority        │
+└─────────────────┘  │ created_at      │  │ category        │
+                      └─────────────────┘  │ status          │
+                                           │ estimated_min   │
+          │                                │ created_at      │
+          │ 1:N                            └─────────────────┘
+          ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      competitors                             │
+├─────────────────────────────────────────────────────────────┤
+│ id (uuid, PK)                                               │
+│ project_id (uuid, FK → projects.id)                         │
+│ name (text)                                                 │
+│ url (text)                                                  │
+│ features (jsonb)                                            │
+│ strengths (jsonb)                                           │
+│ weaknesses (jsonb)                                          │
+│ created_at (timestamp)                                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### RLS Политики
+
+```sql
+-- Все таблицы защищены Row Level Security
+-- Пользователь видит только свои данные
+
+-- profiles: только свой профиль
+CREATE POLICY "Users can view own profile"
+  ON profiles FOR SELECT
+  USING (auth.uid() = id);
+
+-- projects: только свои проекты
+CREATE POLICY "Users can CRUD own projects"
+  ON projects FOR ALL
+  USING (auth.uid() = user_id);
+
+-- analyses, tasks, canvases, competitors:
+-- доступ через project ownership
+CREATE POLICY "Access via project"
+  ON analyses FOR ALL
+  USING (
+    project_id IN (
+      SELECT id FROM projects WHERE user_id = auth.uid()
+    )
+  );
+```
+
+### Auth Flow
+
+```
+1. Регистрация (/signup)
+   └── supabase.auth.signUp({ email, password })
+       └── Создаётся auth.users запись
+       └── Trigger создаёт profiles запись
+       └── Session cookie устанавливается
+
+2. Вход (/login)
+   └── supabase.auth.signInWithPassword({ email, password })
+       └── Session cookie устанавливается
+       └── Редирект на /dashboard
+
+3. Protected Routes
+   └── middleware.ts проверяет session
+       └── Если нет session → редирект на /login
+       └── Если есть → пропускает
+
+4. API Calls
+   └── createServerClient() читает cookies
+       └── supabase.auth.getUser() валидирует
+       └── RLS автоматически применяется
+```
+
+---
+
+## 11. Метрики успеха
 
 ### Качество анализа
 

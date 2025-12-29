@@ -1,24 +1,97 @@
 # API Specification
 
-> Детальная спецификация всех API endpoints системы Business & Code Analyzer.
+> Детальная спецификация всех API endpoints системы Business & Code Analyzer v0.5.0
 
 ---
 
 ## Обзор endpoints
 
+### Анализ
+
 | Method | Endpoint | Описание | Статус |
 |--------|----------|----------|--------|
-| POST | `/api/analyze` | Анализ репозитория | Готов |
-| POST | `/api/chat` | Follow-up вопросы | Готов |
-| POST | `/api/chat/stream` | Streaming чат | Готов |
-| GET | `/api/commit-sha` | Получить SHA коммита | Готов |
-| POST | `/api/analyze-business` | Анализ бизнеса → Canvas | **Фаза 1** |
-| POST | `/api/analyze-gaps` | Gap Detection | **Фаза 2** |
-| POST | `/api/analyze-full` | Полный анализ | **Фаза 3** |
-| POST | `/api/competitors` | Анализ конкурентов | Фаза 4 |
-| GET | `/api/projects` | Список проектов | Фаза 5 |
-| GET | `/api/projects/:id` | Детали проекта | Фаза 5 |
+| POST | `/api/analyze` | Анализ репозитория | ✅ Готов |
+| POST | `/api/analyze-business` | Анализ бизнеса → Canvas | ✅ Готов |
+| POST | `/api/analyze-gaps` | Gap Detection | ✅ Готов |
+| POST | `/api/analyze-competitors` | Анализ конкурентов | ✅ Готов |
+
+### Чат
+
+| Method | Endpoint | Описание | Статус |
+|--------|----------|----------|--------|
+| POST | `/api/chat` | Follow-up вопросы | ✅ Готов |
+| POST | `/api/chat/stream` | Streaming чат (SSE) | ✅ Готов |
+
+### Проекты (требуют авторизации)
+
+| Method | Endpoint | Описание | Статус |
+|--------|----------|----------|--------|
+| GET | `/api/projects` | Список проектов | ✅ Готов |
+| POST | `/api/projects` | Создать проект | ✅ Готов |
+| GET | `/api/projects/:id` | Детали проекта | ✅ Готов |
+| PATCH | `/api/projects/:id` | Обновить проект | ✅ Готов |
+| DELETE | `/api/projects/:id` | Удалить проект | ✅ Готов |
+
+### Утилиты
+
+| Method | Endpoint | Описание | Статус |
+|--------|----------|----------|--------|
+| GET | `/api/commit-sha` | Получить SHA коммита | ✅ Готов |
+
+### Будущие
+
+| Method | Endpoint | Описание | Статус |
+|--------|----------|----------|--------|
 | GET | `/api/projects/:id/report` | Weekly report | Фаза 6 |
+
+---
+
+## POST /api/analyze
+
+> Анализирует репозиторий (GitHub URL или загруженные файлы).
+
+### Request
+
+```typescript
+interface AnalyzeRequest {
+  // Одно из:
+  repo_url?: string;      // GitHub URL
+  files?: FileInput[];    // Загруженные файлы
+
+  // Обязательно
+  description: string;    // Описание проекта
+
+  // Опционально
+  access_token?: string;  // Для приватных репо
+}
+
+interface FileInput {
+  name: string;
+  path: string;
+  content: string;
+  size: number;
+}
+```
+
+### Response: Success (200)
+
+```typescript
+interface AnalyzeResponse {
+  success: true;
+  project_summary: string;
+  detected_stage: 'documentation' | 'mvp' | 'launched' | 'growing';
+  tech_stack: string[];
+  strengths: Array<{ area: string; detail: string }>;
+  issues: Array<{
+    severity: 'high' | 'medium' | 'low';
+    area: string;
+    detail: string;
+    file_path?: string;
+  }>;
+  questions: Question[];
+  weekly_tasks: Task[];
+}
+```
 
 ---
 
@@ -28,32 +101,25 @@
 
 ### Request
 
-```http
-POST /api/analyze-business
-Content-Type: application/json
-```
-
 ```typescript
 interface AnalyzeBusinessRequest {
-  // Обязательно
-  description: string;  // min 50 chars, max 10000 chars
+  description: string;  // min 50, max 10000 chars
 
-  // Опционально
   social_links?: {
-    instagram?: string;   // URL или @username
-    linkedin?: string;    // URL
-    twitter?: string;     // URL или @username
-    tiktok?: string;      // URL или @username
-    youtube?: string;     // URL
-    facebook?: string;    // URL
-    website?: string;     // URL
+    instagram?: string;
+    linkedin?: string;
+    twitter?: string;
+    tiktok?: string;
+    youtube?: string;
+    facebook?: string;
+    website?: string;
   };
 
   documents?: Array<{
-    name: string;           // Имя файла
+    name: string;
     type: 'pdf' | 'docx' | 'md' | 'txt';
-    content: string;        // base64 для бинарных, текст для md/txt
-    size: number;           // bytes
+    content: string;  // base64 для бинарных
+    size: number;
   }>;
 }
 ```
@@ -66,16 +132,12 @@ interface AnalyzeBusinessResponse {
   needs_clarification: boolean;
 
   // Если needs_clarification: true
-  questions?: Array<{
-    id: string;
-    question: string;
-    why: string;  // Почему спрашиваем
-  }>;
+  questions?: Question[];
   partial_canvas?: Partial<BusinessCanvas>;
 
   // Если needs_clarification: false
   canvas?: BusinessCanvas;
-  business_stage?: 'idea' | 'building' | 'early_traction' | 'growing' | 'scaling';
+  business_stage?: BusinessStage;
   gaps_in_model?: string[];
   recommendations?: Array<{
     area: string;
@@ -90,54 +152,6 @@ interface AnalyzeBusinessResponse {
     analysis_duration_ms: number;
   };
 }
-
-interface BusinessCanvas {
-  customer_segments: string[];
-  value_proposition: string;
-  channels: string[];
-  customer_relationships: string;
-  revenue_streams: string[];
-  key_resources: string[];
-  key_activities: string[];
-  key_partners: string[];
-  cost_structure: string[];
-}
-```
-
-### Response: Error (400)
-
-```typescript
-interface ErrorResponse {
-  success: false;
-  error: string;
-  details?: string[];
-}
-```
-
-**Ошибки валидации:**
-- `description too short` — описание < 50 символов
-- `description too long` — описание > 10000 символов
-- `invalid document type` — неподдерживаемый тип файла
-- `document too large` — файл > 5MB
-- `too many documents` — > 10 документов
-- `total size exceeded` — общий размер > 20MB
-
-### Response: Rate Limit (429)
-
-```typescript
-{
-  success: false,
-  error: "Rate limit exceeded",
-  retry_after: 60  // seconds
-}
-```
-
-### Headers
-
-```http
-X-RateLimit-Limit: 5
-X-RateLimit-Remaining: 4
-X-RateLimit-Reset: 1703847600
 ```
 
 ### Limits
@@ -149,40 +163,6 @@ X-RateLimit-Reset: 1703847600
 | Max description | 10,000 chars |
 | Max document size | 5 MB |
 | Max documents | 10 |
-| Max total size | 20 MB |
-| Max PDF pages | 200 |
-
-### Examples
-
-**Минимальный запрос:**
-```bash
-curl -X POST http://localhost:3000/api/analyze-business \
-  -H "Content-Type: application/json" \
-  -d '{
-    "description": "Сервис клининга для частных домов в Саванне. Работаем уже 3 месяца, есть 5 постоянных клиентов."
-  }'
-```
-
-**С документами:**
-```bash
-curl -X POST http://localhost:3000/api/analyze-business \
-  -H "Content-Type: application/json" \
-  -d '{
-    "description": "SaaS для автоматизации email-маркетинга...",
-    "social_links": {
-      "instagram": "https://instagram.com/myapp",
-      "website": "https://myapp.com"
-    },
-    "documents": [
-      {
-        "name": "pitch.pdf",
-        "type": "pdf",
-        "content": "JVBERi0xLjQK...",
-        "size": 1024000
-      }
-    ]
-  }'
-```
 
 ---
 
@@ -194,23 +174,10 @@ curl -X POST http://localhost:3000/api/analyze-business \
 
 ```typescript
 interface AnalyzeGapsRequest {
-  // Обязательно
   canvas: BusinessCanvas;
   code_analysis: CodeAnalysis;
-
-  // Опционально
-  competitors?: Array<{
-    name: string;
-    url?: string;
-    notes?: string;
-  }>;
-
-  user_context?: {
-    current_week?: number;
-    previous_tasks_completed?: string[];
-    user_goal?: string;
-    constraints?: string[];
-  };
+  competitors?: CompetitorInput[];
+  user_context?: UserContext;
 }
 ```
 
@@ -220,34 +187,11 @@ interface AnalyzeGapsRequest {
 interface AnalyzeGapsResponse {
   success: true;
 
-  gaps: Array<{
-    id: string;
-    type: 'critical' | 'warning' | 'info';
-    category: GapCategory;
-    business_goal: string;
-    current_state: string;
-    recommendation: string;
-    effort: 'low' | 'medium' | 'high';
-    impact: 'low' | 'medium' | 'high';
-    resources?: string[];
-  }>;
-
+  gaps: Gap[];
   alignment_score: number;  // 0-100
   verdict: 'on_track' | 'iterate' | 'pivot';
   verdict_explanation: string;
-
-  tasks: Array<{
-    id: string;
-    title: string;
-    description: string;
-    priority: 'high' | 'medium' | 'low';
-    category: 'documentation' | 'technical' | 'product' | 'marketing' | 'business';
-    estimated_minutes: number;
-    depends_on?: string;
-    addresses_gap?: string;
-    resources?: string[];
-  }>;
-
+  tasks: Task[];
   next_milestone: string;
 
   metadata: {
@@ -257,26 +201,6 @@ interface AnalyzeGapsResponse {
     analysis_duration_ms: number;
   };
 }
-
-type GapCategory =
-  | 'monetization'
-  | 'growth'
-  | 'security'
-  | 'ux'
-  | 'infrastructure'
-  | 'marketing'
-  | 'scalability'
-  | 'documentation'
-  | 'testing';
-```
-
-### Response: Error (400)
-
-```typescript
-{
-  success: false,
-  error: "Missing required field: canvas"
-}
 ```
 
 ### Limits
@@ -285,112 +209,65 @@ type GapCategory =
 |----------|-------|
 | Rate limit | 5 req/min per IP |
 | Timeout | 90 seconds |
-| Max competitors | 5 |
-
-### Example
-
-```bash
-curl -X POST http://localhost:3000/api/analyze-gaps \
-  -H "Content-Type: application/json" \
-  -d '{
-    "canvas": {
-      "customer_segments": ["Домовладельцы в Саванне"],
-      "value_proposition": "Быстрая уборка без предоплаты",
-      "channels": ["Nextdoor"],
-      "customer_relationships": "Личное общение",
-      "revenue_streams": ["Разовые услуги $80-150"],
-      "key_resources": ["Оборудование", "Транспорт"],
-      "key_activities": ["Уборка"],
-      "key_partners": [],
-      "cost_structure": ["Расходники", "Бензин"]
-    },
-    "code_analysis": {
-      "project_summary": "Landing page на HTML/CSS",
-      "detected_stage": "mvp",
-      "tech_stack": ["html", "css"],
-      "strengths": [{"area": "Простота", "detail": "Минималистичный код"}],
-      "issues": [{"severity": "high", "area": "Нет формы", "detail": "Нет способа связаться"}]
-    }
-  }'
-```
 
 ---
 
-## POST /api/analyze-full
+## POST /api/analyze-competitors
 
-> Полный анализ: бизнес + код + gaps в одном запросе.
+> Анализирует конкурентов и генерирует сравнительную матрицу.
 
 ### Request
 
 ```typescript
-interface AnalyzeFullRequest {
-  business: {
+interface AnalyzeCompetitorsRequest {
+  my_business: {
+    name: string;
     description: string;
-    social_links?: SocialLinks;
-    documents?: DocumentInput[];
+    features?: string[];
+    pricing?: string;
   };
 
-  code: {
-    repo_url?: string;
-    files?: FileInput[];
-    access_token?: string;
-  };
-
-  competitors?: CompetitorInput[];
-  user_context?: UserContext;
+  competitors: Array<{
+    url: string;
+    name?: string;
+    notes?: string;
+  }>;  // 1-5 конкурентов
 }
 ```
 
 ### Response: Success (200)
 
 ```typescript
-interface AnalyzeFullResponse {
+interface AnalyzeCompetitorsResponse {
   success: true;
 
-  business_analysis: {
-    canvas: BusinessCanvas;
-    business_stage: BusinessStage;
-    gaps_in_model: string[];
+  my_position: 'leader' | 'challenger' | 'niche' | 'newcomer';
+  market_analysis: string;
+
+  competitors: Array<{
+    url: string;
+    name: string;
+    tagline?: string;
+    features: string[];
+    pricing?: string;
+    strengths: string[];
+    weaknesses: string[];
+  }>;
+
+  comparison: {
+    my_advantages: string[];
+    my_gaps: string[];
+    recommendations: string[];
+    feature_matrix: Record<string, Record<string, boolean>>;
   };
-
-  code_analysis: CodeAnalysis;
-
-  gap_analysis: {
-    gaps: Gap[];
-    alignment_score: number;
-    verdict: Verdict;
-    verdict_explanation: string;
-  };
-
-  tasks: Task[];
-  next_milestone: string;
 
   metadata: {
-    business_analysis_ms: number;
-    code_analysis_ms: number;
-    gap_analysis_ms: number;
-    total_duration_ms: number;
+    competitors_analyzed: number;
+    sites_parsed: number;
     tokens_used: number;
-    files_analyzed: number;
-    cached: boolean;
+    analysis_duration_ms: number;
   };
 }
-```
-
-### Execution Flow
-
-```
-Request
-   │
-   ├──► analyze-business ───┐
-   │         (parallel)     │
-   └──► analyze-code ───────┤
-                            │
-                            ▼
-                    analyze-gaps
-                            │
-                            ▼
-                        Response
 ```
 
 ### Limits
@@ -399,12 +276,160 @@ Request
 |----------|-------|
 | Rate limit | 3 req/min per IP |
 | Timeout | 120 seconds |
+| Max competitors | 5 |
 
 ---
 
-## POST /api/chat (расширенный)
+## GET /api/projects
 
-> Follow-up вопросы с полным контекстом.
+> Получить список проектов текущего пользователя.
+
+**Требует авторизации** (Supabase session cookie)
+
+### Response: Success (200)
+
+```typescript
+interface ListProjectsResponse {
+  projects: Array<{
+    id: string;
+    name: string;
+    description?: string;
+    repo_url?: string;
+    created_at: string;
+    updated_at: string;
+    analyses: Array<{
+      id: string;
+      type: string;
+      created_at: string;
+    }>;
+  }>;
+}
+```
+
+### Response: Unauthorized (401)
+
+```typescript
+{
+  error: "Unauthorized"
+}
+```
+
+---
+
+## POST /api/projects
+
+> Создать новый проект.
+
+**Требует авторизации**
+
+### Request
+
+```typescript
+interface CreateProjectRequest {
+  name: string;           // 1-100 chars
+  description?: string;   // max 5000 chars
+  repo_url?: string;      // valid URL
+}
+```
+
+### Response: Success (201)
+
+```typescript
+interface CreateProjectResponse {
+  project: {
+    id: string;
+    name: string;
+    description?: string;
+    repo_url?: string;
+    created_at: string;
+    updated_at: string;
+  };
+}
+```
+
+---
+
+## GET /api/projects/:id
+
+> Получить проект с анализами, canvas, задачами.
+
+**Требует авторизации**
+
+### Response: Success (200)
+
+```typescript
+interface GetProjectResponse {
+  project: {
+    id: string;
+    name: string;
+    description?: string;
+    repo_url?: string;
+    created_at: string;
+    updated_at: string;
+
+    analyses: Analysis[];
+    business_canvases: BusinessCanvas[];
+    competitors: Competitor[];
+    tasks: Task[];
+  };
+}
+```
+
+### Response: Not Found (404)
+
+```typescript
+{
+  error: "Project not found"
+}
+```
+
+---
+
+## PATCH /api/projects/:id
+
+> Обновить проект.
+
+**Требует авторизации**
+
+### Request
+
+```typescript
+interface UpdateProjectRequest {
+  name?: string;
+  description?: string | null;
+  repo_url?: string | null;
+}
+```
+
+### Response: Success (200)
+
+```typescript
+interface UpdateProjectResponse {
+  project: Project;
+}
+```
+
+---
+
+## DELETE /api/projects/:id
+
+> Удалить проект (каскадно удаляет все связанные данные).
+
+**Требует авторизации**
+
+### Response: Success (200)
+
+```typescript
+{
+  success: true
+}
+```
+
+---
+
+## POST /api/chat
+
+> Follow-up вопросы с контекстом.
 
 ### Request
 
@@ -412,7 +437,6 @@ Request
 interface ChatRequest {
   message: string;
 
-  // Контекст (всё что есть)
   context: {
     canvas?: BusinessCanvas;
     code_analysis?: CodeAnalysis;
@@ -431,42 +455,67 @@ interface ChatRequest {
 interface ChatResponse {
   success: true;
   answer: string;
-  updated_tasks?: Task[];  // Если ответ меняет рекомендации
+  updated_tasks?: Task[];
 }
+```
+
+---
+
+## POST /api/chat/stream
+
+> Streaming чат через Server-Sent Events.
+
+### Request
+
+Same as `/api/chat`
+
+### Response
+
+```
+data: {"chunk": "First part..."}
+data: {"chunk": "Second part..."}
+data: [DONE]
 ```
 
 ---
 
 ## Общие типы
 
-### CodeAnalysis (существующий)
+### BusinessCanvas
 
 ```typescript
-interface CodeAnalysis {
-  project_summary: string;
-  detected_stage: 'documentation' | 'mvp' | 'launched' | 'growing';
-  tech_stack: string[];
-  strengths: Array<{
-    area: string;
-    detail: string;
-  }>;
-  issues: Array<{
-    severity: 'high' | 'medium' | 'low';
-    area: string;
-    detail: string;
-    file_path?: string;
-  }>;
+interface BusinessCanvas {
+  customer_segments: string[];
+  value_proposition: string;
+  channels: string[];
+  customer_relationships: string;
+  revenue_streams: string[];
+  key_resources: string[];
+  key_activities: string[];
+  key_partners: string[];
+  cost_structure: string[];
 }
 ```
 
-### Question
+### Gap
 
 ```typescript
-interface Question {
+interface Gap {
   id: string;
-  question: string;
-  why: string;
+  type: 'critical' | 'warning' | 'info';
+  category: GapCategory;
+  business_goal: string;
+  current_state: string;
+  recommendation: string;
+  effort: 'low' | 'medium' | 'high';
+  impact: 'low' | 'medium' | 'high';
+  resources?: string[];
 }
+
+type GapCategory =
+  | 'monetization' | 'growth' | 'security'
+  | 'ux' | 'infrastructure' | 'marketing'
+  | 'scalability' | 'documentation' | 'testing';
 ```
 
 ### Task
@@ -485,6 +534,16 @@ interface Task {
 }
 ```
 
+### Question
+
+```typescript
+interface Question {
+  id: string;
+  question: string;
+  why: string;
+}
+```
+
 ---
 
 ## Error Codes
@@ -492,9 +551,9 @@ interface Task {
 | HTTP | Error | Описание |
 |------|-------|----------|
 | 400 | `validation_error` | Невалидные входные данные |
-| 401 | `unauthorized` | Нет токена (для приватных репо) |
-| 403 | `forbidden` | Нет доступа к репо |
-| 404 | `not_found` | Репо не найден |
+| 401 | `unauthorized` | Не авторизован |
+| 403 | `forbidden` | Нет доступа |
+| 404 | `not_found` | Ресурс не найден |
 | 429 | `rate_limit` | Превышен лимит запросов |
 | 500 | `internal_error` | Ошибка сервера |
 | 502 | `llm_error` | Ошибка LLM API |
@@ -502,22 +561,35 @@ interface Task {
 
 ---
 
-## Webhooks (Future)
+## Rate Limiting
 
-### POST /api/webhooks/github
+Все endpoints используют rate limiting:
 
-> Для автоматических анализов при push.
+```http
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 4
+X-RateLimit-Reset: 1703847600
+```
 
-```typescript
-interface GithubWebhook {
-  action: 'push';
-  repository: {
-    full_name: string;
-    default_branch: string;
-  };
-  commits: Array<{
-    id: string;
-    message: string;
-  }>;
+При превышении:
+
+```json
+{
+  "success": false,
+  "error": "Rate limit exceeded",
+  "retry_after": 60
 }
 ```
+
+---
+
+## Аутентификация
+
+Endpoints `/api/projects/*` требуют аутентификации через Supabase.
+
+Сессия хранится в HTTP-only cookies и автоматически обрабатывается middleware.
+
+Для получения сессии:
+1. Пользователь логинится через `/login`
+2. Supabase устанавливает session cookies
+3. Все запросы к protected endpoints автоматически авторизованы
