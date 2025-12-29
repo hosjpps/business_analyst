@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.5.0
+## Текущий статус: v0.6.0
 
 ### Готово
 
@@ -111,14 +111,25 @@
 **UX:**
 - [x] Follow-up чат с SSE streaming
 - [x] Markdown рендеринг
-- [x] Экспорт (JSON + Markdown)
+- [x] Экспорт (JSON + Markdown + PDF)
 - [x] localStorage persistence
 - [x] GitHub Dark тема
+
+**UX Components (для нетехнической аудитории):**
+- [x] Tooltips система (термины MRR, LTV и др.)
+- [x] Иконки и badges (20+ иконок, severity/category badges)
+- [x] Progress индикаторы (ScoreCircle, BusinessReadiness, StepProgress)
+- [x] Wizard с валидацией (пошаговый ввод)
+- [x] Checklist с persistence (localStorage)
+- [x] ActionSteps с "Почему это важно"
+- [x] FAQ аккордеон (контекстные подсказки)
+- [x] Before/After сравнения (история анализов)
+- [x] PDF Export (настраиваемые разделы)
 
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
-- [x] 150 unit тестов (полное покрытие API)
+- [x] 609 unit тестов (полное покрытие API + UI)
 
 ---
 
@@ -253,13 +264,14 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 
 **Тестирование:**
 - Vitest
-- 150 unit тестов:
+- 609 unit тестов:
   - Code Analysis: 15 тестов
-  - Business Analysis: 21 тест
-  - Gap Detection: 23 теста
+  - Business Analysis: 71 тест (21 + 50 metrics)
+  - Gap Detection: 91 тест (23 + 68 scorer v2)
   - Competitor Analysis: 23 теста
-  - Components: 16 тестов
-  - Utils: 52 теста
+  - Security Analysis: 42 теста
+  - UI Components: 329 тестов
+  - Utils: 38 тестов
 
 ---
 
@@ -278,7 +290,8 @@ src/
 ├── components/
 │   ├── auth/               # Компоненты аутентификации
 │   ├── forms/              # Формы ввода
-│   └── results/            # Компоненты результатов
+│   ├── results/            # Компоненты результатов
+│   └── ui/                 # UI библиотека (Tooltips, Icons, Progress, Wizard, Checklist, FAQ, PDF Export)
 ├── lib/
 │   ├── supabase/           # Supabase клиенты
 │   ├── business/           # Business Canvas логика

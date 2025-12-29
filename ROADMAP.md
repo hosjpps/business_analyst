@@ -520,7 +520,7 @@
 - [x] Gap Detection tests (23 теста)
 - [x] Competitor Analysis tests (23 теста)
 
-**Общее покрытие: 310 тестов** (после Phase 6.2)
+**Общее покрытие: 609 тестов** (после Phase 6.6)
 
 ### 6.2 Улучшения Business Analysis [DONE ✅]
 
@@ -571,6 +571,84 @@
 - [ ] Автоматическое извлечение features/pricing
 - [ ] Отслеживание изменений у конкурентов со временем
 
+### 6.6 UX Components для нетехнической аудитории [DONE ✅]
+
+> **Цель:** UI компоненты для пользователей без технического бэкграунда, которые получают бизнес-анализ и рекомендации.
+
+**Phase A: Основы (~5.5h)**
+- [x] `Tooltip` - базовый tooltip с позиционированием
+- [x] `TermTooltip` - термины с пояснениями (MRR, LTV, etc.)
+- [x] `AutoTooltipText` - автоматические tooltips для терминов в тексте
+- [x] `InfoTooltip` - информационные подсказки
+- [x] `Icon` - унифицированная система иконок (20+ иконок)
+- [x] `SeverityBadge` - бейджи для critical/warning/info
+- [x] `CategoryBadge` - бейджи для категорий gaps
+- [x] `StatusIndicator` - индикаторы статуса
+- [x] `ProgressBar` - базовый прогресс бар
+- [x] `ScoreCircle` - круговой индикатор скора (0-100)
+- [x] `BusinessReadiness` - визуализация готовности бизнеса
+- [x] `StepProgress` - прогресс по шагам (1/5, 2/5...)
+- [x] `CompletionProgress` - прогресс выполнения с процентами
+
+**Phase B: Интерактивные (~10h)**
+- [x] `Wizard` - пошаговый мастер с валидацией
+- [x] `useWizard` - хук для управления wizard состоянием
+- [x] `WizardTextField`, `WizardSelectField`, `WizardCheckboxGroup` - поля для wizard
+- [x] `Checklist` - чеклист с localStorage persistence
+- [x] `PriorityBadge` - бейджи приоритета (high/medium/low)
+- [x] `calculateProgress` - утилита расчёта прогресса
+- [x] `ActionSteps` - нумерованные шаги с иконками
+- [x] `ActionPlanCard` - карточка плана действий
+- [x] `WhyImportant` - блок "Почему это важно"
+- [x] `QuickWinBadge` - бейдж quick win
+- [x] `NumberedList` - нумерованный список
+- [x] `TipBox` - блок с советами
+
+**Phase C: Дополнительные (~10h)**
+- [x] `FAQList` - аккордеон FAQ
+- [x] `FAQSection` - секция FAQ с header
+- [x] `ContextualFAQ` - предустановленные FAQ по контекстам (analysis, business, gaps, tasks)
+- [x] `InlineHelp` - inline подсказки с примерами
+- [x] `ComparisonCard` - карточка сравнения анализов
+- [x] `BeforeAfter` - визуальное сравнение "было/стало"
+- [x] `ImprovementSummary` - сводка улучшений
+- [x] `HistoryTimeline` - таймлайн истории анализов
+- [x] `MiniComparison` - компактное сравнение значений
+- [x] `createComparison` - утилита создания сравнения
+- [x] `PDFExportButton` - кнопка экспорта PDF
+- [x] `PDFExportModal` - модалка настройки экспорта
+- [x] `PDFPreview` - превью PDF отчёта
+- [x] `ExportFormatSelector` - выбор формата экспорта (PDF/JSON/MD)
+- [x] `QuickExportActions` - быстрые кнопки экспорта
+- [x] `ExportSuccess` - сообщение об успешном экспорте
+- [x] `generatePDFFilename`, `generateMarkdownReport` - утилиты генерации
+
+**Файлы:**
+- `src/components/ui/Tooltip.tsx` - базовые tooltips
+- `src/components/ui/TermTooltip.tsx` - термины с пояснениями
+- `src/components/ui/Icon.tsx` - иконки и бейджи
+- `src/components/ui/ProgressBar.tsx` - прогресс индикаторы
+- `src/components/ui/Wizard.tsx` - пошаговый мастер
+- `src/components/ui/Checklist.tsx` - интерактивный чеклист
+- `src/components/ui/ActionSteps.tsx` - шаги с пояснениями
+- `src/components/ui/FAQ.tsx` - FAQ компоненты
+- `src/components/ui/Comparison.tsx` - Before/After сравнения
+- `src/components/ui/PDFExport.tsx` - экспорт отчётов
+- `src/components/ui/index.ts` - barrel exports
+
+**Тесты: 212 тестов**
+- `src/__tests__/components/ui/Tooltip.test.tsx` - 25 тестов
+- `src/__tests__/components/ui/Icon.test.tsx` - 25 тестов
+- `src/__tests__/components/ui/ProgressBar.test.tsx` - 41 тест
+- `src/__tests__/components/ui/Wizard.test.tsx` - 26 тестов
+- `src/__tests__/components/ui/Checklist.test.tsx` - 24 теста
+- `src/__tests__/components/ui/ActionSteps.test.tsx` - 21 тест
+- `src/__tests__/components/ui/FAQ.test.tsx` - 30 тестов
+- `src/__tests__/components/ui/Comparison.test.tsx` - 41 тест
+- `src/__tests__/components/ui/PDFExport.test.tsx` - 50 тестов
+
+**CSS:** ~1200 строк в `src/app/globals.css`
+
 ### Чеклист Фазы 6
 
 ```
@@ -581,6 +659,8 @@
 [x] Weighted gap scoring v2 с category weights и stage modifiers
 [x] Resource-aware task generation с solo dev multiplier
 [x] Sprint capacity estimation
+[x] 30+ UX компонентов для нетехнической аудитории
+[x] 212 тестов для UI компонентов
 [ ] Real website parsing (Cheerio) - будет в след. итерации
 ```
 
