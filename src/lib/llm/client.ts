@@ -136,8 +136,8 @@ const PartialAnalysisSchema = z.object({
 });
 
 export const LLMAnalysisResponseSchema = z.object({
-  needs_clarification: z.boolean(),
-  questions: z.array(QuestionSchema).optional(),
+  needs_clarification: z.boolean().default(false),
+  questions: z.array(QuestionSchema).optional().default([]),
   partial_analysis: PartialAnalysisSchema.optional(),
   analysis: AnalysisSchema.optional()
 });
