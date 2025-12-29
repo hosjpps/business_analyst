@@ -969,15 +969,15 @@ function Home() {
                   }, null, 2)}
                 </pre>
                 {/* Show raw LLM response if available */}
-                {(codeResult as { _debug?: { llm_response_length: number; llm_response_preview: string; llm_response_end: string } })._debug && (
+                {(codeResult as unknown as { _debug?: { llm_response_length: number; llm_response_preview: string; llm_response_end: string } })._debug && (
                   <>
-                    <p style={{ marginTop: '12px', fontWeight: 'bold' }}>Сырой ответ LLM ({(codeResult as { _debug: { llm_response_length: number } })._debug.llm_response_length} символов):</p>
+                    <p style={{ marginTop: '12px', fontWeight: 'bold' }}>Сырой ответ LLM ({(codeResult as unknown as { _debug: { llm_response_length: number } })._debug.llm_response_length} символов):</p>
                     <pre style={{ marginTop: '4px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto', maxHeight: '300px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                      {(codeResult as { _debug: { llm_response_preview: string } })._debug.llm_response_preview}
+                      {(codeResult as unknown as { _debug: { llm_response_preview: string } })._debug.llm_response_preview}
                     </pre>
                     <p style={{ marginTop: '8px', fontWeight: 'bold' }}>Конец ответа:</p>
                     <pre style={{ marginTop: '4px', padding: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'auto', maxHeight: '200px', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                      {(codeResult as { _debug: { llm_response_end: string } })._debug.llm_response_end}
+                      {(codeResult as unknown as { _debug: { llm_response_end: string } })._debug.llm_response_end}
                     </pre>
                   </>
                 )}
