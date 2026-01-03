@@ -28,6 +28,10 @@ export interface ExportOptions {
 
 function getVerdictLabel(verdict: string): string {
   const labels: Record<string, string> = {
+    on_track: '✅ Всё хорошо (ON TRACK)',
+    iterate: '🔄 Требуются улучшения (ITERATE)',
+    pivot: '⚠️ Серьёзные изменения нужны (PIVOT)',
+    // Support legacy uppercase
     ON_TRACK: '✅ Всё хорошо (ON TRACK)',
     ITERATE: '🔄 Требуются улучшения (ITERATE)',
     PIVOT: '⚠️ Серьёзные изменения нужны (PIVOT)',

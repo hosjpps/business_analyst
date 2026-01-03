@@ -6,8 +6,9 @@ import { TopNav } from '@/components/layout/TopNav';
 // Mocks
 // ===========================================
 
-const mockPathname = vi.fn(() => '/');
-const mockUser = vi.fn(() => null);
+const mockPathname = vi.fn().mockReturnValue('/');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockUser = vi.fn().mockReturnValue(null) as any;
 
 vi.mock('next/navigation', () => ({
   usePathname: () => mockPathname(),

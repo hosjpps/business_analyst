@@ -31,7 +31,7 @@ const mockCanvas: BusinessCanvas = {
 const mockBusinessResult: BusinessAnalyzeResponse = {
   success: true,
   canvas: mockCanvas,
-  business_stage: 'mvp',
+  business_stage: 'building',
 };
 
 const mockCodeResult: AnalyzeResponse = {
@@ -64,15 +64,15 @@ const mockCodeResult: AnalyzeResponse = {
     files_analyzed: 25,
     total_lines: 5000,
     tokens_used: 1500,
-    model: 'claude-opus-4',
+    model_used: 'claude-opus-4',
+    analysis_duration_ms: 2500,
   },
-  cached: false,
 };
 
 const mockGapResult: GapAnalyzeResponse = {
   success: true,
   alignment_score: 65,
-  verdict: 'ITERATE',
+  verdict: 'iterate',
   verdict_explanation: 'Требуются улучшения',
   gaps: [
     {
@@ -98,11 +98,12 @@ const mockGapResult: GapAnalyzeResponse = {
   ],
   tasks: [
     {
-      id: 'task-1',
       title: 'Интегрировать Stripe',
-      description: 'Настроить оплату',
+      description: 'Настроить оплату подробно с инструкциями',
       priority: 'high',
       category: 'business',
+      estimated_minutes: 240,
+      depends_on: null,
     },
   ],
   strengths: ['Хорошая архитектура', 'Современный стек'],
@@ -110,12 +111,17 @@ const mockGapResult: GapAnalyzeResponse = {
 
 const mockCompetitorResult: CompetitorAnalyzeResponse = {
   success: true,
-  competitors_analyzed: 2,
   your_advantages: ['Лучший UX', 'Быстрее конкурентов'],
   your_gaps: ['Меньше функций', 'Нет мобильного приложения'],
   market_position: 'challenger',
   market_position_explanation: 'Вы претендент на лидерство',
   recommendations: ['Добавить мобильное приложение', 'Расширить функционал'],
+  metadata: {
+    competitors_analyzed: 2,
+    websites_parsed: 2,
+    tokens_used: 1000,
+    analysis_duration_ms: 3000,
+  },
 };
 
 // ===========================================

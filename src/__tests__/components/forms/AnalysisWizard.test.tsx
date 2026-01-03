@@ -352,7 +352,7 @@ describe('AnalysisWizard', () => {
             repoUrl: 'https://github.com/user/repo',
             uploadedFiles: [],
             description: 'Test description',
-            competitors: [{ url: 'https://competitor.com', notes: 'Test' }],
+            competitors: [{ name: 'Competitor', url: 'https://competitor.com', notes: 'Test' }],
           }}
         />
       );
