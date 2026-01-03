@@ -180,14 +180,13 @@ export function TopNav() {
         }
 
         .nav-container {
-          max-width: 1200px;
+          max-width: 960px;
           margin: 0 auto;
           padding: 0 24px;
           height: 56px;
           display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 48px;
+          justify-content: space-between;
         }
 
         /* Logo */
@@ -220,7 +219,7 @@ export function TopNav() {
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 48px;
+          gap: 32px;
         }
 
         .nav-link {
