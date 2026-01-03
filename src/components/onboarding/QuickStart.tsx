@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 // ===========================================
 // Types
@@ -51,9 +52,11 @@ const FEATURES: Feature[] = [
 
 export function QuickStart({ onStart, onLogin, storageKey = 'quickstart-dismissed' }: QuickStartProps) {
   const [isDismissed, setIsDismissed] = useState(true); // Start hidden to prevent flash
+  const [mounted, setMounted] = useState(false);
 
   // Check localStorage on mount
   useEffect(() => {
+    setMounted(true);
     const dismissed = localStorage.getItem(storageKey);
     setIsDismissed(dismissed === 'true');
   }, [storageKey]);
@@ -69,12 +72,13 @@ export function QuickStart({ onStart, onLogin, storageKey = 'quickstart-dismisse
     setIsDismissed(true);
   };
 
-  // Don't render if dismissed
-  if (isDismissed) {
+  // Don't render if dismissed or not mounted (SSR)
+  if (isDismissed || !mounted) {
     return null;
   }
 
-  return (
+  // Use portal to render at document.body level to avoid z-index stacking context issues
+  return createPortal(
     <div className="quickstart-overlay">
       <div className="quickstart-card">
         {/* Close button */}
@@ -388,7 +392,8 @@ export function QuickStart({ onStart, onLogin, storageKey = 'quickstart-dismisse
           }
         `}</style>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

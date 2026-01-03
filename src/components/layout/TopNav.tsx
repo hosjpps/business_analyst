@@ -220,37 +220,31 @@ export function TopNav() {
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 32px;
         }
 
         .nav-link {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 8px 16px;
-          font-size: 15px;
-          color: var(--text-muted);
+          padding: 10px 20px;
+          font-size: 16px;
+          color: #e6edf3;
           text-decoration: none;
           border-radius: 6px;
-          transition: color 0.2s ease;
+          transition: opacity 0.2s ease;
         }
 
         .nav-link:hover {
-          color: var(--text-primary);
+          opacity: 0.8;
         }
 
         .nav-link.active {
-          color: var(--text-primary);
-          font-weight: 500;
+          font-weight: 600;
         }
 
         .nav-icon {
           font-size: 14px;
-          opacity: 0.7;
-        }
-
-        .nav-link.active .nav-icon {
-          opacity: 1;
         }
 
         /* User Menu */

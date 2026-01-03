@@ -176,9 +176,162 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="dashboard-loading">
-        <div className="loading-spinner"></div>
-        <p>Загрузка...</p>
+      <div className="dashboard">
+        {/* Header Skeleton */}
+        <header className="dashboard-header">
+          <div className="header-container">
+            <div className="header-left">
+              <div className="skeleton skeleton-title" />
+              <div className="skeleton skeleton-email" />
+            </div>
+            <div className="header-right">
+              <div className="skeleton skeleton-btn" />
+              <div className="skeleton skeleton-btn-sm" />
+            </div>
+          </div>
+        </header>
+
+        {/* Content Skeleton */}
+        <div className="page-container">
+          <main className="dashboard-content">
+            <div className="projects-list">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="project-card skeleton-card">
+                  <div className="skeleton skeleton-card-title" />
+                  <div className="skeleton skeleton-card-desc" />
+                  <div className="skeleton skeleton-card-desc-short" />
+                  <div className="project-footer">
+                    <div className="skeleton skeleton-date" />
+                    <div className="skeleton skeleton-btn-sm" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </main>
+        </div>
+
+        <style jsx>{`
+          .skeleton {
+            background: linear-gradient(90deg, #21262d 25%, #30363d 50%, #21262d 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+          }
+
+          @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+          }
+
+          .skeleton-title {
+            width: 150px;
+            height: 28px;
+          }
+
+          .skeleton-email {
+            width: 120px;
+            height: 16px;
+          }
+
+          .skeleton-btn {
+            width: 140px;
+            height: 36px;
+          }
+
+          .skeleton-btn-sm {
+            width: 80px;
+            height: 36px;
+          }
+
+          .skeleton-card {
+            min-height: 180px;
+          }
+
+          .skeleton-card-title {
+            width: 60%;
+            height: 24px;
+            margin-bottom: 16px;
+          }
+
+          .skeleton-card-desc {
+            width: 90%;
+            height: 16px;
+            margin-bottom: 8px;
+          }
+
+          .skeleton-card-desc-short {
+            width: 50%;
+            height: 16px;
+            margin-bottom: 24px;
+          }
+
+          .skeleton-date {
+            width: 100px;
+            height: 14px;
+          }
+
+          .dashboard {
+            min-height: 100vh;
+            background: #0d1117;
+            color: #e6edf3;
+          }
+
+          .page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px;
+          }
+
+          .dashboard-header {
+            border-bottom: 1px solid #30363d;
+            background: #161b22;
+          }
+
+          .header-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1rem 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+          }
+
+          .header-right {
+            display: flex;
+            gap: 0.75rem;
+          }
+
+          .dashboard-content {
+            padding: 1.5rem 0;
+          }
+
+          .projects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+          }
+
+          .project-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.25rem;
+          }
+
+          .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #30363d;
+          }
+        `}</style>
       </div>
     );
   }
