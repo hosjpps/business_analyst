@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Checklist } from '@/components/ui/Checklist';
 import { TermTooltip, AutoTooltipText } from '@/components/ui/TermTooltip';
-import { ProgressTracker } from '@/components/results/ProgressTracker';
+import { ProgressTrackerAdvanced } from '@/components/results/ProgressTrackerAdvanced';
 import type { Tables } from '@/types/database';
 import type { ChecklistItem, TooltipTerm } from '@/types/ux';
 
@@ -514,7 +514,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
           {/* Progress Tab Content */}
           {activeTab === 'progress' && project ? (
-            <ProgressTracker
+            <ProgressTrackerAdvanced
               analyses={project.analyses.map(a => ({
                 id: a.id,
                 type: a.type,
