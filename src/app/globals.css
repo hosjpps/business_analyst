@@ -79,6 +79,8 @@ body {
 .top-nav .nav-logo:active {
   color: #ffffff !important;
   text-decoration: none !important;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .top-nav .user-menu,
@@ -88,6 +90,8 @@ body {
 .top-nav .user-menu:active {
   color: #ffffff !important;
   text-decoration: none !important;
+  font-size: 17px;
+  font-weight: 500;
 }
 
 .container {

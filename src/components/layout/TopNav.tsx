@@ -186,8 +186,8 @@ export function TopNav() {
           height: 56px;
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          gap: 24px;
+          justify-content: center;
+          gap: 48px;
         }
 
         /* Logo */
@@ -198,7 +198,7 @@ export function TopNav() {
           text-decoration: none;
           color: var(--text-primary);
           font-weight: 600;
-          font-size: 18px;
+          font-size: 17px;
           transition: opacity 0.2s ease;
         }
 
@@ -207,7 +207,7 @@ export function TopNav() {
         }
 
         .logo-icon {
-          font-size: 22px;
+          font-size: 20px;
           color: var(--accent-green);
         }
 
@@ -220,7 +220,7 @@ export function TopNav() {
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 48px;
         }
 
         .nav-link {
