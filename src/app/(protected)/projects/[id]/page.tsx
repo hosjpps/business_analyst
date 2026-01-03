@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Checklist } from '@/components/ui/Checklist';
 import { TermTooltip, AutoTooltipText } from '@/components/ui/TermTooltip';
+import { ProgressTracker } from '@/components/results/ProgressTracker';
 import type { Tables } from '@/types/database';
 import type { ChecklistItem, TooltipTerm } from '@/types/ux';
 
@@ -19,7 +20,7 @@ type ProjectWithRelations = Tables<'projects'> & {
 };
 
 // Типы анализов для табов
-type AnalysisTabType = 'all' | 'code' | 'business' | 'full' | 'competitor';
+type AnalysisTabType = 'all' | 'code' | 'business' | 'full' | 'competitor' | 'progress';
 
 // Определения терминов для нетехнических пользователей
 const TERM_DEFINITIONS: Record<string, TooltipTerm> = {
@@ -75,9 +76,15 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
   // Подсчёт анализов по типам
   const analysisCounts = useMemo(() => {
-    if (!project?.analyses) return { all: 0, code: 0, business: 0, full: 0, competitor: 0 };
+    if (!project?.analyses) return { all: 0, code: 0, business: 0, full: 0, competitor: 0, progress: 0 };
 
-    const counts = { all: project.analyses.length, code: 0, business: 0, full: 0, competitor: 0 };
+    // Count analyses with alignment_score for progress tracking
+    const progressCount = project.analyses.filter(a => {
+      const result = a.result as { alignment_score?: number; analysis?: { alignment_score?: number } };
+      return result?.alignment_score !== undefined || result?.analysis?.alignment_score !== undefined;
+    }).length;
+
+    const counts = { all: project.analyses.length, code: 0, business: 0, full: 0, competitor: 0, progress: progressCount };
     project.analyses.forEach(a => {
       if (a.type === 'code') counts.code++;
       else if (a.type === 'business') counts.business++;
@@ -374,6 +381,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     { key: 'business', label: 'Бизнес', icon: '📊', description: 'Анализ бизнес-модели' },
     { key: 'full', label: 'Полный', icon: '🔬', description: 'Код + Бизнес + Разрывы' },
     { key: 'competitor', label: 'Конкуренты', icon: '🎯', description: 'Сравнение с конкурентами' },
+    { key: 'progress', label: 'Прогресс', icon: '📈', description: 'График улучшений проекта' },
   ];
 
   return (
@@ -504,8 +512,19 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
             {analysisTabs.find(t => t.key === activeTab)?.description}
           </p>
 
-          {/* Filtered Analyses List */}
-          {filteredAnalyses.length > 0 ? (
+          {/* Progress Tab Content */}
+          {activeTab === 'progress' && project ? (
+            <ProgressTracker
+              analyses={project.analyses.map(a => ({
+                id: a.id,
+                type: a.type,
+                result: a.result as Record<string, unknown>,
+                created_at: a.created_at,
+              }))}
+              projectName={project.name}
+            />
+          ) : activeTab !== 'progress' && /* Filtered Analyses List */
+          filteredAnalyses.length > 0 ? (
             <div className="analyses-list">
               {filteredAnalyses.map(analysis => {
               const badge = getAnalysisTypeBadge(analysis.type);

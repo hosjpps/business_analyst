@@ -52,7 +52,9 @@
       "WebFetch(domain:www.npmjs.com)",
       "WebFetch(domain:github.com)",
       "mcp__playwright__browser_evaluate",
-      "mcp__playwright__browser_select_option"
+      "mcp__playwright__browser_select_option",
+      "Bash(ls:*)",
+      "Bash(grep:*)"
     ]
   }
 }
