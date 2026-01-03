@@ -20,7 +20,7 @@ All planned sprints (S0-S4) have been completed:
 - Sprint 4: AI Quality ✅
 
 ### Known Issues
-- TopNav component created but not integrated into layout
+- None! All components integrated.
 
 ---
 
@@ -259,7 +259,7 @@ All planned sprints (S0-S4) have been completed:
 | S2-01 | Wizard форма | `src/components/forms/AnalysisWizard.tsx` | ✅ Done |
 | S2-02 | Редизайн Gap Cards | `src/components/results/GapsView.tsx` | ✅ Done |
 | S2-03 | Onboarding QuickStart | `src/components/onboarding/QuickStart.tsx` | ✅ Done |
-| S2-04 | TopNav | `src/components/layout/TopNav.tsx` | ⚠️ Created (not integrated) |
+| S2-04 | TopNav | `src/components/layout/TopNav.tsx` | ✅ Done |
 
 **New Files:**
 - `src/components/forms/AnalysisWizard.tsx` - Step-by-step wizard for Full Analysis

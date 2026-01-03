@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { TopNav } from '@/components/layout/TopNav';
 
 export const metadata: Metadata = {
-  title: 'GitHub Repository Analyzer',
-  description: 'Анализ GitHub репозиториев и генерация персонализированных задач',
+  title: 'Business Analyst - Анализ бизнеса и кода',
+  description: 'Анализ GitHub репозиториев, бизнес-модели и генерация персонализированных задач',
 };
 
 export default function RootLayout({
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <TopNav />
+        <main>{children}</main>
+      </body>
     </html>
   );
 }
