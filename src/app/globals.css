@@ -57,6 +57,39 @@ body {
   font-size: 14px;
 }
 
+/* =============================================
+   TopNav Global Styles (override browser defaults)
+   ============================================= */
+
+.top-nav .nav-link,
+.top-nav .nav-link:link,
+.top-nav .nav-link:visited,
+.top-nav .nav-link:hover,
+.top-nav .nav-link:active {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.top-nav .nav-logo,
+.top-nav .nav-logo:link,
+.top-nav .nav-logo:visited,
+.top-nav .nav-logo:hover,
+.top-nav .nav-logo:active {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.top-nav .user-menu,
+.top-nav .user-menu:link,
+.top-nav .user-menu:visited,
+.top-nav .user-menu:hover,
+.top-nav .user-menu:active {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
 .container {
   max-width: 960px;
   margin: 0 auto;
