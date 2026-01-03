@@ -76,23 +76,21 @@ export function TopNav() {
           <span className="logo-text">Business Analyst</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="nav-links desktop-only">
-          {NAV_ITEMS.map((item) => {
-            if (item.requiresAuth && !user) return null;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-link ${isActive ? 'active' : ''}`}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Desktop Navigation - each item separately for equal spacing */}
+        {NAV_ITEMS.map((item) => {
+          if (item.requiresAuth && !user) return null;
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`nav-link desktop-only ${isActive ? 'active' : ''}`}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
+            </Link>
+          );
+        })}
 
         {/* User Menu / Auth Buttons */}
         <div className="nav-user desktop-only">
@@ -216,12 +214,6 @@ export function TopNav() {
         }
 
         /* Desktop Navigation */
-        .nav-links {
-          display: flex;
-          align-items: center;
-          gap: 32px;
-        }
-
         .nav-link {
           display: flex;
           align-items: center;
