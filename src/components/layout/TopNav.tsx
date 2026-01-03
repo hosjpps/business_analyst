@@ -25,8 +25,8 @@ interface User {
 // ===========================================
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Анализ', icon: '◉' },
-  { href: '/dashboard', label: 'Проекты', icon: '▤', requiresAuth: true },
+  { href: '/', label: 'Анализ', icon: '🔍' },
+  { href: '/dashboard', label: 'Проекты', icon: '📁', requiresAuth: true },
 ];
 
 // ===========================================
@@ -227,16 +227,23 @@ export function TopNav() {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 10px 20px;
-          font-size: 16px;
-          color: #e6edf3;
-          text-decoration: none;
+          padding: 10px 16px;
+          font-size: 17px;
+          font-weight: 500;
+          color: #ffffff !important;
+          text-decoration: none !important;
           border-radius: 6px;
           transition: opacity 0.2s ease;
         }
 
+        .nav-link:visited,
+        .nav-link:link {
+          color: #ffffff !important;
+          text-decoration: none !important;
+        }
+
         .nav-link:hover {
-          opacity: 0.8;
+          opacity: 0.75;
         }
 
         .nav-link.active {
@@ -244,7 +251,7 @@ export function TopNav() {
         }
 
         .nav-icon {
-          font-size: 14px;
+          font-size: 16px;
         }
 
         /* User Menu */
@@ -274,13 +281,20 @@ export function TopNav() {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 6px 12px;
-          font-size: 14px;
-          color: var(--text-primary);
-          text-decoration: none;
+          padding: 6px 14px;
+          font-size: 15px;
+          font-weight: 500;
+          color: #ffffff !important;
+          text-decoration: none !important;
           background: var(--bg-secondary);
           border-radius: 20px;
           transition: background 0.2s ease;
+        }
+
+        .user-menu:visited,
+        .user-menu:link {
+          color: #ffffff !important;
+          text-decoration: none !important;
         }
 
         .user-menu:hover {
