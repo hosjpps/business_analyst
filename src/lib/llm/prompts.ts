@@ -225,3 +225,166 @@ ${message}
 
 Отвечай конкретно и по делу. Если нужны примеры кода — давай их.`;
 }
+
+// ===========================================
+// Full Analysis Chat Prompt
+// ===========================================
+
+interface FullAnalysisContext {
+  codeAnalysis?: {
+    project_summary: string;
+    detected_stage: string;
+    tech_stack: string[];
+    strengths: Array<{ area: string; detail: string }>;
+    issues: Array<{ severity: string; area: string; detail: string; file_path?: string }>;
+    tasks: Array<{ title: string; description: string; priority: string; category: string }>;
+    next_milestone: string;
+  };
+  businessCanvas?: {
+    value_proposition: string;
+    customer_segments: string[];
+    channels: string[];
+    revenue_streams: string[];
+    key_resources: string[];
+    key_activities: string[];
+    key_partners: string[];
+    customer_relationships?: string;
+    cost_structure: string[];
+  };
+  gapAnalysis?: {
+    gaps?: Array<{
+      category: string;
+      type: string;
+      current_state: string;
+      recommendation: string;
+      impact?: string;
+    }>;
+    alignment_score?: number;
+    verdict?: string;
+    tasks?: Array<{ title: string; description: string; priority: string; category: string }>;
+  };
+  competitorAnalysis?: {
+    your_advantages?: string[];
+    your_gaps?: string[];
+    market_position?: string;
+    recommendations?: string[];
+  };
+}
+
+export function buildFullAnalysisChatPrompt(
+  message: string,
+  context: FullAnalysisContext
+): string {
+  const sections: string[] = [];
+
+  // Business Canvas section
+  if (context.businessCanvas) {
+    const canvas = context.businessCanvas;
+    sections.push(`## Бизнес-модель (Business Canvas)
+
+**Ценностное предложение:** ${canvas.value_proposition}
+**Сегменты клиентов:** ${canvas.customer_segments.join(', ')}
+**Каналы:** ${canvas.channels.join(', ')}
+**Потоки дохода:** ${canvas.revenue_streams.join(', ')}
+**Ключевые ресурсы:** ${canvas.key_resources.join(', ')}
+**Ключевые активности:** ${canvas.key_activities.join(', ')}
+**Ключевые партнёры:** ${canvas.key_partners.join(', ')}
+${canvas.customer_relationships ? `**Отношения с клиентами:** ${canvas.customer_relationships}` : ''}
+**Структура затрат:** ${canvas.cost_structure.join(', ')}`);
+  }
+
+  // Code Analysis section
+  if (context.codeAnalysis) {
+    const code = context.codeAnalysis;
+    sections.push(`## Анализ кода
+
+**Описание проекта:** ${code.project_summary}
+**Стадия:** ${code.detected_stage}
+**Технологии:** ${code.tech_stack.join(', ')}
+**Следующая цель:** ${code.next_milestone}
+
+### Сильные стороны:
+${code.strengths.map(s => `- **${s.area}:** ${s.detail}`).join('\n')}
+
+### Проблемы:
+${code.issues.map(i => `- [${i.severity.toUpperCase()}] **${i.area}:** ${i.detail}${i.file_path ? ` (файл: ${i.file_path})` : ''}`).join('\n')}`);
+  }
+
+  // Gap Analysis section
+  if (context.gapAnalysis) {
+    const gaps = context.gapAnalysis;
+    const verdictText = gaps.verdict === 'ON_TRACK' ? '✅ Всё хорошо' :
+                       gaps.verdict === 'ITERATE' ? '🔄 Требуются улучшения' :
+                       gaps.verdict === 'PIVOT' ? '⚠️ Серьёзные изменения нужны' : gaps.verdict;
+
+    sections.push(`## Анализ разрывов (Gap Detection)
+
+**Alignment Score:** ${gaps.alignment_score ?? 'N/A'}/100
+**Вердикт:** ${verdictText}
+
+### Найденные разрывы:
+${gaps.gaps?.map(g => {
+  const severityEmoji = g.type === 'critical' ? '🔴' : g.type === 'warning' ? '🟡' : '🔵';
+  return `- ${severityEmoji} **${g.category}:** ${g.current_state}
+  → Рекомендация: ${g.recommendation}`;
+}).join('\n') || 'Разрывов не найдено'}`);
+  }
+
+  // Competitor Analysis section
+  if (context.competitorAnalysis) {
+    const comp = context.competitorAnalysis;
+    sections.push(`## Анализ конкурентов
+
+**Позиция на рынке:** ${comp.market_position || 'Не определена'}
+
+### Ваши преимущества:
+${comp.your_advantages?.map(a => `- ${a}`).join('\n') || 'Не определены'}
+
+### Слабые стороны:
+${comp.your_gaps?.map(g => `- ${g}`).join('\n') || 'Не определены'}
+
+### Рекомендации:
+${comp.recommendations?.map(r => `- ${r}`).join('\n') || 'Нет рекомендаций'}`);
+  }
+
+  // All tasks (from code analysis and gap analysis)
+  const allTasks = [
+    ...(context.codeAnalysis?.tasks || []),
+    ...(context.gapAnalysis?.tasks || [])
+  ];
+
+  if (allTasks.length > 0) {
+    sections.push(`## Задачи на неделю
+
+${allTasks.map((t, i) => `${i + 1}. **${t.title}** [${t.priority}]
+   ${t.description}`).join('\n\n')}`);
+  }
+
+  return `Ты — эксперт-консультант по стартапам и продуктам. У тебя есть полный контекст анализа проекта: бизнес-модель, технический анализ, найденные разрывы и информация о конкурентах.
+
+${sections.join('\n\n---\n\n')}
+
+---
+
+## Вопрос пользователя
+${message}
+
+---
+
+## Инструкции
+
+Отвечай с учётом ПОЛНОГО контекста проекта:
+- Если вопрос о бизнесе — используй Business Canvas
+- Если вопрос о коде — используй технический анализ
+- Если вопрос о приоритетах — учитывай Gap Detection и Alignment Score
+- Если вопрос о позиционировании — используй анализ конкурентов
+
+**Правила ответа:**
+1. Будь конкретным — давай actionable советы
+2. Связывай ответ с контекстом — "учитывая ваш Alignment Score 65..."
+3. Если просят детали задачи — давай пошаговую инструкцию
+4. Если спрашивают "почему" — объясняй с привязкой к бизнес-целям
+5. Предлагай альтернативы, если это уместно
+
+Отвечай на русском языке, используй простые формулировки.`;
+}

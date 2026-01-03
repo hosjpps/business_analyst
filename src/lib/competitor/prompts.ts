@@ -72,7 +72,18 @@ Respond with valid JSON only:
       "pricing_model": "Freemium / Subscription / One-time",
       "strengths": ["strength1", "strength2"],
       "weaknesses": ["weakness1", "weakness2"],
-      "differentiators": ["what makes them unique"]
+      "differentiators": ["what makes them unique"],
+      "messaging": {
+        "pain_points": ["Pain point they address 1", "Pain point 2"],
+        "value_props": ["How they communicate value 1", "Value prop 2"],
+        "emotional_triggers": ["Emotional appeal 1", "Appeal 2"]
+      },
+      "patterns": {
+        "pricing_type": "freemium|subscription|one-time|usage-based|custom",
+        "social_proof": ["Used by 10,000+ teams", "Customer logo mentions"],
+        "unique_angles": ["What makes their positioning unique"],
+        "cta_style": "Their call-to-action approach"
+      }
     }
   ],
   "comparison_matrix": [

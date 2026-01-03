@@ -62,9 +62,9 @@ export async function generateTasks(
     const { system, user } = buildFullTaskGenerationPrompt(topGaps, canvas, codeAnalysis);
     const fullPrompt = buildPrompt(system, user);
 
-    // Send to LLM with retry
+    // Send to LLM with retry (task generation is part of gap analysis)
     const response = await withLLMRetry(async () => {
-      return sendToLLM(fullPrompt);
+      return sendToLLM(fullPrompt, { taskType: 'gapDetection' });
     });
 
     // Parse JSON from response

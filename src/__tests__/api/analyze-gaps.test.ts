@@ -421,6 +421,93 @@ describe('Gap Detection - Task Generation', () => {
 // Test Suite: Full Gap Analysis Result
 // ===========================================
 
+// ===========================================
+// Test Suite: BUG-002 Fallback Behavior
+// ===========================================
+
+describe('Gap Detection - Fallback on Invalid LLM Response (BUG-002)', () => {
+  it('should calculate fallback score from gap types', () => {
+    const calculateFallbackScore = (gaps: Array<{ type: string }>): number => {
+      let score = 100;
+      for (const gap of gaps) {
+        if (gap.type === 'critical') score -= 20;
+        else if (gap.type === 'warning') score -= 10;
+        else score -= 5;
+      }
+      return Math.max(0, score);
+    };
+
+    // 2 critical + 1 warning = 40 + 10 = 50 penalty
+    expect(calculateFallbackScore([
+      { type: 'critical' },
+      { type: 'critical' },
+      { type: 'warning' }
+    ])).toBe(50);
+
+    // 5 critical = 100 penalty, capped at 0
+    expect(calculateFallbackScore([
+      { type: 'critical' },
+      { type: 'critical' },
+      { type: 'critical' },
+      { type: 'critical' },
+      { type: 'critical' }
+    ])).toBe(0);
+  });
+
+  it('should determine fallback verdict from score', () => {
+    const determineFallbackVerdict = (score: number): 'on_track' | 'iterate' | 'pivot' => {
+      if (score >= 70) return 'on_track';
+      if (score >= 40) return 'iterate';
+      return 'pivot';
+    };
+
+    expect(determineFallbackVerdict(80)).toBe('on_track');
+    expect(determineFallbackVerdict(55)).toBe('iterate');
+    expect(determineFallbackVerdict(20)).toBe('pivot');
+  });
+
+  it('should create mismatch gap when no gaps detected', () => {
+    const createMismatchGap = (valueProposition: string, stage: string) => ({
+      id: 'gap-mismatch',
+      type: 'critical' as const,
+      category: 'ux' as const,
+      business_goal: valueProposition || 'Реализовать бизнес-цели',
+      current_state: `Текущий код (${stage}) не соответствует описанному бизнесу`,
+      recommendation: 'Необходимо разработать код, соответствующий бизнес-модели, или пересмотреть бизнес-цели',
+      effort: 'high' as const,
+      impact: 'high' as const,
+    });
+
+    const gap = createMismatchGap('Фитнес-приложение', 'documentation');
+
+    expect(gap.id).toBe('gap-mismatch');
+    expect(gap.type).toBe('critical');
+    expect(gap.business_goal).toBe('Фитнес-приложение');
+    expect(gap.current_state).toContain('documentation');
+  });
+
+  it('should provide valid fallback structure', () => {
+    const fallbackResult = {
+      gaps: [{
+        id: 'gap-1',
+        type: 'critical',
+        category: 'ux',
+        business_goal: 'Some business goal that is long enough',
+        current_state: 'Current state description that is long enough',
+        recommendation: 'Recommendation that is detailed and long enough',
+        effort: 'high',
+        impact: 'high'
+      }],
+      alignment_score: 80,
+      verdict: 'on_track',
+      verdict_explanation: 'Анализ выполнен в упрощённом режиме. Рекомендуется детальная проверка.'
+    };
+
+    const result = GapAnalysisResultSchema.safeParse(fallbackResult);
+    expect(result.success).toBe(true);
+  });
+});
+
 describe('Gap Detection - Full Analysis Result', () => {
   it('should validate complete gap analysis result', () => {
     const validResult = {

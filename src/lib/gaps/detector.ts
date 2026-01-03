@@ -5,6 +5,7 @@ import { LLMGapDetectionResponseSchema } from '@/types/gaps';
 import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
 import { withLLMRetry } from '@/lib/utils/retry';
 import { buildFullGapAnalysisPrompt } from './prompts';
+import { validateGapResult } from './validator';
 
 // ===========================================
 // Gap Detection Result
@@ -40,8 +41,9 @@ export async function detectGaps(
     const fullPrompt = buildPrompt(system, user);
 
     // Send to LLM with retry (retry is already handled inside sendToLLM)
+    // Use Opus for thorough gap analysis
     const response = await withLLMRetry(async () => {
-      return sendToLLM(fullPrompt);
+      return sendToLLM(fullPrompt, { taskType: 'gapDetection' });
     });
 
     // Parse JSON from response
@@ -52,15 +54,64 @@ export async function detectGaps(
 
     if (!validation.success) {
       const errors = validation.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
-      console.error('Gap detection response validation failed:', errors);
+      console.warn('Gap detection response validation failed, using fallback:', errors);
+
+      // BUG-002 FIX: Create fallback response when LLM returns incomplete data
+      const fallbackGaps = analyzeGapsQuick(canvas, codeAnalysis);
+
+      // Add fundamental mismatch gap if no other gaps detected
+      if (fallbackGaps.length === 0) {
+        fallbackGaps.push({
+          id: 'gap-mismatch',
+          type: 'critical',
+          category: 'ux',
+          business_goal: canvas.value_proposition || 'Реализовать бизнес-цели',
+          current_state: `Текущий код (${codeAnalysis.detected_stage}) не соответствует описанному бизнесу`,
+          recommendation: 'Необходимо разработать код, соответствующий бизнес-модели, или пересмотреть бизнес-цели',
+          effort: 'high',
+          impact: 'high',
+        });
+      }
+
+      // Calculate fallback alignment score
+      let fallbackScore = 100;
+      for (const gap of fallbackGaps) {
+        if (gap.type === 'critical') fallbackScore -= 20;
+        else if (gap.type === 'warning') fallbackScore -= 10;
+        else fallbackScore -= 5;
+      }
+      fallbackScore = Math.max(0, fallbackScore);
+
+      // Determine verdict
+      let fallbackVerdict: 'on_track' | 'iterate' | 'pivot';
+      if (fallbackScore >= 70) fallbackVerdict = 'on_track';
+      else if (fallbackScore >= 40) fallbackVerdict = 'iterate';
+      else fallbackVerdict = 'pivot';
+
       return {
-        success: false,
-        error: `Response validation failed: ${errors}`,
+        success: true,
+        data: {
+          gaps: fallbackGaps,
+          alignment_score: fallbackScore,
+          verdict: fallbackVerdict,
+          verdict_explanation: `Анализ выполнен в упрощённом режиме из-за нестандартной комбинации бизнеса и кода. Обнаружено ${fallbackGaps.length} разрывов между бизнес-моделью и продуктом.`,
+          summary: `Упрощённый анализ: найдено ${fallbackGaps.length} разрывов. Рекомендуется детальная проверка соответствия кода бизнес-целям.`,
+          strengths: codeAnalysis.strengths.slice(0, 3).map(s => `${s.area}: ${s.detail}`),
+        },
+        tokens_used: response.tokens_used,
       };
     }
 
+    // Apply additional validation and sanitization
+    const validationResult = validateGapResult(validation.data);
+
+    // Log validation warnings for debugging
+    if (validationResult.warnings.length > 0) {
+      console.log('Gap validation warnings:', validationResult.warnings);
+    }
+
     // Enrich gap IDs
-    const gaps = validation.data.gaps.map((gap, index) => ({
+    const gaps = validationResult.sanitizedResult.gaps.map((gap, index) => ({
       ...gap,
       id: gap.id || `gap-${index + 1}`,
     }));
@@ -69,9 +120,13 @@ export async function detectGaps(
       success: true,
       data: {
         gaps,
-        alignment_score: validation.data.alignment_score,
-        verdict: validation.data.verdict,
-        verdict_explanation: validation.data.verdict_explanation,
+        alignment_score: validationResult.sanitizedResult.alignment_score,
+        verdict: validationResult.sanitizedResult.verdict,
+        verdict_explanation: validationResult.sanitizedResult.verdict_explanation,
+        // From skills analysis
+        summary: validationResult.sanitizedResult.summary,
+        strengths: validationResult.sanitizedResult.strengths,
+        market_insights: validationResult.sanitizedResult.market_insights,
       },
       tokens_used: response.tokens_used,
     };

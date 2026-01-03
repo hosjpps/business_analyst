@@ -75,6 +75,19 @@ export interface CompetitorProfile {
   strengths: string[];
   weaknesses: string[];
   differentiators: string[];
+
+  // NEW: From skills analysis (competitive-ads-extractor)
+  messaging?: {
+    pain_points: string[]; // What problems they address
+    value_props: string[]; // How they communicate value
+    emotional_triggers: string[]; // Emotional appeals they use
+  };
+  patterns?: {
+    pricing_type: 'freemium' | 'subscription' | 'one-time' | 'usage-based' | 'custom';
+    social_proof: string[]; // "Used by 10,000+ teams", logos, etc.
+    unique_angles: string[]; // What makes their positioning unique
+    cta_style: string; // Their call-to-action approach
+  };
 }
 
 export const CompetitorProfileSchema = z.object({
@@ -88,6 +101,23 @@ export const CompetitorProfileSchema = z.object({
   strengths: z.array(z.string()),
   weaknesses: z.array(z.string()),
   differentiators: z.array(z.string()),
+
+  // NEW: From skills analysis
+  messaging: z
+    .object({
+      pain_points: z.array(z.string()),
+      value_props: z.array(z.string()),
+      emotional_triggers: z.array(z.string()),
+    })
+    .optional(),
+  patterns: z
+    .object({
+      pricing_type: z.enum(['freemium', 'subscription', 'one-time', 'usage-based', 'custom']),
+      social_proof: z.array(z.string()),
+      unique_angles: z.array(z.string()),
+      cta_style: z.string(),
+    })
+    .optional(),
 });
 
 // ===========================================

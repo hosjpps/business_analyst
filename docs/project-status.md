@@ -1,9 +1,113 @@
 # Project Status
 
-## Current Phase: API Hardened, Ready for Deploy
+## Current Phase: All Sprints Complete ✅
 
-**Last Updated:** 2024-12-27
-**Version:** 0.3.4
+**Last Updated:** 2026-01-03
+**Version:** 0.7.0
+
+---
+
+## Recent Changes (v0.7.0)
+
+### Summary
+All planned sprints (S0-S4) have been completed:
+- **918 unit tests** passing
+- **Build successful**
+- Sprint 0: Critical Bugs ✅
+- Sprint 1: UX Polish ✅
+- Sprint 2: Form Experience ✅
+- Sprint 3: Advanced Features ✅
+- Sprint 4: AI Quality ✅
+
+### Known Issues
+- TopNav component created but not integrated into layout
+
+---
+
+## Previous Changes (v0.6.5)
+
+### S3-01: Google Trends Integration
+- Added `/api/trends` endpoint for fetching Google Trends data
+- Created `TrendsChart` component with SVG line charts
+- Auto-extracts keywords from Business Canvas
+- Shows trends in Business Analysis and Full Analysis modes
+- Features: geo selection, time range, related queries
+
+### S3-02: Enhanced Export (Markdown + JSON)
+- Created `src/lib/export/export-results.ts` with comprehensive export functions
+- Updated `ExportButtons` component with two modes: compact and full
+- Full mode shows options panel with section checkboxes
+- Exports include: Business Canvas, Code Analysis, Gap Detection, Competitors, Tasks
+- Integrated in all analysis mode results sections
+
+### S3-03: Full Analysis Chat
+- Extended `/api/chat/stream` to accept full analysis context (business, gaps, competitors)
+- Added `buildFullAnalysisChatPrompt` in `src/lib/llm/prompts.ts`
+- Updated `ChatSection` component with new props: businessCanvas, gapAnalysis, competitorAnalysis, mode
+- Chat now uses all context for comprehensive answers
+- Different title and placeholder for full mode: "💬 Консультант по проекту"
+- Answers reference specific context: Alignment Score, gaps, competitor analysis
+
+### BUG-003: QuickStart Onboarding Fix
+- Integrated `QuickStart` component into page.tsx
+- Shows welcome modal for new users (stored in localStorage)
+- "Начать анализ" button focuses on business description field
+- "Войти" link navigates to login page
+
+### S4-01: Claude Opus 4.5 Migration
+- Added `MODEL_CONFIG` in `src/lib/llm/client.ts` with task-based model selection
+- Opus 4.5 for deep analysis: fullAnalysis, gapDetection, businessCanvas
+- Sonnet 4 for fast operations: codeAnalysis, chat, clarification
+- Updated all API routes to use appropriate models:
+  - `canvas-builder.ts` → businessCanvas (Opus)
+  - `gaps/detector.ts` → gapDetection (Opus)
+  - `gaps/task-generator.ts` → gapDetection (Opus)
+  - `competitor/analyzer.ts` → businessCanvas (Opus)
+  - `api/chat/route.ts` → chat (Sonnet)
+  - `api/analyze/route.ts` → codeAnalysis (Sonnet)
+- Configurable via `LLM_MODEL` env var override
+
+### S4-02: Enhanced Prompts
+- Rewrote Gap Detection system prompt with detailed methodology:
+  - 9 categories with specific questions for each (monetization, growth, security, etc.)
+  - Better severity level definitions with examples
+  - Enhanced scoring methodology (not mechanical, business-focused)
+  - Detailed examples of good/bad formulations
+- Improved Gap Detection user prompt:
+  - Structured Business Canvas presentation
+  - Better code analysis context (with icons and formatting)
+  - Specific analysis checklist (monetization, audience, channels, infrastructure, growth)
+  - Clear output format requirements
+- Rewrote Task Generation prompts:
+  - SMART principles (Specific, Measurable, Achievable)
+  - Business-focused task descriptions
+  - Step-by-step instructions in plain Russian
+  - IT terms explained in parentheses
+  - Priority sorting by gap severity
+
+### S4-03: AI Result Validation
+- Created `src/lib/gaps/validator.ts` with comprehensive validation:
+  - `validateGapResult()` - main validator returning errors, warnings, and sanitized result
+  - Alignment score validation (0-100 range, type checking)
+  - Verdict validation with auto-inference from score
+  - Gap validation with sanitization of missing fields
+  - Duplicate gap removal (by category + content hash)
+  - Market insights validation
+  - Strengths array validation
+- Helper functions:
+  - `inferVerdict()` - derive verdict from score
+  - `inferCategory()` - derive category from text content
+  - `isValidGapResult()` - quick type guard
+  - `recalculateScore()` - recalculate score from gaps
+- Integrated validator into `detector.ts` for automatic sanitization
+
+### S4-04: Comprehensive Test Coverage
+- Created `src/__tests__/gaps/validator.test.ts` - 53 tests for AI result validation
+- Created `src/__tests__/gaps/prompts-enhanced.test.ts` - 42 tests for enhanced prompts
+- Created `src/__tests__/llm/model-config.test.ts` - 23 tests for MODEL_CONFIG
+- Exported `getModelConfig` function from client.ts
+- Fixed `inferCategory` to detect Russian auth terms ('аутентификац', 'авториз')
+- Total: 918 unit tests passing
 
 ---
 
@@ -93,39 +197,81 @@
 | Caching | ✅ Done | In-memory LRU cache by repo_url + commit_sha |
 | Large repos handling | ✅ Done | Smart file selection, token limits, truncation |
 
+### Milestone 8: UX Polish Sprint 1
+**Status:** ✅ Complete
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Multi-Metric Score | ✅ Done | 4 metrics: market readiness, business alignment, technical quality, security. Replaces single Alignment Score. |
+| Skeleton Loading | ✅ Done | Base Skeleton + presets (SkeletonScore, SkeletonCanvas, SkeletonGaps). Shimmer/pulse animations. |
+| CSS Animations | ✅ Done | fadeIn, fadeInUp, scaleIn, slideIn. Stagger for lists. prefers-reduced-motion support. |
+| Detailed Progress | ✅ Done | Enhanced ProgressIndicator with timer, progress bar, step descriptions. Two variants: minimal/detailed. |
+
+**New Files:**
+- `src/components/results/MultiMetricScore.tsx` - 4-metric visualization
+- `src/components/ui/Skeleton.tsx` - Loading skeletons
+
+**Modified Files:**
+- `src/app/page.tsx` - Integration of new components
+- `src/app/globals.css` - Animation keyframes and utilities
+- `src/components/ProgressIndicator.tsx` - Enhanced with detailed variant
+- `src/lib/tooltips/dictionary.ts` - New tooltip terms
+
 ---
 
 ## Current Focus
 
-**Working on:** Ready for deployment!
+**Status:** All Sprints Complete! 🎉
 
 **What's done:**
-- ✅ Full project structure created
+- ✅ Sprint 0: Critical Bugs fixed
+- ✅ Sprint 1: UX Polish (Multi-Metric Score, Skeleton, Animations, Progress)
+- ✅ Sprint 2: Form Experience (Wizard, Gap Cards, QuickStart, TopNav)
+- ✅ Sprint 3: Advanced Features (Google Trends, Export, Full Analysis Chat)
+- ✅ Sprint 4: AI Quality (Opus 4.5, Enhanced Prompts, Validation, Tests)
+
+**Previously completed:**
+- ✅ Full project structure
 - ✅ GitHub fetcher with file filtering
 - ✅ LLM client (OpenRouter/Claude)
-- ✅ Analysis API endpoint
-- ✅ Chat API endpoint (+ streaming)
-- ✅ Frontend with all features
-- ✅ Build passing
+- ✅ Analysis API endpoints (analyze, chat, stream)
+- ✅ Business Canvas + Gap Detection
+- ✅ Competitor Analysis
 - ✅ ZIP archive support (JSZip)
-- ✅ Chat history with copy buttons
-- ✅ Color legend
-- ✅ GitHub Dark theme UI
-- ✅ Tested with real repos
 - ✅ Rate limiting (5 req/min)
 - ✅ Zod validation for LLM responses
-- ✅ Retry logic with exponential backoff
 - ✅ SSE streaming for chat
-- ✅ Component architecture (7 components)
+- ✅ Component architecture (30+ components)
 - ✅ Export to JSON/Markdown
-- ✅ Progress indicator
-- ✅ Markdown rendering in chat
 - ✅ localStorage persistence
-- ✅ In-memory caching (repo_url + commit_sha)
-- ✅ Smart file selection for large repos
+- ✅ In-memory caching
+- ✅ 918 unit tests
 
-**Next steps:**
-1. Deploy to Vercel
+**Bug Fixes:**
+- ✅ BUG-001: Gap Detection с пустыми URL конкурентов (CompetitorInputSchema + sanitization)
+- ✅ BUG-002: Gap Detection LLM validation failure (улучшен промпт + fallback с analyzeGapsQuick)
+
+### Milestone 9: UX Polish Sprint 2
+**Status:** ✅ Complete
+
+| # | Задача | Файлы | Статус |
+|---|--------|-------|--------|
+| S2-01 | Wizard форма | `src/components/forms/AnalysisWizard.tsx` | ✅ Done |
+| S2-02 | Редизайн Gap Cards | `src/components/results/GapsView.tsx` | ✅ Done |
+| S2-03 | Onboarding QuickStart | `src/components/onboarding/QuickStart.tsx` | ✅ Done |
+| S2-04 | TopNav | `src/components/layout/TopNav.tsx` | ⚠️ Created (not integrated) |
+
+**New Files:**
+- `src/components/forms/AnalysisWizard.tsx` - Step-by-step wizard for Full Analysis
+- `src/components/onboarding/QuickStart.tsx` - Welcome modal for new users
+- `src/components/layout/TopNav.tsx` - Top navigation with auth
+
+**Modified Files:**
+- `src/app/page.tsx` - Wizard integration, mode toggle
+- `src/components/results/GapsView.tsx` - ActionableGapCard design
+- `src/app/globals.css` - Wizard toggle styles
+
+**Next steps: Phase 6.2 (Analysis Quality)**
 
 ---
 

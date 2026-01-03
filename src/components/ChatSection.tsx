@@ -2,15 +2,32 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import type { Analysis, ChatResponse } from '@/types';
+import type { BusinessCanvas } from '@/types/business';
+import type { GapAnalyzeResponse } from '@/types/gaps';
+import type { CompetitorAnalyzeResponse } from '@/types/competitor';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { usePersistedChatHistory } from '@/hooks/useLocalStorage';
 
 interface ChatSectionProps {
-  analysis: Analysis;
+  // Legacy prop for code-only analysis (backwards compatible)
+  analysis?: Analysis;
+  // Full analysis context
+  businessCanvas?: BusinessCanvas | null;
+  gapAnalysis?: GapAnalyzeResponse | null;
+  competitorAnalysis?: CompetitorAnalyzeResponse | null;
+  // Analysis mode
+  mode?: 'code' | 'business' | 'full' | 'competitor';
   onError: (error: string) => void;
 }
 
-export function ChatSection({ analysis, onError }: ChatSectionProps) {
+export function ChatSection({
+  analysis,
+  businessCanvas,
+  gapAnalysis,
+  competitorAnalysis,
+  mode = 'code',
+  onError
+}: ChatSectionProps) {
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = usePersistedChatHistory();
   const [chatLoading, setChatLoading] = useState(false);
@@ -73,14 +90,47 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
     setCurrentStreamingQuestion(currentQuestion);
 
     try {
+      // Build request body based on mode
+      const requestBody: Record<string, unknown> = {
+        session_id: Date.now().toString(),
+        message: currentQuestion,
+        analysis_mode: mode
+      };
+
+      // Add code analysis (legacy support)
+      if (analysis) {
+        requestBody.previous_analysis = analysis;
+      }
+
+      // Add business canvas
+      if (businessCanvas) {
+        requestBody.business_canvas = businessCanvas;
+      }
+
+      // Add gap analysis
+      if (gapAnalysis?.success) {
+        requestBody.gap_analysis = {
+          gaps: gapAnalysis.gaps,
+          alignment_score: gapAnalysis.alignment_score,
+          verdict: gapAnalysis.verdict,
+          tasks: gapAnalysis.tasks
+        };
+      }
+
+      // Add competitor analysis
+      if (competitorAnalysis?.success) {
+        requestBody.competitor_analysis = {
+          your_advantages: competitorAnalysis.your_advantages,
+          your_gaps: competitorAnalysis.your_gaps,
+          market_position: competitorAnalysis.market_position,
+          recommendations: competitorAnalysis.recommendations
+        };
+      }
+
       const response = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          session_id: Date.now().toString(),
-          message: currentQuestion,
-          previous_analysis: analysis
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
@@ -134,7 +184,7 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
     } finally {
       setChatLoading(false);
     }
-  }, [chatMessage, analysis, onError]);
+  }, [chatMessage, analysis, businessCanvas, gapAnalysis, competitorAnalysis, mode, onError]);
 
   // Handle chat without streaming (fallback)
   const handleChatRegular = useCallback(async () => {
@@ -174,10 +224,15 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
 
   const handleChat = useStreaming ? handleChatStream : handleChatRegular;
 
+  // Get appropriate header based on mode
+  const chatTitle = mode === 'full'
+    ? '💬 Консультант по проекту'
+    : 'Задать вопрос';
+
   return (
     <div className="chat-section">
       <div className="chat-header">
-        <h3>Задать вопрос</h3>
+        <h3>{chatTitle}</h3>
         {chatHistory.length > 1 && (
           <button className="toggle-all-btn" onClick={toggleAll}>
             {expandedItems.size === chatHistory.length ? '▲ Свернуть все' : '▼ Развернуть все'}
@@ -244,7 +299,11 @@ export function ChatSection({ analysis, onError }: ChatSectionProps) {
       <div className="chat-input">
         <input
           type="text"
-          placeholder="Как мне сделать первую задачу? Почему это важно?"
+          placeholder={
+            mode === 'full'
+              ? "Спроси про бизнес, код, разрывы или конкурентов..."
+              : "Как мне сделать первую задачу? Почему это важно?"
+          }
           value={chatMessage}
           onChange={e => setChatMessage(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !chatLoading && handleChat()}

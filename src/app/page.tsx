@@ -14,14 +14,25 @@ import { ExportButtons } from '@/components/ExportButtons';
 import { AnalysisModeSelector, type AnalysisMode } from '@/components/forms/AnalysisModeSelector';
 import { BusinessInputForm } from '@/components/forms/BusinessInputForm';
 import { CompetitorInputForm } from '@/components/forms/CompetitorInputForm';
+import { AnalysisWizard, type AnalysisWizardData } from '@/components/forms/AnalysisWizard';
 import { CanvasView } from '@/components/results/CanvasView';
+import { TrendsChart } from '@/components/results/TrendsChart';
+import type { TrendResult } from '@/types/trends';
 import { ClarificationQuestions } from '@/components/forms/ClarificationQuestions';
 import { GapsView } from '@/components/results/GapsView';
 import { AlignmentScore } from '@/components/results/AlignmentScore';
+import { MultiMetricScore } from '@/components/results/MultiMetricScore';
 import { VerdictBadge } from '@/components/results/VerdictBadge';
 import { CompetitorComparisonView } from '@/components/results/CompetitorComparisonView';
 import { UserNav } from '@/components/UserNav';
+import { QuickStart } from '@/components/onboarding/QuickStart';
 import { FAQList } from '@/components/ui/FAQ';
+import {
+  SkeletonScore,
+  SkeletonCanvas,
+  SkeletonGaps,
+  SkeletonAnalysisResults,
+} from '@/components/ui/Skeleton';
 import { createClient } from '@/lib/supabase/client';
 import {
   usePersistedDescription,
@@ -149,6 +160,10 @@ function Home() {
   });
   const [businessResult, setBusinessResult] = useState<BusinessAnalyzeResponse | null>(null);
 
+  // Google Trends state (S3-01)
+  const [trendsResults, setTrendsResults] = useState<TrendResult[]>([]);
+  const [trendsLoading, setTrendsLoading] = useState(false);
+
   // Gap analysis state (for full mode)
   const [gapResult, setGapResult] = useState<GapAnalyzeResponse | null>(null);
 
@@ -161,6 +176,9 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysisStep, setAnalysisStep] = useState<AnalysisStep>('idle');
+
+  // Wizard mode for full analysis (default enabled)
+  const [useWizardMode, setUseWizardMode] = useState(true);
 
   // Client-side cache for GitHub repos
   const { getCached, setCache, isCacheValid, clearAllCaches } = useAnalysisCache();
@@ -178,6 +196,7 @@ function Home() {
     setGapResult(null);
     setCompetitors([]);
     setCompetitorResult(null);
+    setTrendsResults([]);
     setError(null);
     setAnalysisStep('idle');
     setAnalysisMode(null);
@@ -371,17 +390,33 @@ function Home() {
   // Full Analysis Handler (Business + Code + Gaps)
   // ===========================================
 
-  const handleFullAnalyze = async () => {
+  const handleFullAnalyze = async (wizardData?: AnalysisWizardData) => {
+    // Use wizard data if provided, otherwise use current state
+    const bInput = wizardData?.businessInput || businessInput;
+    const rUrl = wizardData?.repoUrl || repoUrl;
+    const uFiles = wizardData?.uploadedFiles || uploadedFiles;
+    const desc = wizardData?.description || description;
+    const comps = wizardData?.competitors || competitors;
+
+    // Update state from wizard data (for UI consistency)
+    if (wizardData) {
+      setBusinessInput(wizardData.businessInput);
+      setRepoUrl(wizardData.repoUrl);
+      setUploadedFiles(wizardData.uploadedFiles);
+      setDescription(wizardData.description);
+      setCompetitors(wizardData.competitors);
+    }
+
     // Validate both inputs
-    if (businessInput.description.length < 50) {
+    if (bInput.description.length < 50) {
       setError('Описание бизнеса должно быть минимум 50 символов');
       return;
     }
-    if (!repoUrl && uploadedFiles.length === 0) {
+    if (!rUrl && uFiles.length === 0) {
       setError('Укажите GitHub URL или загрузите файлы');
       return;
     }
-    if (!description.trim()) {
+    if (!desc.trim()) {
       setError('Опишите свой проект');
       return;
     }
@@ -401,15 +436,15 @@ function Home() {
         fetch('/api/analyze-business', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(businessInput),
+          body: JSON.stringify(bInput),
         }),
         fetch('/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            repo_url: repoUrl || undefined,
-            files: uploadedFiles.length > 0 ? uploadedFiles : undefined,
-            project_description: description,
+            repo_url: rUrl || undefined,
+            files: uFiles.length > 0 ? uFiles : undefined,
+            project_description: desc,
           }),
         }),
       ]);
@@ -437,8 +472,14 @@ function Home() {
       if (businessData.canvas && codeData.analysis) {
         setAnalysisStep('generating');
 
-        // Include competitors if provided
-        const validCompetitors = competitors.filter((c) => c.name.trim());
+        // Include competitors if provided - sanitize empty URLs
+        const validCompetitors = comps
+          .filter((c) => c.name.trim())
+          .map((c) => ({
+            ...c,
+            // Remove empty string URLs to avoid validation issues
+            url: c.url?.trim() || undefined,
+          }));
 
         const gapResponse = await fetch('/api/analyze-gaps', {
           method: 'POST',
@@ -532,6 +573,65 @@ function Home() {
   };
 
   // ===========================================
+  // Fetch Google Trends (S3-01)
+  // ===========================================
+
+  const fetchTrends = useCallback(async (keywords: string[], geo = '', timeRange = 'past_year') => {
+    if (keywords.length === 0) return;
+
+    setTrendsLoading(true);
+    try {
+      const response = await fetch('/api/trends', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords, geo, timeRange }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.results) {
+        setTrendsResults(data.results);
+      }
+    } catch (error) {
+      console.error('Failed to fetch trends:', error);
+    } finally {
+      setTrendsLoading(false);
+    }
+  }, []);
+
+  // Extract keywords from business description for trends
+  const extractKeywordsForTrends = useCallback((canvas: BusinessAnalyzeResponse['canvas']) => {
+    if (!canvas) return [];
+
+    const keywords: string[] = [];
+
+    // Extract from value proposition
+    if (canvas.value_proposition) {
+      const words = canvas.value_proposition
+        .split(/[\s,]+/)
+        .filter((w) => w.length > 4)
+        .slice(0, 2);
+      keywords.push(...words);
+    }
+
+    // Extract from customer segments
+    if (canvas.customer_segments.length > 0) {
+      keywords.push(canvas.customer_segments[0].split(/[\s,]+/)[0]);
+    }
+
+    return keywords.slice(0, 3);
+  }, []);
+
+  // Auto-fetch trends when business canvas is available
+  useEffect(() => {
+    if (businessResult?.canvas && trendsResults.length === 0 && !trendsLoading) {
+      const keywords = extractKeywordsForTrends(businessResult.canvas);
+      if (keywords.length > 0) {
+        fetchTrends(keywords);
+      }
+    }
+  }, [businessResult?.canvas, trendsResults.length, trendsLoading, extractKeywordsForTrends, fetchTrends]);
+
+  // ===========================================
   // Handle clarification answers
   // ===========================================
 
@@ -549,6 +649,96 @@ function Home() {
     // Clear result and re-analyze
     setBusinessResult(null);
     await handleBusinessAnalyze();
+  };
+
+  // ===========================================
+  // Handle Full Analysis Clarification (for code questions)
+  // ===========================================
+
+  const handleFullAnalysisClarification = async (answers: Record<string, string>) => {
+    // Add answers to project description
+    const answersText = Object.entries(answers)
+      .map(([questionId, answer]) => {
+        const question = codeResult?.questions?.find(q => q.id === questionId);
+        return `\n\n[Уточнение к "${question?.question || questionId}"]: ${answer}`;
+      })
+      .join('');
+
+    const updatedDescription = description + answersText;
+    setDescription(updatedDescription);
+
+    setLoading(true);
+    setError(null);
+    setAnalysisStep('analyzing');
+
+    try {
+      // Re-run code analysis with clarification answers
+      const codeResponse = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          repo_url: repoUrl || undefined,
+          files: uploadedFiles.length > 0 ? uploadedFiles : undefined,
+          project_description: updatedDescription,
+        }),
+      });
+
+      const newCodeData: AnalyzeResponse = await codeResponse.json();
+
+      if (!newCodeData.success) {
+        setError(newCodeData.error || 'Ошибка анализа кода');
+        setAnalysisStep('error');
+        return;
+      }
+
+      setPersistedResult(newCodeData);
+
+      // If we now have analysis AND canvas - run gap detection
+      if (newCodeData.analysis && businessResult?.canvas) {
+        setAnalysisStep('generating');
+
+        // Sanitize competitors - remove empty URLs
+        const validCompetitors = competitors
+          .filter((c) => c.name.trim())
+          .map((c) => ({
+            ...c,
+            url: c.url?.trim() || undefined,
+          }));
+
+        const gapResponse = await fetch('/api/analyze-gaps', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            canvas: businessResult.canvas,
+            code_analysis: newCodeData.analysis,
+            competitors: validCompetitors.length > 0 ? validCompetitors : undefined,
+          }),
+        });
+
+        const gapData: GapAnalyzeResponse = await gapResponse.json();
+
+        if (gapData.success) {
+          setGapResult(gapData);
+
+          // Save to project if enabled
+          if (saveToProject && selectedProjectId) {
+            await saveAnalysisToProject(selectedProjectId, 'full', gapData);
+          }
+        } else {
+          setError(gapData.error || 'Ошибка анализа разрывов');
+          setAnalysisStep('error');
+          return;
+        }
+      }
+
+      setAnalysisStep('complete');
+    } catch (err) {
+      setError('Не удалось выполнить запрос');
+      setAnalysisStep('error');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ===========================================
@@ -580,6 +770,49 @@ function Home() {
       : analysisMode === 'competitor'
       ? competitors.filter((c) => c.name.trim()).length > 0
       : false;
+
+  // Validation errors for showing what's missing
+  const getValidationErrors = (): string[] => {
+    const errors: string[] = [];
+
+    if (analysisMode === 'code') {
+      if (!repoUrl && uploadedFiles.length === 0) {
+        errors.push('Укажите GitHub URL или загрузите файлы');
+      }
+      if (!description.trim()) {
+        errors.push('Опишите проект (что он делает)');
+      }
+    } else if (analysisMode === 'business') {
+      if (businessInput.description.length < 50) {
+        const remaining = 50 - businessInput.description.length;
+        errors.push(`Описание бизнеса слишком короткое (ещё ${remaining} символов)`);
+      }
+    } else if (analysisMode === 'full') {
+      if (businessInput.description.length < 50) {
+        const remaining = 50 - businessInput.description.length;
+        errors.push(`Описание бизнеса слишком короткое (ещё ${remaining} символов)`);
+      }
+      if (!repoUrl && uploadedFiles.length === 0) {
+        errors.push('Укажите GitHub URL или загрузите файлы');
+      }
+      if (!description.trim()) {
+        errors.push('Опишите проект (что он делает)');
+      }
+    } else if (analysisMode === 'competitor') {
+      if (competitors.filter((c) => c.name.trim()).length === 0) {
+        errors.push('Добавьте хотя бы одного конкурента');
+      }
+    }
+
+    // Check project selection if saving
+    if (saveToProject && !selectedProjectId) {
+      errors.push('Выберите проект для сохранения');
+    }
+
+    return errors;
+  };
+
+  const validationErrors = getValidationErrors();
 
   // Has any result
   const hasCodeResult = codeResult && codeResult.success;
@@ -683,86 +916,121 @@ function Home() {
           {/* Full Analysis Form */}
           {analysisMode === 'full' && (
             <>
-              {/* Business Section */}
-              <div className="form-card step-card">
-                <div className="form-card-header">
-                  <h3>📊 Шаг 1: Бизнес</h3>
-                  <span className="form-card-badge">Обязательно</span>
-                </div>
-                <div className="form-card-content">
-                  <BusinessInputForm
-                    value={businessInput}
-                    onChange={setBusinessInput}
-                    onError={setError}
-                    disabled={loading}
-                  />
-                </div>
+              {/* Wizard Mode Toggle */}
+              <div className="wizard-mode-toggle">
+                <button
+                  type="button"
+                  className={`toggle-btn ${useWizardMode ? 'active' : ''}`}
+                  onClick={() => setUseWizardMode(true)}
+                >
+                  Пошаговый режим
+                </button>
+                <button
+                  type="button"
+                  className={`toggle-btn ${!useWizardMode ? 'active' : ''}`}
+                  onClick={() => setUseWizardMode(false)}
+                >
+                  Все поля сразу
+                </button>
               </div>
 
-              {/* Code Section */}
-              <div className="form-card step-card">
-                <div className="form-card-header">
-                  <h3>💻 Шаг 2: Код</h3>
-                  <span className="form-card-badge">Обязательно</span>
-                </div>
-                <div className="form-card-content">
-                  {/* GitHub URL */}
-                  <div className="form-group">
-                    <label htmlFor="repo-url-full">GitHub URL</label>
-                    <input
-                      id="repo-url-full"
-                      type="text"
-                      placeholder="https://github.com/username/repo"
-                      value={repoUrl}
-                      onChange={(e) => setRepoUrl(e.target.value)}
-                      disabled={uploadedFiles.length > 0 || loading}
-                    />
+              {/* Wizard Mode */}
+              {useWizardMode ? (
+                <AnalysisWizard
+                  initialData={{
+                    businessInput,
+                    repoUrl,
+                    uploadedFiles,
+                    description,
+                    competitors,
+                  }}
+                  onComplete={handleFullAnalyze}
+                  disabled={loading}
+                />
+              ) : (
+                <>
+                  {/* Classic Mode: Business Section */}
+                  <div className="form-card step-card">
+                    <div className="form-card-header">
+                      <h3>📊 Шаг 1: Бизнес</h3>
+                      <span className="form-card-badge">Обязательно</span>
+                    </div>
+                    <div className="form-card-content">
+                      <BusinessInputForm
+                        value={businessInput}
+                        onChange={setBusinessInput}
+                        onError={setError}
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
 
-                  <div className="divider">
-                    <span>или</span>
+                  {/* Classic Mode: Code Section */}
+                  <div className="form-card step-card">
+                    <div className="form-card-header">
+                      <h3>💻 Шаг 2: Код</h3>
+                      <span className="form-card-badge">Обязательно</span>
+                    </div>
+                    <div className="form-card-content">
+                      {/* GitHub URL */}
+                      <div className="form-group">
+                        <label htmlFor="repo-url-full">GitHub URL</label>
+                        <input
+                          id="repo-url-full"
+                          type="text"
+                          placeholder="https://github.com/username/repo"
+                          value={repoUrl}
+                          onChange={(e) => setRepoUrl(e.target.value)}
+                          disabled={uploadedFiles.length > 0 || loading}
+                        />
+                      </div>
+
+                      <div className="divider">
+                        <span>или</span>
+                      </div>
+
+                      {/* File Upload */}
+                      <UploadForm
+                        files={uploadedFiles}
+                        onFilesChange={setUploadedFiles}
+                        onError={setError}
+                        disabled={loading}
+                      />
+
+                      {/* Project Description */}
+                      <div className="form-group" style={{ marginTop: '16px' }}>
+                        <label htmlFor="description-full">Опишите свой проект</label>
+                        <textarea
+                          id="description-full"
+                          placeholder="Чем занимается твой проект? Какую проблему решает?"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          disabled={loading}
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* File Upload */}
-                  <UploadForm
-                    files={uploadedFiles}
-                    onFilesChange={setUploadedFiles}
-                    onError={setError}
-                    disabled={loading}
-                  />
-
-                  {/* Project Description */}
-                  <div className="form-group" style={{ marginTop: '16px' }}>
-                    <label htmlFor="description-full">Опишите свой проект</label>
-                    <textarea
-                      id="description-full"
-                      placeholder="Чем занимается твой проект? Какую проблему решает?"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      disabled={loading}
-                    />
+                  {/* Classic Mode: Competitors Section - Optional */}
+                  <div className="form-card step-card optional">
+                    <div className="form-card-header">
+                      <h3>🎯 Шаг 3: Конкуренты</h3>
+                      <span className="form-card-badge optional">Опционально</span>
+                    </div>
+                    <div className="form-card-content">
+                      <p className="form-hint">
+                        Добавьте конкурентов для более точного анализа разрывов и позиционирования.
+                      </p>
+                      <CompetitorInputForm
+                        competitors={competitors}
+                        onChange={setCompetitors}
+                        disabled={loading}
+                        maxCompetitors={10}
+                      />
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Competitors Section - Optional */}
-              <div className="form-card step-card optional">
-                <div className="form-card-header">
-                  <h3>🎯 Шаг 3: Конкуренты</h3>
-                  <span className="form-card-badge optional">Опционально</span>
-                </div>
-                <div className="form-card-content">
-                  <p className="form-hint">
-                    Добавьте конкурентов для более точного анализа разрывов и позиционирования.
-                  </p>
-                  <CompetitorInputForm
-                    competitors={competitors}
-                    onChange={setCompetitors}
-                    disabled={loading}
-                    maxCompetitors={10}
-                  />
-                </div>
-              </div>
+                </>
+              )}
             </>
           )}
 
@@ -833,7 +1101,8 @@ function Home() {
             </div>
           )}
 
-          {/* Submit Button */}
+          {/* Submit Button (hidden in wizard mode for full analysis) */}
+          {!(analysisMode === 'full' && useWizardMode) && (
           <div className="submit-section">
             <button
               className="submit-btn"
@@ -866,7 +1135,21 @@ function Home() {
                 💾 Сохранение в проект...
               </div>
             )}
+
+            {/* Validation errors - show when button is disabled */}
+            {!loading && !canSubmit && validationErrors.length > 0 && (
+              <div className="validation-errors">
+                <span className="validation-icon">ℹ️</span>
+                <ul className="validation-list">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
+          )}
+
         </>
       )}
 
@@ -876,16 +1159,23 @@ function Home() {
       {/* Progress Indicator */}
       <ProgressIndicator currentStep={analysisStep} />
 
-      {/* Loading Spinner (fallback) */}
-      {loading && analysisStep === 'idle' && (
-        <div className="loading">
-          <div className="spinner" />
+      {/* Loading Skeletons (shows expected result structure) */}
+      {loading && (
+        <div className="loading-skeletons">
+          {analysisMode === 'full' && <SkeletonAnalysisResults />}
+          {analysisMode === 'business' && <SkeletonCanvas />}
+          {analysisMode === 'code' && (
+            <div className="skeleton-code-results">
+              <SkeletonGaps />
+            </div>
+          )}
+          {analysisMode === 'competitor' && <SkeletonGaps />}
         </div>
       )}
 
       {/* Business Results */}
       {businessResult && analysisMode === 'business' && (
-        <div className="results">
+        <div className="results animate-fade-in-up">
           {/* Clarification Questions */}
           {businessResult.needs_clarification && businessResult.questions && (
             <ClarificationQuestions
@@ -905,6 +1195,16 @@ function Home() {
             />
           )}
 
+          {/* Google Trends (S3-01) */}
+          <TrendsChart
+            results={trendsResults}
+            onRefresh={fetchTrends}
+            isLoading={trendsLoading}
+          />
+
+          {/* Export Buttons */}
+          <ExportButtons businessResult={businessResult} mode="compact" />
+
           {/* Metadata */}
           {businessResult.metadata && (
             <div className="metadata">
@@ -919,7 +1219,7 @@ function Home() {
 
       {/* Code Results (existing) */}
       {codeResult && analysisMode === 'code' && (
-        <div className="results">
+        <div className="results animate-fade-in-up">
           {/* Questions */}
           {codeResult.needs_clarification && codeResult.questions && (
             <div className="questions">
@@ -986,7 +1286,7 @@ function Home() {
           ) : null}
 
           {/* Export Buttons */}
-          <ExportButtons result={codeResult} />
+          <ExportButtons codeResult={codeResult} mode="compact" />
 
           {/* Metadata */}
           <div className="metadata">
@@ -1010,41 +1310,41 @@ function Home() {
 
           {/* Chat */}
           {codeResult.analysis && (
-            <ChatSection analysis={codeResult.analysis} onError={setError} />
+            <ChatSection analysis={codeResult.analysis} mode="code" onError={setError} />
           )}
         </div>
       )}
 
       {/* Competitor Analysis Results */}
       {competitorResult && analysisMode === 'competitor' && (
-        <div className="results">
+        <div className="results animate-fade-in-up">
           <CompetitorComparisonView result={competitorResult} />
+
+          {/* Export Buttons */}
+          <ExportButtons competitorResult={competitorResult} mode="compact" />
         </div>
       )}
 
       {/* Full Analysis Results */}
       {analysisMode === 'full' && (hasBusinessResult || hasCodeResult || hasGapResult) && (
-        <div className="results full-results">
-          {/* Gap Detection Results */}
+        <div className="results full-results animate-fade-in-up">
+
+          {/* CASE 1: Full results available (Gap Detection completed) */}
           {gapResult && (
             <>
               <div className="full-results-header">
                 <h3>Результаты анализа</h3>
               </div>
 
-              {/* Verdict */}
-              {gapResult.verdict && (
-                <VerdictBadge
-                  verdict={gapResult.verdict}
-                  explanation={gapResult.verdict_explanation}
-                  size="large"
-                />
-              )}
-
-              {/* Alignment Score */}
-              {typeof gapResult.alignment_score === 'number' && (
+              {/* Multi-Metric Score (includes verdict) */}
+              {typeof gapResult.alignment_score === 'number' && gapResult.gaps && gapResult.verdict && (
                 <div className="score-section">
-                  <AlignmentScore score={gapResult.alignment_score} />
+                  <MultiMetricScore
+                    gaps={gapResult.gaps}
+                    alignmentScore={gapResult.alignment_score}
+                    verdict={gapResult.verdict}
+                    verdictExplanation={gapResult.verdict_explanation}
+                  />
                 </div>
               )}
 
@@ -1054,14 +1354,75 @@ function Home() {
                   gaps={gapResult.gaps}
                   tasks={gapResult.tasks}
                   nextMilestone={gapResult.next_milestone}
+                  summary={gapResult.summary}
+                  strengths={gapResult.strengths}
+                  marketInsights={gapResult.market_insights}
                 />
               )}
             </>
           )}
 
-          {/* Business Canvas (collapsible) */}
+          {/* CASE 2: Code needs clarification - show questions */}
+          {!gapResult && codeResult?.needs_clarification && codeResult?.questions && (
+            <div className="clarification-needed-section">
+              <div className="full-results-header">
+                <h3>⚠️ Требуется уточнение</h3>
+              </div>
+
+              <p className="clarification-explanation">
+                Для полного анализа нужно уточнить несколько деталей о вашем проекте.
+                После ответа мы сможем найти разрывы между бизнесом и кодом.
+              </p>
+
+              {/* Partial analysis info if available */}
+              {codeResult.partial_analysis && (
+                <div className="partial-analysis-info">
+                  <h4>Что удалось определить:</h4>
+                  <ul>
+                    {codeResult.partial_analysis.tech_stack && codeResult.partial_analysis.tech_stack.length > 0 && (
+                      <li>Технологии: {codeResult.partial_analysis.tech_stack.join(', ')}</li>
+                    )}
+                    {codeResult.partial_analysis.detected_stage && (
+                      <li>Стадия: {codeResult.partial_analysis.detected_stage}</li>
+                    )}
+                    {codeResult.partial_analysis.project_summary && (
+                      <li>{codeResult.partial_analysis.project_summary}</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              <ClarificationQuestions
+                questions={codeResult.questions}
+                onSubmit={handleFullAnalysisClarification}
+                disabled={loading}
+              />
+
+              {/* Pending sections indicator */}
+              <div className="pending-sections">
+                <div className="pending-item">
+                  <span className="pending-icon">⏳</span>
+                  <span>Поиск разрывов — ожидает ответа</span>
+                </div>
+                <div className="pending-item">
+                  <span className="pending-icon">⏳</span>
+                  <span>Задачи на неделю — ожидает ответа</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* CASE 3: No gap result and no clarification needed - something went wrong */}
+          {!gapResult && !codeResult?.needs_clarification && codeResult?.success && !codeResult?.analysis && (
+            <div className="analysis-incomplete">
+              <h3>⚠️ Анализ кода не завершён</h3>
+              <p>Не удалось получить полный анализ кода. Попробуйте уточнить описание проекта.</p>
+            </div>
+          )}
+
+          {/* Business Canvas (collapsible) - always show if available */}
           {businessResult?.canvas && (
-            <details className="results-section">
+            <details className="results-section" open={!gapResult}>
               <summary>📊 Business Canvas</summary>
               <CanvasView
                 canvas={businessResult.canvas}
@@ -1072,7 +1433,19 @@ function Home() {
             </details>
           )}
 
-          {/* Code Analysis (collapsible) */}
+          {/* Google Trends (S3-01) - collapsible in full mode */}
+          {(trendsResults.length > 0 || trendsLoading) && (
+            <details className="results-section">
+              <summary>📈 Рыночный спрос (Google Trends)</summary>
+              <TrendsChart
+                results={trendsResults}
+                onRefresh={fetchTrends}
+                isLoading={trendsLoading}
+              />
+            </details>
+          )}
+
+          {/* Code Analysis (collapsible) - only if full analysis available */}
           {codeResult?.analysis && (
             <details className="results-section">
               <summary>💻 Анализ кода</summary>
@@ -1080,22 +1453,37 @@ function Home() {
             </details>
           )}
 
+          {/* Export Panel - full mode with options */}
+          <ExportButtons
+            businessResult={businessResult}
+            codeResult={codeResult}
+            gapResult={gapResult}
+            mode="full"
+          />
+
           {/* Metadata */}
           <div className="metadata">
             {businessResult?.metadata && (
-              <span>Бизнес: {businessResult.metadata.analysis_duration_ms}ms</span>
+              <span>Бизнес: {Math.round(businessResult.metadata.analysis_duration_ms / 1000)}с</span>
             )}
             {codeResult?.metadata && (
-              <span>Код: {codeResult.metadata.analysis_duration_ms}ms</span>
+              <span>Код: {Math.round(codeResult.metadata.analysis_duration_ms / 1000)}с</span>
             )}
             {gapResult?.metadata && (
-              <span>Gaps: {gapResult.metadata.analysis_duration_ms}ms</span>
+              <span>Анализ: {Math.round(gapResult.metadata.analysis_duration_ms / 1000)}с</span>
             )}
           </div>
 
-          {/* Chat */}
-          {codeResult?.analysis && (
-            <ChatSection analysis={codeResult.analysis} onError={setError} />
+          {/* Chat - Full Analysis mode with all context */}
+          {(codeResult?.analysis || gapResult?.success || businessResult?.canvas) && (
+            <ChatSection
+              analysis={codeResult?.analysis}
+              businessCanvas={businessResult?.canvas}
+              gapAnalysis={gapResult}
+              competitorAnalysis={competitorResult}
+              mode="full"
+              onError={setError}
+            />
           )}
         </div>
       )}
@@ -1105,6 +1493,19 @@ function Home() {
         <h2 className="faq-section-title">Частые вопросы</h2>
         <FAQList items={FAQ_ITEMS} allowMultiple={true} />
       </div>
+
+      {/* QuickStart Onboarding Modal - shows only for new users */}
+      <QuickStart
+        onStart={() => {
+          // Focus on the business description textarea
+          const textarea = document.querySelector('textarea[placeholder*="Опишите"]') as HTMLTextAreaElement;
+          if (textarea) {
+            textarea.focus();
+            textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }}
+        onLogin={() => router.push('/login')}
+      />
 
       <style jsx>{`
         .header-row {
@@ -1332,6 +1733,123 @@ function Home() {
           margin-bottom: 16px;
           border-bottom: 1px solid var(--border-default);
           padding-bottom: 12px;
+        }
+
+        /* Clarification Needed Section */
+        .clarification-needed-section {
+          background: var(--bg-secondary);
+          border: 2px solid var(--warning-yellow);
+          border-radius: 12px;
+          padding: 24px;
+          margin-bottom: 24px;
+        }
+        .clarification-explanation {
+          font-size: 14px;
+          color: var(--text-secondary);
+          margin: 0 0 20px 0;
+          line-height: 1.5;
+        }
+        .partial-analysis-info {
+          background: var(--bg-tertiary);
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 20px;
+        }
+        .partial-analysis-info h4 {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin: 0 0 12px 0;
+        }
+        .partial-analysis-info ul {
+          margin: 0;
+          padding-left: 20px;
+        }
+        .partial-analysis-info li {
+          font-size: 13px;
+          color: var(--text-secondary);
+          margin-bottom: 4px;
+        }
+        .pending-sections {
+          margin-top: 24px;
+          padding-top: 20px;
+          border-top: 1px solid var(--border-default);
+        }
+        .pending-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 16px;
+          background: var(--bg-tertiary);
+          border-radius: 6px;
+          margin-bottom: 8px;
+          font-size: 14px;
+          color: var(--text-muted);
+        }
+        .pending-icon {
+          font-size: 16px;
+        }
+        .analysis-incomplete {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 8px;
+          padding: 24px;
+          margin-bottom: 24px;
+        }
+        .analysis-incomplete h3 {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--warning-yellow);
+          margin: 0 0 8px 0;
+        }
+        .analysis-incomplete p {
+          font-size: 14px;
+          color: var(--text-secondary);
+          margin: 0;
+        }
+
+        /* Validation Errors */
+        .validation-errors {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          margin-top: 12px;
+          padding: 12px 16px;
+          background: rgba(139, 92, 246, 0.1);
+          border: 1px solid rgba(139, 92, 246, 0.3);
+          border-radius: 8px;
+        }
+        .validation-icon {
+          flex-shrink: 0;
+          font-size: 14px;
+        }
+        .validation-list {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .validation-list li {
+          font-size: 13px;
+          color: var(--text-secondary);
+          line-height: 1.5;
+        }
+        .validation-list li::before {
+          content: "• ";
+          color: rgba(139, 92, 246, 0.8);
+        }
+        .validation-list li + li {
+          margin-top: 4px;
+        }
+
+        /* Loading Skeletons */
+        .loading-skeletons {
+          margin-top: 24px;
+          animation: fadeIn 0.3s ease;
+        }
+        .skeleton-code-results {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
         }
 
         /* FAQ Section */

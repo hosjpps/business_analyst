@@ -38,9 +38,9 @@ export async function analyzeCompetitors(
 
   const prompt = `${system}\n\n---\n\n${user}`;
 
-  // Call LLM with retry
+  // Call LLM with retry (use Opus for thorough competitor analysis)
   const response = await withLLMRetry(async () => {
-    const result = await sendToLLM(prompt);
+    const result = await sendToLLM(prompt, { taskType: 'businessCanvas' });
     return result;
   });
 

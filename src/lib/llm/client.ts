@@ -28,12 +28,58 @@ function getClient(): OpenAI {
   return _client;
 }
 
+// ===========================================
+// Model Configuration
+// ===========================================
+
+const MODEL_OPUS = 'anthropic/claude-opus-4';
+const MODEL_SONNET = 'anthropic/claude-sonnet-4';
+
+// Task types for model selection
+export type LLMTaskType =
+  | 'fullAnalysis'     // Deep analysis - use Opus
+  | 'gapDetection'     // Gap detection - use Opus
+  | 'businessCanvas'   // Business model - use Opus
+  | 'codeAnalysis'     // Code review - can use Sonnet for speed
+  | 'chat'             // Follow-up chat - use Sonnet for speed
+  | 'clarification';   // Quick clarification - use Sonnet
+
+// Model config based on task type
+export const MODEL_CONFIG: Record<LLMTaskType, { model: string; maxTokens: number; temperature: number }> = {
+  // Opus for deep analysis (better reasoning, more thorough)
+  fullAnalysis: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.3 },
+  gapDetection: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.3 },
+  businessCanvas: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.4 },
+
+  // Sonnet for faster operations
+  codeAnalysis: { model: MODEL_SONNET, maxTokens: 8000, temperature: 0.5 },
+  chat: { model: MODEL_SONNET, maxTokens: 4000, temperature: 0.6 },
+  clarification: { model: MODEL_SONNET, maxTokens: 2000, temperature: 0.5 },
+};
+
 function getDefaultModel(): string {
-  return process.env.LLM_MODEL || 'anthropic/claude-sonnet-4';
+  return process.env.LLM_MODEL || MODEL_SONNET;
 }
 
 function getMaxTokens(): number {
   return parseInt(process.env.LLM_MAX_TOKENS || '8000', 10);
+}
+
+export function getModelConfig(taskType?: LLMTaskType): { model: string; maxTokens: number; temperature: number } {
+  if (taskType && MODEL_CONFIG[taskType]) {
+    // Allow env override
+    const envModel = process.env.LLM_MODEL;
+    const config = MODEL_CONFIG[taskType];
+    return {
+      ...config,
+      model: envModel || config.model,
+    };
+  }
+  return {
+    model: getDefaultModel(),
+    maxTokens: getMaxTokens(),
+    temperature: 0.5,
+  };
 }
 
 // ===========================================
@@ -46,19 +92,41 @@ export interface LLMResponse {
   tokens_used: number;
 }
 
+export interface SendToLLMOptions {
+  model?: string;
+  taskType?: LLMTaskType;
+}
+
 export async function sendToLLM(
   prompt: string,
-  model?: string
+  options?: string | SendToLLMOptions
 ): Promise<LLMResponse> {
   const startTime = Date.now();
   const client = getClient();
-  const modelToUse = model || getDefaultModel();
+
+  // Handle legacy string model parameter
+  let taskType: LLMTaskType | undefined;
+  let modelOverride: string | undefined;
+
+  if (typeof options === 'string') {
+    modelOverride = options;
+  } else if (options) {
+    taskType = options.taskType;
+    modelOverride = options.model;
+  }
+
+  const config = getModelConfig(taskType);
+  const modelToUse = modelOverride || config.model;
+  const maxTokens = config.maxTokens;
+
+  console.log(`LLM Request: task=${taskType || 'default'}, model=${modelToUse}, maxTokens=${maxTokens}`);
 
   return withLLMRetry(async () => {
     try {
       const response = await client.chat.completions.create({
         model: modelToUse,
-        max_tokens: getMaxTokens(),
+        max_tokens: maxTokens,
+        temperature: config.temperature,
         messages: [
           {
             role: 'system',

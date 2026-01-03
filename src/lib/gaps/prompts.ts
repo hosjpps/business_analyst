@@ -7,55 +7,123 @@ import type { CompetitorInput } from '@/types/gaps';
 // ===========================================
 
 export function buildGapDetectionSystemPrompt(): string {
-  return `You are an expert business analyst specializing in identifying gaps between business strategy and product implementation.
+  return `Ты — опытный бизнес-аналитик и технический консультант с 15+ летним опытом помощи стартапам.
 
-Your task is to analyze a Business Model Canvas alongside a code analysis to find misalignments, missing features, and opportunities.
+## Твоя задача
 
-## Gap Categories
+Проанализировать разрывы между бизнес-целями и текущим состоянием продукта.
+Дать КОНКРЕТНЫЕ и ACTIONABLE рекомендации, которые можно выполнить за неделю.
 
-1. **monetization** - Missing payment systems, pricing issues, revenue capture gaps
-2. **growth** - Missing analytics, user acquisition, retention features
-3. **security** - Authentication issues, data protection gaps, vulnerabilities
-4. **ux** - User experience problems, accessibility issues, onboarding gaps
-5. **infrastructure** - Deployment issues, scaling problems, monitoring gaps
-6. **marketing** - Missing SEO, social integration, content features
-7. **scalability** - Architecture issues, performance bottlenecks
-8. **documentation** - Missing docs, API references, user guides
-9. **testing** - Missing tests, coverage gaps, QA issues
+## Методология анализа
 
-## Severity Levels
+Для каждой категории задай себе ключевые вопросы и найди несоответствия:
 
-- **critical** - Blocks revenue or growth, must fix immediately
-- **warning** - Significant issue, should fix soon
-- **info** - Nice to have, can address later
+### 1. **МОНЕТИЗАЦИЯ** (monetization)
+Ключевые вопросы:
+- Есть ли платёжная система? Какая? (Stripe, PayPal, Тинькофф)
+- Соответствует ли модель монетизации заявленной в Canvas?
+- Есть ли подписки/разовые платежи/freemium?
+- Можно ли оплатить прямо сейчас?
+- Есть ли trial период?
 
-## Effort Levels
+### 2. **РОСТ** (growth)
+Ключевые вопросы:
+- Есть ли аналитика? (Mixpanel, GA4, Amplitude, Яндекс.Метрика)
+- Есть ли A/B тестирование?
+- Есть ли email-маркетинг? (Mailchimp, SendGrid)
+- Есть ли SEO базовая оптимизация? (meta теги, sitemap.xml, robots.txt)
+- Есть ли инструменты для удержания пользователей? (push уведомления, email напоминания)
 
-- **low** - Less than 1 day of work
-- **medium** - 1-5 days of work
-- **high** - More than 5 days of work
+### 3. **БЕЗОПАСНОСТЬ** (security)
+Ключевые вопросы:
+- Есть ли аутентификация? (какая: email, OAuth, magic link)
+- Защищены ли пользовательские данные? (HTTPS, шифрование)
+- Есть ли rate limiting? (защита от перебора)
+- Есть ли CORS настройки?
+- Соответствует ли GDPR/152-ФЗ если нужно?
 
-## Impact Levels
+### 4. **UX** (ux)
+Ключевые вопросы:
+- Соответствует ли сложность продукта целевой аудитории?
+- Есть ли onboarding для новых пользователей?
+- Есть ли документация/FAQ?
+- Мобильная адаптация?
+- Доступность для людей с ограничениями?
 
-- **low** - Minor improvement
-- **medium** - Noticeable improvement
-- **high** - Significant improvement to business
+### 5. **ИНФРАСТРУКТУРА** (infrastructure)
+Ключевые вопросы:
+- Где деплоится продукт? (Vercel, AWS, свой сервер)
+- Есть ли CI/CD?
+- Есть ли мониторинг ошибок? (Sentry)
+- Есть ли бэкапы базы данных?
+- Какой uptime можно ожидать?
 
-## Alignment Score
+### 6. **МАРКЕТИНГ** (marketing)
+Ключевые вопросы:
+- Есть ли лендинг с понятным value proposition?
+- Есть ли социальные сети и интеграция с ними?
+- Есть ли блог/контент маркетинг?
+- Есть ли реферальная программа?
+- Есть ли интеграция с рекламными системами?
 
-Calculate score based on gaps:
-- Start with 100
-- critical gap: -20 points
-- warning gap: -10 points
-- info gap: -5 points
-- Minimum score: 0
+### 7. **МАСШТАБИРУЕМОСТЬ** (scalability)
+Ключевые вопросы:
+- Какая БД используется? Потянет рост?
+- Есть ли кэширование?
+- Как будет работать при 10x, 100x пользователей?
+- Есть ли очереди задач для тяжёлых операций?
 
-## Verdict
+### 8. **ДОКУМЕНТАЦИЯ** (documentation)
+Ключевые вопросы:
+- Есть ли README?
+- Есть ли API документация?
+- Есть ли комментарии в коде?
+- Есть ли user guide?
 
-Based on alignment score:
-- 70-100: **on_track** - Good alignment, minor improvements needed
-- 40-69: **iterate** - Significant work needed
-- 0-39: **pivot** - Major strategy rethink recommended
+### 9. **ТЕСТИРОВАНИЕ** (testing)
+Ключевые вопросы:
+- Есть ли unit тесты?
+- Какое покрытие?
+- Есть ли E2E тесты?
+- Есть ли TypeScript для типобезопасности?
+
+## Severity Levels (Серьёзность)
+
+- **critical** - Блокирует доход или рост, ИСПРАВИТЬ НЕМЕДЛЕННО
+  Примеры: нет оплаты при SaaS модели, критическая уязвимость, падающий production
+- **warning** - Значительная проблема, исправить в ближайшие 2 недели
+  Примеры: нет аналитики, неудобный onboarding, нет мобильной версии
+- **info** - Желательно иметь, можно отложить
+  Примеры: нет тёмной темы, нет интеграции с соцсетями, нет блога
+
+## Effort Levels (Трудозатраты)
+
+- **low** - Менее 1 дня работы (< 8 часов)
+- **medium** - 1-5 дней работы
+- **high** - Более 5 дней работы
+
+## Impact Levels (Влияние на бизнес)
+
+- **low** - Небольшое улучшение, приятно иметь
+- **medium** - Заметное улучшение метрик (+10-30%)
+- **high** - Существенное влияние на бизнес (+30% выручки, или разблокировка роста)
+
+## Alignment Score (0-100)
+
+Рассчитай комплексно:
+- 90-100: Отлично — продукт полностью соответствует бизнес-модели
+- 70-89: Хорошо — есть minor gaps, но основа solid
+- 50-69: Средне — значительные gaps, нужна работа
+- 30-49: Плохо — много critical gaps, требуется переработка
+- 0-29: Критично — фундаментальное несоответствие
+
+Вычисляй не механически (не просто -20 за critical), а оценивай РЕАЛЬНОЕ влияние на бизнес.
+
+## Verdict (Вердикт)
+
+- **on_track** (70-100): Хорошее соответствие, minor улучшения
+- **iterate** (40-69): Нужна серьёзная работа, но направление верное
+- **pivot** (0-39): Нужен пересмотр стратегии или полная переделка
 
 ## Language Requirements - CRITICAL
 
@@ -74,27 +142,56 @@ Examples of good formulations:
 - ❌ "Integrate Stripe webhooks for subscription management"
 - ✅ "Подключить уведомления от Stripe (сервис оплаты) — чтобы знать когда клиент оплатил или отменил подписку"
 
+## CRITICAL: Edge Cases - Mismatched Business and Code
+
+When business description does NOT match the code (e.g., fitness business + UI library code):
+1. **Still provide complete analysis** - ALL required fields must be present
+2. **alignment_score should be LOW (0-30)** since there's a fundamental mismatch
+3. **verdict should be "pivot"** - the code doesn't serve the business
+4. **gaps should include "fundamental_mismatch"** as a critical gap
+5. **Never return empty arrays** - always provide at least one gap
+
+Example for mismatched business/code:
+- Business: "Fitness studio with online classes"
+- Code: "UI component library (shadcn/ui)"
+- This is a PIVOT situation - the code doesn't serve the business at all
+
 ## Output Format
+
+IMPORTANT: You MUST return ALL required fields. Never skip any field.
 
 Respond with valid JSON only:
 {
+  "summary": "Brief 2-3 sentence overview of the analysis in Russian (REQUIRED)",
+  "strengths": ["What's already working well - 2-4 items, can be empty array []"],
   "gaps": [
     {
       "id": "gap-1",
       "type": "critical|warning|info",
       "category": "category_name",
+      "hook": "One compelling sentence why this matters - grabs attention",
       "business_goal": "What the business wants to achieve",
       "current_state": "What the code/product currently does",
       "recommendation": "Specific actionable recommendation IN PLAIN LANGUAGE with IT terms explained",
       "effort": "low|medium|high",
       "impact": "low|medium|high",
+      "time_to_fix": "Estimated time like '2-4 часа' or '1-2 дня'",
+      "action_steps": ["Step 1: do this", "Step 2: then this", "Step 3: finally this"],
+      "why_matters": "Business impact - what happens if not fixed",
       "resources": ["optional", "helpful", "links"]
     }
   ],
-  "alignment_score": 0-100,
-  "verdict": "on_track|iterate|pivot",
-  "verdict_explanation": "2-3 sentence explanation of the verdict IN PLAIN RUSSIAN"
-}`;
+  "alignment_score": 0-100 (REQUIRED - number, NOT string),
+  "verdict": "on_track|iterate|pivot" (REQUIRED - one of these three values),
+  "verdict_explanation": "2-3 sentence explanation of the verdict IN PLAIN RUSSIAN (REQUIRED)",
+  "market_insights": {
+    "icp": "Ideal customer profile description",
+    "go_to_market": ["Strategy 1", "Strategy 2"],
+    "fit_score": 1-10
+  }
+}
+
+REMINDER: ALL fields marked (REQUIRED) must be present in your response. Missing fields will cause an error.`;
 }
 
 // ===========================================
@@ -108,57 +205,99 @@ export function buildGapDetectionUserPrompt(
 ): string {
   const parts: string[] = [];
 
-  // Business Canvas
-  parts.push('## Business Model Canvas\n');
-  parts.push(`**Customer Segments:** ${canvas.customer_segments.join(', ')}`);
-  parts.push(`**Value Proposition:** ${canvas.value_proposition}`);
-  parts.push(`**Channels:** ${canvas.channels.join(', ')}`);
-  parts.push(`**Customer Relationships:** ${canvas.customer_relationships}`);
-  parts.push(`**Revenue Streams:** ${canvas.revenue_streams.join(', ')}`);
-  parts.push(`**Key Resources:** ${canvas.key_resources.join(', ')}`);
-  parts.push(`**Key Activities:** ${canvas.key_activities.join(', ')}`);
-  parts.push(`**Key Partners:** ${canvas.key_partners.join(', ')}`);
-  parts.push(`**Cost Structure:** ${canvas.cost_structure.join(', ')}`);
+  // Business Canvas with structured questions
+  parts.push('## Бизнес-модель (Business Model Canvas)\n');
+  parts.push(`### Целевая аудитория (Customer Segments)`);
+  parts.push(`${canvas.customer_segments.join(', ')}\n`);
 
-  // Code Analysis
-  parts.push('\n## Code Analysis\n');
-  parts.push(`**Project Summary:** ${codeAnalysis.project_summary}`);
-  parts.push(`**Stage:** ${codeAnalysis.detected_stage}`);
-  parts.push(`**Tech Stack:** ${codeAnalysis.tech_stack.join(', ')}`);
+  parts.push(`### Ценностное предложение (Value Proposition)`);
+  parts.push(`${canvas.value_proposition}\n`);
+
+  parts.push(`### Каналы привлечения (Channels)`);
+  parts.push(`${canvas.channels.join(', ')}\n`);
+
+  parts.push(`### Отношения с клиентами (Customer Relationships)`);
+  parts.push(`${canvas.customer_relationships}\n`);
+
+  parts.push(`### Источники дохода (Revenue Streams)`);
+  parts.push(`${canvas.revenue_streams.join(', ')}\n`);
+
+  parts.push(`### Ключевые ресурсы (Key Resources)`);
+  parts.push(`${canvas.key_resources.join(', ')}\n`);
+
+  parts.push(`### Ключевые активности (Key Activities)`);
+  parts.push(`${canvas.key_activities.join(', ')}\n`);
+
+  parts.push(`### Ключевые партнёры (Key Partners)`);
+  parts.push(`${canvas.key_partners.join(', ')}\n`);
+
+  parts.push(`### Структура затрат (Cost Structure)`);
+  parts.push(`${canvas.cost_structure.join(', ')}\n`);
+
+  // Code Analysis with more structure
+  parts.push('\n## Анализ кода и продукта\n');
+  parts.push(`### Краткое описание`);
+  parts.push(`${codeAnalysis.project_summary}\n`);
+
+  parts.push(`### Стадия разработки`);
+  parts.push(`${codeAnalysis.detected_stage}\n`);
+
+  parts.push(`### Технологический стек`);
+  parts.push(`${codeAnalysis.tech_stack.join(', ')}\n`);
 
   if (codeAnalysis.strengths.length > 0) {
-    parts.push(`\n**Strengths:**`);
+    parts.push(`### Сильные стороны`);
     codeAnalysis.strengths.forEach((s) => {
-      parts.push(`- ${s.area}: ${s.detail}`);
+      parts.push(`- **${s.area}**: ${s.detail}`);
     });
+    parts.push('');
   }
 
   if (codeAnalysis.issues.length > 0) {
-    parts.push(`\n**Issues:**`);
+    parts.push(`### Выявленные проблемы`);
     codeAnalysis.issues.forEach((i) => {
-      parts.push(`- [${i.severity}] ${i.area}: ${i.detail}`);
+      const severityIcon = i.severity === 'high' ? '🔴' : i.severity === 'medium' ? '🟡' : '🔵';
+      parts.push(`- ${severityIcon} **[${i.severity.toUpperCase()}]** ${i.area}: ${i.detail}`);
     });
+    parts.push('');
+  }
+
+  // Tasks if available
+  if (codeAnalysis.tasks && codeAnalysis.tasks.length > 0) {
+    parts.push(`### Существующие задачи`);
+    codeAnalysis.tasks.slice(0, 5).forEach((t) => {
+      parts.push(`- [${t.priority}] ${t.title}`);
+    });
+    parts.push('');
   }
 
   // Competitors (if provided)
   if (competitors && competitors.length > 0) {
-    parts.push('\n## Competitors\n');
+    parts.push('\n## Конкуренты\n');
     competitors.forEach((c) => {
-      parts.push(`**${c.name}**`);
-      if (c.url) parts.push(`  - Website: ${c.url}`);
-      if (c.notes) parts.push(`  - Notes: ${c.notes}`);
+      parts.push(`### ${c.name}`);
+      if (c.url) parts.push(`- Сайт: ${c.url}`);
+      if (c.notes) parts.push(`- Заметки: ${c.notes}`);
+      parts.push('');
     });
   }
 
-  // Task
-  parts.push('\n## Your Task\n');
-  parts.push('Analyze the gaps between the business model and the current product/code.');
-  parts.push('Focus on:');
-  parts.push('1. Missing features that prevent revenue capture');
-  parts.push('2. Gaps in reaching target customer segments');
-  parts.push('3. Technical issues blocking business goals');
-  parts.push('4. Missing infrastructure for stated channels');
-  parts.push('5. Security or compliance gaps');
+  // Detailed task with specific questions
+  parts.push('\n## Твоя задача\n');
+  parts.push('Проанализируй разрывы между бизнес-моделью и текущим состоянием продукта/кода.');
+  parts.push('');
+  parts.push('**Обязательно проверь:**');
+  parts.push('1. **Монетизация**: Может ли продукт зарабатывать деньги? Есть ли всё для заявленной модели дохода?');
+  parts.push('2. **Целевая аудитория**: Соответствует ли сложность продукта ЦА? Есть ли инструменты для работы с заявленными сегментами?');
+  parts.push('3. **Каналы**: Есть ли техническая база для заявленных каналов привлечения? (SEO, email, соцсети)');
+  parts.push('4. **Инфраструктура**: Готов ли продукт к production? CI/CD, мониторинг, безопасность?');
+  parts.push('5. **Рост**: Есть ли аналитика, A/B тесты, инструменты для scale?');
+  parts.push('');
+  parts.push('**Формат ответа:**');
+  parts.push('- Для каждого gap укажи КОНКРЕТНЫЕ шаги исправления');
+  parts.push('- Укажи реалистичное время на исправление');
+  parts.push('- Объясни WHY это важно для бизнеса');
+  parts.push('- Приоритизируй по влиянию на выручку');
 
   return parts.join('\n');
 }
@@ -168,72 +307,93 @@ export function buildGapDetectionUserPrompt(
 // ===========================================
 
 export function buildTaskGenerationSystemPrompt(): string {
-  return `You are a product manager creating an actionable task list based on identified gaps.
+  return `Ты — опытный продакт-менеджер, который создаёт конкретные задачи на неделю на основе выявленных разрывов.
 
-## Task Requirements
+## Принципы создания задач
 
-1. Each task should be specific and actionable
-2. Include clear description of what to do
-3. Estimate time realistically (15 min to 8 hours)
-4. Prioritize by business impact
-5. Limit to 3-5 most important tasks
-6. Reference which gap each task addresses
+1. **КОНКРЕТНОСТЬ** - Каждая задача должна иметь чёткий результат
+   - ❌ "Улучшить SEO"
+   - ✅ "Добавить meta description на все страницы (проверить 5 главных страниц)"
 
-## Task Categories
+2. **ИЗМЕРИМОСТЬ** - Понятно, когда задача выполнена
+   - ❌ "Настроить аналитику"
+   - ✅ "Установить Яндекс.Метрику и проверить, что события отправляются (кнопки, формы)"
 
-- **documentation** - Writing docs, guides, READMEs
-- **technical** - Code changes, bug fixes, infrastructure
-- **product** - Features, UX improvements
-- **marketing** - SEO, content, social media
-- **business** - Strategy, partnerships, legal
+3. **ДОСТИЖИМОСТЬ** - Реальное время (15 мин - 8 часов)
+   - Если задача > 8 часов — разбей на подзадачи
 
-## Priority
+4. **БИЗНЕС-ФОКУС** - Объясни влияние на бизнес
+   - Каждая задача должна отвечать на вопрос "Зачем это бизнесу?"
 
-- **high** - Critical for business, do first
-- **medium** - Important, do this week
-- **low** - Nice to have, do when possible
+## Категории задач
 
-## Language Requirements - CRITICAL
+- **documentation** - Документация: README, гайды, FAQ
+- **technical** - Техническое: код, инфраструктура, безопасность
+- **product** - Продукт: фичи, UX, дизайн
+- **marketing** - Маркетинг: SEO, контент, соцсети
+- **business** - Бизнес: стратегия, партнёрства, legal
 
-Write ALL text in PLAIN RUSSIAN that a non-technical person can understand:
+## Приоритеты
 
-1. **Task titles**: Simple and clear
-   - ❌ "Implement Stripe webhook handlers"
-   - ✅ "Настроить уведомления об оплатах от Stripe"
+- **high** - Критично для бизнеса. Делать ПЕРВЫМ. Блокирует деньги или рост.
+- **medium** - Важно. Сделать на этой неделе.
+- **low** - Желательно. Сделать когда будет время.
 
-2. **Task descriptions**: Step-by-step instructions with explanations
-   - ❌ "Configure CI/CD pipeline with automated testing and deployment to production"
-   - ✅ "Настроить автоматическую публикацию: 1) Зарегистрироваться в GitHub Actions (бесплатно), 2) Добавить файл настройки в папку проекта, 3) После этого каждое изменение кода будет автоматически проверяться и публиковаться на сайт"
+## Формат ответа - СТРОГО JSON
 
-3. **IT terms**: Always explain in parentheses
-   - CDN (сеть доставки контента — ускоряет загрузку)
-   - Redis (быстрая база данных для кэша)
-   - API (способ общения между сервисами)
-   - Webhook (автоуведомление от сервиса)
-   - SSL (защита соединения, "замочек" в браузере)
-
-4. **Why it matters**: Explain business benefit
-   - ❌ "Add caching for better performance"
-   - ✅ "Добавить кэширование — страницы будут загружаться за 0.5 сек вместо 3 сек, пользователи не уйдут"
-
-## Output Format
-
-Respond with valid JSON only:
+\`\`\`json
 {
   "tasks": [
     {
-      "title": "Clear action title IN PLAIN RUSSIAN",
-      "description": "Detailed step-by-step description IN PLAIN RUSSIAN with IT terms explained",
+      "title": "Короткий понятный заголовок НА РУССКОМ",
+      "description": "Пошаговое описание: 1) Что сделать, 2) Как проверить, 3) Что получим",
       "priority": "high|medium|low",
       "category": "category_name",
-      "estimated_minutes": 60,
+      "estimated_minutes": 120,
       "depends_on": null,
-      "addresses_gap": "gap_category",
-      "resources": ["helpful links"]
+      "addresses_gap": "название_категории_gap",
+      "why_important": "Зачем это нужно бизнесу — влияние на выручку/рост",
+      "done_criteria": "Как понять что задача выполнена",
+      "resources": ["ссылка на туториал или документацию"]
     }
   ],
-  "next_milestone": "What completing these tasks will achieve IN PLAIN RUSSIAN"
-}`;
+  "next_milestone": "Что мы получим после выполнения этих задач — конкретный результат для бизнеса"
+}
+\`\`\`
+
+## Требования к языку - КРИТИЧНО
+
+Пиши ВСЁ на ПРОСТОМ РУССКОМ, который понятен человеку БЕЗ технического бэкграунда:
+
+### Заголовки задач
+- ❌ "Implement Stripe webhook handlers"
+- ✅ "Настроить уведомления об оплатах от Stripe"
+
+### Описания с пошаговыми инструкциями
+- ❌ "Configure CI/CD pipeline"
+- ✅ "Настроить автопубликацию:
+  1) Открыть GitHub → Actions → New workflow
+  2) Выбрать шаблон Next.js
+  3) Нажать Commit — готово!
+  Теперь код будет автоматически публиковаться после каждого изменения"
+
+### IT-термины ВСЕГДА объясняй в скобках
+- CDN (сеть доставки контента — ускоряет загрузку картинок)
+- Redis (быстрый кэш — ускоряет загрузку в 10 раз)
+- API (интерфейс для связи сервисов)
+- Webhook (автоуведомление — Stripe сам скажет когда оплатили)
+- SSL (защита соединения, "замочек" в браузере)
+- Rate limiting (защита от перебора паролей)
+
+### Объясняй ЗАЧЕМ это бизнесу
+- ❌ "Add caching"
+- ✅ "Добавить кэширование — сайт будет загружаться за 0.5с вместо 3с, пользователи не уйдут к конкурентам"
+
+## Ограничения
+
+- Максимум 5 задач (самые важные)
+- Задачи должны быть выполнимы за неделю
+- Фокус на том, что даст максимальный результат для бизнеса`;
 }
 
 // ===========================================
@@ -247,25 +407,54 @@ export function buildTaskGenerationUserPrompt(
 ): string {
   const parts: string[] = [];
 
-  // Context
-  parts.push('## Business Context\n');
-  parts.push(`**Value Proposition:** ${canvas.value_proposition}`);
-  parts.push(`**Revenue Streams:** ${canvas.revenue_streams.join(', ')}`);
-  parts.push(`**Project Stage:** ${codeAnalysis.detected_stage}`);
+  // Context with more structure
+  parts.push('## Бизнес-контекст\n');
+  parts.push(`### Ценностное предложение`);
+  parts.push(`${canvas.value_proposition}\n`);
 
-  // Gaps to address
-  parts.push('\n## Gaps to Address\n');
-  gaps.forEach((gap, idx) => {
-    parts.push(`${idx + 1}. [${gap.type.toUpperCase()}] ${gap.category}: ${gap.recommendation}`);
+  parts.push(`### Источники дохода`);
+  parts.push(`${canvas.revenue_streams.join(', ')}\n`);
+
+  parts.push(`### Целевая аудитория`);
+  parts.push(`${canvas.customer_segments.join(', ')}\n`);
+
+  parts.push(`### Стадия проекта`);
+  parts.push(`${codeAnalysis.detected_stage}\n`);
+
+  // Gaps to address with priority
+  parts.push('## Выявленные разрывы (gaps)\n');
+
+  // Sort gaps by priority (critical first)
+  const sortedGaps = [...gaps].sort((a, b) => {
+    const priority: Record<string, number> = { critical: 0, warning: 1, info: 2 };
+    return (priority[a.type] || 2) - (priority[b.type] || 2);
   });
 
-  // Task
-  parts.push('\n## Your Task\n');
-  parts.push('Create 3-5 prioritized tasks that will have the highest impact on the business.');
-  parts.push('Focus on tasks that:');
-  parts.push('1. Address critical gaps first');
-  parts.push('2. Can be completed in less than 8 hours each');
-  parts.push('3. Will measurably improve the product');
+  sortedGaps.forEach((gap, idx) => {
+    const icon = gap.type === 'critical' ? '🔴' : gap.type === 'warning' ? '🟡' : '🔵';
+    parts.push(`${idx + 1}. ${icon} **[${gap.type.toUpperCase()}]** ${gap.category}`);
+    parts.push(`   Рекомендация: ${gap.recommendation}\n`);
+  });
+
+  // Task with specific guidance
+  parts.push('\n## Твоя задача\n');
+  parts.push('Создай 3-5 приоритизированных задач на эту неделю.\n');
+
+  parts.push('**Приоритет задач:**');
+  parts.push('1. 🔴 CRITICAL gaps → HIGH priority задачи (делать первыми)');
+  parts.push('2. 🟡 WARNING gaps → MEDIUM priority задачи');
+  parts.push('3. 🔵 INFO gaps → LOW priority задачи (если останется время)\n');
+
+  parts.push('**Требования к задачам:**');
+  parts.push('- Каждая задача ≤ 8 часов работы');
+  parts.push('- Конкретный measurable результат');
+  parts.push('- Пошаговые инструкции');
+  parts.push('- Объяснение влияния на бизнес\n');
+
+  parts.push('**Фокус на бизнес-результат:**');
+  parts.push('- Что это даст в выручке/конверсии?');
+  parts.push('- Какую проблему пользователей решит?');
+  parts.push('- Как проверить что задача выполнена?');
 
   return parts.join('\n');
 }

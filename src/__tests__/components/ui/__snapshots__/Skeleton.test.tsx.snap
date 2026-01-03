@@ -1,0 +1,7544 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Skeleton snapshots > Skeleton should match snapshot 1`] = `
+<div
+  aria-hidden="true"
+  class="skeleton skeleton-rect skeleton-shimmer "
+  style="width: 200px; height: 50px;"
+/>
+`;
+
+exports[`Skeleton snapshots > SkeletonCanvas should match snapshot 1`] = `
+<div
+  class="skeleton-canvas-wrapper"
+>
+  <div
+    class="skeleton-canvas-header"
+  >
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-circle skeleton-wave "
+      style="width: 24px; height: 24px;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-text skeleton-wave "
+      style="animation-delay: 50ms; width: 200px; height: 20px;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+  </div>
+  <div
+    class="skeleton-canvas-grid"
+  >
+    <div
+      class="skeleton-canvas-block"
+    >
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 160ms; width: 40%; height: 14px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 180ms; width: 100%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 200ms; width: 80%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 220ms; width: 60%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-canvas-block"
+    >
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 220ms; width: 40%; height: 14px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 240ms; width: 100%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 260ms; width: 80%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 280ms; width: 60%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-canvas-block"
+    >
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 280ms; width: 40%; height: 14px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 300ms; width: 100%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 320ms; width: 80%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 340ms; width: 60%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-canvas-block"
+    >
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 340ms; width: 40%; height: 14px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 360ms; width: 100%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 380ms; width: 80%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 400ms; width: 60%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-canvas-block"
+    >
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 400ms; width: 40%; height: 14px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 420ms; width: 100%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 440ms; width: 80%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 460ms; width: 60%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-canvas-block"
+    >
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 460ms; width: 40%; height: 14px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 480ms; width: 100%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 500ms; width: 80%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 520ms; width: 60%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Skeleton snapshots > SkeletonCard should match snapshot 1`] = `
+<div
+  class="skeleton-card-wrapper"
+>
+  <div
+    aria-hidden="true"
+    class="skeleton skeleton-rect skeleton-shimmer "
+    style="height: 120px;"
+  />
+  <style>
+    
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+  </style>
+  <div
+    class="skeleton-card-body"
+  >
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-text skeleton-shimmer "
+      style="width: 60%;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-text skeleton-shimmer "
+      style="width: 80%;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-text skeleton-shimmer "
+      style="width: 40%;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+  </div>
+</div>
+`;
+
+exports[`Skeleton snapshots > SkeletonGaps should match snapshot 1`] = `
+<div
+  class="skeleton-gaps-wrapper"
+>
+  <div
+    class="skeleton-gaps-header"
+  >
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-text skeleton-wave "
+      style="width: 150px; height: 20px;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+  </div>
+  <div
+    class="skeleton-gaps-list"
+  >
+    <div
+      class="skeleton-gap-card"
+    >
+      <div
+        class="skeleton-gap-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 150ms; width: 60px; height: 24px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 180ms; width: 80px; height: 24px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 210ms; width: 90%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 240ms; width: 70%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        class="skeleton-gap-footer"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 270ms; width: 100px; height: 32px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+    </div>
+    <div
+      class="skeleton-gap-card"
+    >
+      <div
+        class="skeleton-gap-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 250ms; width: 60px; height: 24px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 280ms; width: 80px; height: 24px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 310ms; width: 90%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 340ms; width: 70%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        class="skeleton-gap-footer"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 370ms; width: 100px; height: 32px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+    </div>
+    <div
+      class="skeleton-gap-card"
+    >
+      <div
+        class="skeleton-gap-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 350ms; width: 60px; height: 24px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 380ms; width: 80px; height: 24px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 410ms; width: 90%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 440ms; width: 70%;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        class="skeleton-gap-footer"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-rect skeleton-wave "
+          style="animation-delay: 470ms; width: 100px; height: 32px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Skeleton snapshots > SkeletonScore should match snapshot 1`] = `
+<div
+  class="skeleton-score-wrapper"
+>
+  <div
+    class="skeleton-score-header"
+  >
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-circle skeleton-wave "
+      style="width: 24px; height: 24px;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-text skeleton-wave "
+      style="animation-delay: 50ms; width: 180px; height: 20px;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+  </div>
+  <div
+    class="skeleton-metrics"
+  >
+    <div
+      class="skeleton-metric"
+    >
+      <div
+        class="skeleton-metric-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-circle skeleton-wave "
+          style="animation-delay: 180ms; width: 16px; height: 16px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 200ms; width: 60%; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 220ms; width: 50px; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-rect skeleton-wave "
+        style="animation-delay: 240ms; height: 8px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 260ms; width: 80%; height: 12px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-metric"
+    >
+      <div
+        class="skeleton-metric-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-circle skeleton-wave "
+          style="animation-delay: 260ms; width: 16px; height: 16px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 280ms; width: 60%; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 300ms; width: 50px; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-rect skeleton-wave "
+        style="animation-delay: 320ms; height: 8px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 340ms; width: 80%; height: 12px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-metric"
+    >
+      <div
+        class="skeleton-metric-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-circle skeleton-wave "
+          style="animation-delay: 340ms; width: 16px; height: 16px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 360ms; width: 60%; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 380ms; width: 50px; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-rect skeleton-wave "
+        style="animation-delay: 400ms; height: 8px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 420ms; width: 80%; height: 12px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="skeleton-metric"
+    >
+      <div
+        class="skeleton-metric-header"
+      >
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-circle skeleton-wave "
+          style="animation-delay: 420ms; width: 16px; height: 16px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 440ms; width: 60%; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+        <div
+          aria-hidden="true"
+          class="skeleton skeleton-text skeleton-wave "
+          style="animation-delay: 460ms; width: 50px; height: 14px;"
+        />
+        <style>
+          
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+        </style>
+      </div>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-rect skeleton-wave "
+        style="animation-delay: 480ms; height: 8px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+      <div
+        aria-hidden="true"
+        class="skeleton skeleton-text skeleton-wave "
+        style="animation-delay: 500ms; width: 80%; height: 12px;"
+      />
+      <style>
+        
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+      </style>
+    </div>
+  </div>
+  <div
+    class="skeleton-overall"
+  >
+    <div
+      aria-hidden="true"
+      class="skeleton skeleton-rect skeleton-wave "
+      style="animation-delay: 500ms; height: 56px;"
+    />
+    <style>
+      
+        .skeleton {
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+
+        .skeleton-text {
+          height: 16px;
+          border-radius: 4px;
+        }
+
+        .skeleton-circle {
+          border-radius: 50%;
+        }
+
+        .skeleton-rect {
+          border-radius: 8px;
+        }
+
+        .skeleton-card {
+          border-radius: 12px;
+        }
+
+        .skeleton-shimmer {
+          background: linear-gradient(
+            90deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-secondary) 20%,
+            var(--bg-tertiary) 40%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, shimmer 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-pulse {
+          animation: skeletonFadeIn 0.3s ease-out forwards, pulse 1.5s ease-in-out infinite 0.3s;
+        }
+
+        .skeleton-wave {
+          background: linear-gradient(
+            110deg,
+            var(--bg-tertiary) 0%,
+            var(--bg-tertiary) 40%,
+            var(--bg-secondary) 50%,
+            var(--bg-tertiary) 60%,
+            var(--bg-tertiary) 100%
+          );
+          background-size: 200% 100%;
+          animation: skeletonFadeIn 0.3s ease-out forwards, wave 1.8s ease-in-out infinite 0.3s;
+        }
+
+        @keyframes skeletonFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        @keyframes wave {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
+        }
+      
+    </style>
+  </div>
+</div>
+`;

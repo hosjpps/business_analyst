@@ -62,8 +62,8 @@ export async function buildCanvas(input: BusinessInput): Promise<BuildCanvasResu
   // Combine into single prompt (OpenRouter doesn't always support system messages well)
   const fullPrompt = `${system}\n\n---\n\n${user}`;
 
-  // Step 3: Send to LLM
-  const llmResponse = await sendToLLM(fullPrompt);
+  // Step 3: Send to LLM (use Opus for deep business analysis)
+  const llmResponse = await sendToLLM(fullPrompt, { taskType: 'businessCanvas' });
 
   // Step 4: Parse and validate response
   const parsed = parseJSONResponse<unknown>(llmResponse.content);

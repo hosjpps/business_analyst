@@ -2,25 +2,64 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import OpenAI from 'openai';
 
-import { buildChatPrompt } from '@/lib/llm/prompts';
+import { buildChatPrompt, buildFullAnalysisChatPrompt } from '@/lib/llm/prompts';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
 
 // ===========================================
 // Request Validation
 // ===========================================
 
+// Code analysis schema (for backwards compatibility)
+const CodeAnalysisSchema = z.object({
+  project_summary: z.string(),
+  detected_stage: z.string(),
+  tech_stack: z.array(z.string()),
+  strengths: z.array(z.any()),
+  issues: z.array(z.any()),
+  tasks: z.array(z.any()),
+  next_milestone: z.string()
+});
+
+// Business canvas schema
+const BusinessCanvasSchema = z.object({
+  value_proposition: z.string(),
+  customer_segments: z.array(z.string()),
+  channels: z.array(z.string()),
+  revenue_streams: z.array(z.string()),
+  key_resources: z.array(z.string()),
+  key_activities: z.array(z.string()),
+  key_partners: z.array(z.string()),
+  customer_relationships: z.string().optional(),
+  cost_structure: z.array(z.string())
+}).optional();
+
+// Gap schema
+const GapSchema = z.object({
+  gaps: z.array(z.any()).optional(),
+  alignment_score: z.number().optional(),
+  verdict: z.string().optional(),
+  tasks: z.array(z.any()).optional()
+}).optional();
+
+// Competitor schema
+const CompetitorSchema = z.object({
+  your_advantages: z.array(z.string()).optional(),
+  your_gaps: z.array(z.string()).optional(),
+  market_position: z.string().optional(),
+  recommendations: z.array(z.string()).optional()
+}).optional();
+
 const ChatStreamRequestSchema = z.object({
   session_id: z.string().min(1),
   message: z.string().min(1, 'Message is required'),
-  previous_analysis: z.object({
-    project_summary: z.string(),
-    detected_stage: z.string(),
-    tech_stack: z.array(z.string()),
-    strengths: z.array(z.any()),
-    issues: z.array(z.any()),
-    tasks: z.array(z.any()),
-    next_milestone: z.string()
-  })
+  // Legacy field (for backwards compatibility)
+  previous_analysis: CodeAnalysisSchema.optional(),
+  // Full analysis context fields
+  business_canvas: BusinessCanvasSchema,
+  gap_analysis: GapSchema,
+  competitor_analysis: CompetitorSchema,
+  // Mode indicator
+  analysis_mode: z.enum(['code', 'business', 'full', 'competitor']).optional()
 });
 
 // ===========================================
@@ -86,10 +125,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { message, previous_analysis } = validation.data;
+    const {
+      message,
+      previous_analysis,
+      business_canvas,
+      gap_analysis,
+      competitor_analysis,
+      analysis_mode
+    } = validation.data;
 
-    // Build prompt
-    const prompt = buildChatPrompt(message, previous_analysis);
+    // Build prompt based on analysis mode
+    let prompt: string;
+
+    if (analysis_mode === 'full' || (business_canvas && gap_analysis)) {
+      // Full analysis mode - use comprehensive prompt
+      prompt = buildFullAnalysisChatPrompt(message, {
+        codeAnalysis: previous_analysis,
+        businessCanvas: business_canvas,
+        gapAnalysis: gap_analysis,
+        competitorAnalysis: competitor_analysis
+      });
+    } else if (previous_analysis) {
+      // Legacy mode - code analysis only
+      prompt = buildChatPrompt(message, previous_analysis);
+    } else {
+      // Fallback - use whatever context is available
+      const context: Record<string, unknown> = {};
+      if (business_canvas) context.business_canvas = business_canvas;
+      if (gap_analysis) context.gap_analysis = gap_analysis;
+      if (competitor_analysis) context.competitor_analysis = competitor_analysis;
+      prompt = buildChatPrompt(message, context);
+    }
 
     // Create streaming response
     const client = getClient();

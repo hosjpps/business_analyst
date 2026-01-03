@@ -75,6 +75,13 @@ export interface Gap {
   effort: EffortLevel;
   impact: ImpactLevel;
   resources?: string[];
+
+  // NEW: From skills analysis (competitive-ads-extractor, developer-growth-analysis)
+  hook?: string; // Why this matters - one compelling sentence
+  time_to_fix?: string; // Estimated time (e.g., "2-4 часа", "1 день")
+  action_steps?: string[]; // Concrete steps to fix (from content-research-writer)
+  why_matters?: string; // Business impact explanation
+  competitor_approach?: string; // How competitors solve this (from competitive-ads-extractor)
 }
 
 export const GapSchema = z.object({
@@ -87,6 +94,13 @@ export const GapSchema = z.object({
   effort: EffortLevelSchema,
   impact: ImpactLevelSchema,
   resources: z.array(z.string()).optional(),
+
+  // NEW: From skills analysis
+  hook: z.string().optional(),
+  time_to_fix: z.string().optional(),
+  action_steps: z.array(z.string()).optional(),
+  why_matters: z.string().optional(),
+  competitor_approach: z.string().optional(),
 });
 
 // ===========================================
@@ -118,6 +132,15 @@ export interface GapAnalysisResult {
   alignment_score: number; // 0-100
   verdict: Verdict;
   verdict_explanation: string;
+
+  // NEW: From skills analysis (developer-growth-analysis, lead-research-assistant)
+  summary?: string; // Overview of the analysis
+  strengths?: string[]; // What's already working well
+  market_insights?: {
+    icp?: string; // Ideal Customer Profile
+    go_to_market?: string[]; // Go-to-market strategies
+    fit_score?: number; // 1-10, how well product fits market
+  };
 }
 
 export const GapAnalysisResultSchema = z.object({
@@ -125,6 +148,17 @@ export const GapAnalysisResultSchema = z.object({
   alignment_score: z.number().min(0).max(100),
   verdict: VerdictSchema,
   verdict_explanation: z.string().min(20),
+
+  // NEW: From skills analysis
+  summary: z.string().optional(),
+  strengths: z.array(z.string()).optional(),
+  market_insights: z
+    .object({
+      icp: z.string().optional(),
+      go_to_market: z.array(z.string()).optional(),
+      fit_score: z.number().min(1).max(10).optional(),
+    })
+    .optional(),
 });
 
 // ===========================================
@@ -179,10 +213,18 @@ export interface CompetitorInput {
 
 export const CompetitorInputSchema = z.object({
   name: z.string().min(1),
-  url: z.string().url().optional(),
-  github: z.string().url().optional(),
+  url: z.string().url().optional().or(z.literal('')),
+  github: z.string().url().optional().or(z.literal('')),
   socials: z.record(z.string()).optional(),
   notes: z.string().optional(),
+  // Support additional fields from competitor.ts format
+  social_links: z.object({
+    instagram: z.string().url().optional().or(z.literal('')),
+    linkedin: z.string().url().optional().or(z.literal('')),
+    twitter: z.string().url().optional().or(z.literal('')),
+    facebook: z.string().url().optional().or(z.literal('')),
+    youtube: z.string().url().optional().or(z.literal('')),
+  }).optional(),
 });
 
 export interface GapAnalyzeResponse {
@@ -195,6 +237,15 @@ export interface GapAnalyzeResponse {
   next_milestone?: string;
   metadata?: GapMetadata;
   error?: string;
+
+  // NEW: From skills analysis
+  summary?: string;
+  strengths?: string[];
+  market_insights?: {
+    icp?: string;
+    go_to_market?: string[];
+    fit_score?: number;
+  };
 }
 
 export interface GapMetadata {
@@ -214,6 +265,17 @@ export const LLMGapDetectionResponseSchema = z.object({
   alignment_score: z.number().min(0).max(100),
   verdict: VerdictSchema,
   verdict_explanation: z.string(),
+
+  // NEW: From skills analysis
+  summary: z.string().optional(),
+  strengths: z.array(z.string()).optional(),
+  market_insights: z
+    .object({
+      icp: z.string().optional(),
+      go_to_market: z.array(z.string()).optional(),
+      fit_score: z.number().min(1).max(10).optional(),
+    })
+    .optional(),
 });
 
 export const LLMTaskGenerationResponseSchema = z.object({

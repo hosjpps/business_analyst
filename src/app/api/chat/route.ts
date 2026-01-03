@@ -73,8 +73,8 @@ export async function POST(request: NextRequest) {
     // Build chat prompt
     const prompt = buildChatPrompt(message, previous_analysis);
 
-    // Send to LLM
-    const llmResponse = await sendToLLM(prompt);
+    // Send to LLM (use Sonnet for faster chat responses)
+    const llmResponse = await sendToLLM(prompt, { taskType: 'chat' });
 
     // Return response
     const response: ChatResponse = {

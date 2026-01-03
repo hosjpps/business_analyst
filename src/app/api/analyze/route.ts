@@ -243,7 +243,8 @@ export async function POST(request: NextRequest) {
       user_context
     );
 
-    const llmResponse = await sendToLLM(prompt);
+    // Send to LLM (code analysis uses Sonnet for speed)
+    const llmResponse = await sendToLLM(prompt, { taskType: 'codeAnalysis' });
 
     // Parse and validate LLM response with Zod
     let parsedResponse: LLMAnalysisResponse;

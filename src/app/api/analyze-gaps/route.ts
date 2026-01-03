@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     totalTokensUsed += gapResult.tokens_used || 0;
 
-    const { gaps, alignment_score, verdict, verdict_explanation } = gapResult.data;
+    const { gaps, alignment_score, verdict, verdict_explanation, summary, strengths, market_insights } = gapResult.data;
 
     // 2. Generate tasks from gaps
     const taskResult = await generateTasks(gaps, canvas, code_analysis);
@@ -137,6 +137,10 @@ export async function POST(request: NextRequest) {
       tasks,
       next_milestone,
       metadata,
+      // NEW: From skills analysis
+      summary,
+      strengths,
+      market_insights,
     };
 
     // Add rate limit headers

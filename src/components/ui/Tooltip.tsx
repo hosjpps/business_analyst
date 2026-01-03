@@ -90,6 +90,16 @@ export function Tooltip({
     };
   }, []);
 
+  // Get transform origin based on position
+  const getTransformOrigin = () => {
+    switch (position) {
+      case 'top': return 'bottom center';
+      case 'bottom': return 'top center';
+      case 'left': return 'right center';
+      case 'right': return 'left center';
+    }
+  };
+
   return (
     <>
       <span
@@ -111,10 +121,34 @@ export function Tooltip({
             top: coords.top,
             left: coords.left,
             maxWidth,
+            transformOrigin: getTransformOrigin(),
           }}
           role="tooltip"
         >
           {content}
+          <style jsx>{`
+            .tooltip {
+              z-index: 1000;
+              animation: tooltipEnter 0.2s var(--ease-out-back, cubic-bezier(0.34, 1.56, 0.64, 1));
+            }
+
+            @keyframes tooltipEnter {
+              from {
+                opacity: 0;
+                transform: scale(0.9);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+              .tooltip {
+                animation: none;
+              }
+            }
+          `}</style>
         </div>
       )}
     </>

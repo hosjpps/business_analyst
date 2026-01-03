@@ -34,7 +34,25 @@
       "Bash(find:*)",
       "Bash(xargs:*)",
       "Bash(npm run test:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(lsof:*)",
+      "Bash(pkill:*)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_fill_form",
+      "mcp__github__get_file_contents",
+      "mcp__playwright__browser_install",
+      "mcp__playwright__browser_console_messages",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_select_option"
     ]
   }
 }

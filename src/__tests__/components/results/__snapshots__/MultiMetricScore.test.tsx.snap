@@ -1,0 +1,1674 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MultiMetricScore snapshots > should match snapshot with gaps and explanation 1`] = `
+<div
+  class="multi-metric-score"
+>
+  <div
+    class="score-header"
+  >
+    <span
+      class="score-emoji"
+    >
+      📊
+    </span>
+    <h3
+      class="score-title"
+    >
+      Оценка вашего продукта
+    </h3>
+  </div>
+  <div
+    class="metrics-grid"
+  >
+    <div
+      class="metric-item "
+      style="animation-delay: 0.1s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          💎
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Готовность к рынку
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          80
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 80%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Продукт готов для первых продаж
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="metric-item "
+      style="animation-delay: 0.18s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          🔥
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Соответствие бизнес-целям
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-orange);"
+        >
+          55
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 55%; background-color: var(--accent-orange);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Есть расхождения с бизнес-целями
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="metric-item "
+      style="animation-delay: 0.26s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          🛠️
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Техническое качество
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          100
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 100%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Отличное качество кода
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="metric-item "
+      style="animation-delay: 0.33999999999999997s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          🔒
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Безопасность
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          90
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 90%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Критических уязвимостей нет
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+  </div>
+  <div
+    class="overall-score verdict-iterate"
+  >
+    <div
+      class="overall-left"
+    >
+      <span
+        class="overall-emoji"
+      >
+        🔧
+      </span>
+      <span
+        class="overall-label"
+      >
+        Общий скор:
+      </span>
+      <span
+        class="overall-value"
+      >
+        77
+        /100
+      </span>
+    </div>
+    <div
+      class="overall-verdict"
+    >
+      НУЖНЫ УЛУЧШЕНИЯ
+    </div>
+  </div>
+  <p
+    class="verdict-explanation"
+  >
+    Требуются улучшения в монетизации
+  </p>
+  <style>
+    
+        .multi-metric-score {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 12px;
+          padding: 24px;
+          animation: fadeIn 0.4s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 24px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--border-default);
+        }
+
+        .score-emoji {
+          font-size: 24px;
+          animation: bounceIn 0.5s var(--ease-out-back, cubic-bezier(0.34, 1.56, 0.64, 1));
+        }
+
+        @keyframes bounceIn {
+          from { opacity: 0; transform: scale(0.5); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        .score-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin: 0;
+        }
+
+        .metrics-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 24px;
+        }
+
+        .overall-score {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          border-radius: 8px;
+          background: var(--bg-tertiary);
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          animation: slideUp 0.5s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 0.8s both;
+        }
+
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .overall-score:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.4));
+        }
+
+        .overall-score.verdict-on_track {
+          border-left: 4px solid var(--accent-green);
+        }
+
+        .overall-score.verdict-iterate {
+          border-left: 4px solid var(--accent-orange);
+        }
+
+        .overall-score.verdict-pivot {
+          border-left: 4px solid var(--accent-red);
+        }
+
+        .overall-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .overall-emoji {
+          font-size: 24px;
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+
+        .overall-label {
+          font-size: 14px;
+          color: var(--text-secondary);
+        }
+
+        .overall-value {
+          font-size: 22px;
+          font-weight: 700;
+          color: var(--text-primary);
+          font-variant-numeric: tabular-nums;
+        }
+
+        .overall-verdict {
+          font-size: 13px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          padding: 8px 14px;
+          border-radius: 6px;
+          background: var(--bg-secondary);
+          color: var(--text-secondary);
+          transition: all 0.25s ease;
+        }
+
+        .verdict-on_track .overall-verdict {
+          color: var(--accent-green);
+          background: rgba(46, 160, 67, 0.15);
+        }
+
+        .verdict-iterate .overall-verdict {
+          color: var(--accent-orange);
+          background: rgba(210, 153, 34, 0.15);
+        }
+
+        .verdict-pivot .overall-verdict {
+          color: var(--accent-red);
+          background: rgba(248, 81, 73, 0.15);
+        }
+
+        .verdict-explanation {
+          font-size: 13px;
+          color: var(--text-secondary);
+          margin: 16px 0 0 0;
+          padding-top: 16px;
+          border-top: 1px solid var(--border-default);
+          line-height: 1.5;
+          animation: fadeIn 0.3s ease 1s both;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .multi-metric-score,
+          .score-emoji,
+          .overall-score,
+          .overall-emoji,
+          .verdict-explanation {
+            animation: none;
+          }
+          .overall-score:hover {
+            transform: none;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .multi-metric-score {
+            padding: 16px;
+          }
+
+          .overall-score {
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+          }
+
+          .overall-left {
+            justify-content: center;
+          }
+
+          .overall-value {
+            font-size: 20px;
+          }
+        }
+      
+  </style>
+</div>
+`;
+
+exports[`MultiMetricScore snapshots > should match snapshot with no gaps 1`] = `
+<div
+  class="multi-metric-score"
+>
+  <div
+    class="score-header"
+  >
+    <span
+      class="score-emoji"
+    >
+      📊
+    </span>
+    <h3
+      class="score-title"
+    >
+      Оценка вашего продукта
+    </h3>
+  </div>
+  <div
+    class="metrics-grid"
+  >
+    <div
+      class="metric-item "
+      style="animation-delay: 0.1s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          💎
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Готовность к рынку
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          100
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 100%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Продукт готов для первых продаж
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="metric-item "
+      style="animation-delay: 0.18s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          🔥
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Соответствие бизнес-целям
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          85
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 85%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Код отлично отражает бизнес-модель
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="metric-item "
+      style="animation-delay: 0.26s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          🛠️
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Техническое качество
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          100
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 100%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Отличное качество кода
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+    <div
+      class="metric-item "
+      style="animation-delay: 0.33999999999999997s;"
+    >
+      <div
+        class="metric-header"
+      >
+        <span
+          class="metric-emoji"
+        >
+          🔒
+        </span>
+        <span>
+          <span
+            class="metric-label"
+          >
+            Безопасность
+          </span>
+        </span>
+        <span
+          class="metric-value"
+          style="color: var(--accent-green);"
+        >
+          100
+          /100
+        </span>
+      </div>
+      <div
+        class="metric-bar-container"
+      >
+        <div
+          class="metric-bar-fill"
+          style="width: 100%; background-color: var(--accent-green);"
+        />
+      </div>
+      <p
+        class="metric-description"
+      >
+        Критических уязвимостей нет
+      </p>
+      <style>
+        
+        .metric-item {
+          animation: slideIn 0.4s ease forwards;
+          opacity: 0;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          background: transparent;
+        }
+
+        .metric-item.hovered {
+          background: var(--bg-tertiary);
+          transform: translateX(4px);
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        .metric-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .metric-emoji {
+          font-size: 16px;
+          transition: transform 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-emoji {
+          transform: scale(1.15);
+        }
+
+        .metric-label {
+          flex: 1;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: help;
+          border-bottom: 1px dashed var(--text-muted);
+        }
+
+        .metric-value {
+          font-size: 14px;
+          font-weight: 600;
+          min-width: 60px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          transition: transform 0.2s ease;
+        }
+
+        .metric-item.hovered .metric-value {
+          transform: scale(1.05);
+        }
+
+        .metric-bar-container {
+          height: 8px;
+          background: var(--bg-tertiary);
+          border-radius: 4px;
+          overflow: hidden;
+          margin-bottom: 6px;
+        }
+
+        .metric-bar-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.05s linear;
+          position: relative;
+        }
+
+        .metric-bar-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 20px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-bar-fill::after {
+          opacity: 1;
+        }
+
+        .metric-description {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin: 0;
+          transition: color 0.25s ease;
+        }
+
+        .metric-item.hovered .metric-description {
+          color: var(--text-secondary);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .metric-item {
+            animation: none;
+            opacity: 1;
+          }
+        }
+      
+      </style>
+    </div>
+  </div>
+  <div
+    class="overall-score verdict-on_track"
+  >
+    <div
+      class="overall-left"
+    >
+      <span
+        class="overall-emoji"
+      >
+        🚀
+      </span>
+      <span
+        class="overall-label"
+      >
+        Общий скор:
+      </span>
+      <span
+        class="overall-value"
+      >
+        95
+        /100
+      </span>
+    </div>
+    <div
+      class="overall-verdict"
+    >
+      ГОТОВ К РОСТУ
+    </div>
+  </div>
+  <style>
+    
+        .multi-metric-score {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-default);
+          border-radius: 12px;
+          padding: 24px;
+          animation: fadeIn 0.4s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 24px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--border-default);
+        }
+
+        .score-emoji {
+          font-size: 24px;
+          animation: bounceIn 0.5s var(--ease-out-back, cubic-bezier(0.34, 1.56, 0.64, 1));
+        }
+
+        @keyframes bounceIn {
+          from { opacity: 0; transform: scale(0.5); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        .score-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin: 0;
+        }
+
+        .metrics-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 24px;
+        }
+
+        .overall-score {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          border-radius: 8px;
+          background: var(--bg-tertiary);
+          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+          animation: slideUp 0.5s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 0.8s both;
+        }
+
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .overall-score:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.4));
+        }
+
+        .overall-score.verdict-on_track {
+          border-left: 4px solid var(--accent-green);
+        }
+
+        .overall-score.verdict-iterate {
+          border-left: 4px solid var(--accent-orange);
+        }
+
+        .overall-score.verdict-pivot {
+          border-left: 4px solid var(--accent-red);
+        }
+
+        .overall-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .overall-emoji {
+          font-size: 24px;
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+
+        .overall-label {
+          font-size: 14px;
+          color: var(--text-secondary);
+        }
+
+        .overall-value {
+          font-size: 22px;
+          font-weight: 700;
+          color: var(--text-primary);
+          font-variant-numeric: tabular-nums;
+        }
+
+        .overall-verdict {
+          font-size: 13px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          padding: 8px 14px;
+          border-radius: 6px;
+          background: var(--bg-secondary);
+          color: var(--text-secondary);
+          transition: all 0.25s ease;
+        }
+
+        .verdict-on_track .overall-verdict {
+          color: var(--accent-green);
+          background: rgba(46, 160, 67, 0.15);
+        }
+
+        .verdict-iterate .overall-verdict {
+          color: var(--accent-orange);
+          background: rgba(210, 153, 34, 0.15);
+        }
+
+        .verdict-pivot .overall-verdict {
+          color: var(--accent-red);
+          background: rgba(248, 81, 73, 0.15);
+        }
+
+        .verdict-explanation {
+          font-size: 13px;
+          color: var(--text-secondary);
+          margin: 16px 0 0 0;
+          padding-top: 16px;
+          border-top: 1px solid var(--border-default);
+          line-height: 1.5;
+          animation: fadeIn 0.3s ease 1s both;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .multi-metric-score,
+          .score-emoji,
+          .overall-score,
+          .overall-emoji,
+          .verdict-explanation {
+            animation: none;
+          }
+          .overall-score:hover {
+            transform: none;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .multi-metric-score {
+            padding: 16px;
+          }
+
+          .overall-score {
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+          }
+
+          .overall-left {
+            justify-content: center;
+          }
+
+          .overall-value {
+            font-size: 20px;
+          }
+        }
+      
+  </style>
+</div>
+`;
