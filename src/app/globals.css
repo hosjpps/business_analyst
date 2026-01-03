@@ -4166,3 +4166,220 @@ button.btn-loading::after {
   color: var(--text-secondary);
   font-size: 13px;
 }
+
+/* ===========================================
+   QuickStart Onboarding Popup (Portal)
+   =========================================== */
+
+.quickstart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+  animation: quickstart-fade-in 0.3s ease;
+}
+
+@keyframes quickstart-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.quickstart-card {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 16px;
+  padding: 32px;
+  animation: quickstart-slide-up 0.4s ease;
+}
+
+@keyframes quickstart-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quickstart-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.quickstart-close:hover {
+  background: var(--border-default);
+  color: var(--text-primary);
+}
+
+.quickstart-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.quickstart-wave {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+  animation: quickstart-wave-anim 1.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes quickstart-wave-anim {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+.quickstart-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.quickstart-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.quickstart-features {
+  margin-bottom: 24px;
+}
+
+.quickstart-features-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.quickstart-features-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quickstart-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-muted);
+  border-radius: 10px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.quickstart-feature:hover {
+  transform: translateX(4px);
+  border-color: var(--accent-blue);
+}
+
+.quickstart-feature .feature-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.quickstart-feature .feature-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quickstart-feature .feature-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quickstart-feature .feature-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.quickstart-actions {
+  text-align: center;
+}
+
+.quickstart-cta {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent-blue), #4090e0);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quickstart-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.4);
+}
+
+.quickstart-cta:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.quickstart-login {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.quickstart-login-link {
+  background: none;
+  border: none;
+  color: var(--accent-blue);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.quickstart-login-link:hover {
+  color: var(--text-primary);
+}
+
+@media (max-width: 480px) {
+  .quickstart-card {
+    padding: 24px;
+  }
+
+  .quickstart-title {
+    font-size: 20px;
+  }
+
+  .quickstart-wave {
+    font-size: 36px;
+  }
+}
