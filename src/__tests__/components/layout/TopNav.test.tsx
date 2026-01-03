@@ -52,7 +52,7 @@ describe('TopNav', () => {
       await waitFor(() => {
         const logoIcon = container.querySelector('.logo-icon');
         expect(logoIcon).toBeInTheDocument();
-        expect(logoIcon).toHaveTextContent('🔬');
+        expect(logoIcon).toHaveTextContent('◈');
       });
     });
 

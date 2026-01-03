@@ -25,8 +25,8 @@ interface User {
 // ===========================================
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Анализ', icon: '🔬' },
-  { href: '/dashboard', label: 'Проекты', icon: '📁', requiresAuth: true },
+  { href: '/', label: 'Анализ', icon: '◉' },
+  { href: '/dashboard', label: 'Проекты', icon: '▤', requiresAuth: true },
 ];
 
 // ===========================================
@@ -72,7 +72,7 @@ export function TopNav() {
       <div className="nav-container">
         {/* Logo */}
         <Link href="/" className="nav-logo">
-          <span className="logo-icon">🔬</span>
+          <span className="logo-icon">◈</span>
           <span className="logo-text">Business Analyst</span>
         </Link>
 
@@ -194,11 +194,11 @@ export function TopNav() {
         .nav-logo {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           text-decoration: none;
           color: var(--text-primary);
           font-weight: 600;
-          font-size: 16px;
+          font-size: 18px;
           transition: opacity 0.2s ease;
         }
 
@@ -207,11 +207,13 @@ export function TopNav() {
         }
 
         .logo-icon {
-          font-size: 20px;
+          font-size: 22px;
+          color: var(--accent-green);
         }
 
         .logo-text {
           white-space: nowrap;
+          letter-spacing: -0.3px;
         }
 
         /* Desktop Navigation */
@@ -224,49 +226,31 @@ export function TopNav() {
         .nav-link {
           display: flex;
           align-items: center;
-          gap: 6px;
-          padding: 8px 14px;
-          font-size: 14px;
-          color: var(--text-secondary);
+          gap: 8px;
+          padding: 8px 16px;
+          font-size: 15px;
+          color: var(--text-muted);
           text-decoration: none;
           border-radius: 6px;
-          transition: all 0.2s ease;
-          position: relative;
-        }
-
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          width: 0;
-          height: 2px;
-          background: var(--accent-blue);
-          border-radius: 1px;
-          transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
-          transform: translateX(-50%);
+          transition: color 0.2s ease;
         }
 
         .nav-link:hover {
           color: var(--text-primary);
-          background: var(--bg-secondary);
-        }
-
-        .nav-link:hover::after {
-          width: 60%;
         }
 
         .nav-link.active {
-          color: var(--accent-blue);
-          background: rgba(88, 166, 255, 0.1);
-        }
-
-        .nav-link.active::after {
-          width: 80%;
+          color: var(--text-primary);
+          font-weight: 500;
         }
 
         .nav-icon {
-          font-size: 16px;
+          font-size: 14px;
+          opacity: 0.7;
+        }
+
+        .nav-link.active .nav-icon {
+          opacity: 1;
         }
 
         /* User Menu */
@@ -457,12 +441,10 @@ export function TopNav() {
         .mobile-nav-link.active {
           color: var(--text-primary);
           background: var(--bg-secondary);
-          transform: translateX(4px);
         }
 
         .mobile-nav-link.active {
-          color: var(--accent-blue);
-          background: rgba(88, 166, 255, 0.1);
+          font-weight: 500;
         }
 
         .mobile-auth {
