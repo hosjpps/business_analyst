@@ -1210,7 +1210,6 @@ function Home() {
             <div className="metadata">
               <span>Документов: {businessResult.metadata.documents_parsed}</span>
               <span>Символов: {businessResult.metadata.total_text_length}</span>
-              <span>Токенов: {businessResult.metadata.tokens_used}</span>
               <span>Время: {businessResult.metadata.analysis_duration_ms}ms</span>
             </div>
           )}
@@ -1301,7 +1300,6 @@ function Home() {
               <span>Усечено: {codeResult.metadata.files_truncated}</span>
             ) : null}
             <span>Строк: {codeResult.metadata.total_lines}</span>
-            <span>Токенов: {codeResult.metadata.tokens_used}</span>
             <span>
               Время: {codeResult.metadata.analysis_duration_ms}ms
               {codeResult.metadata.cached ? ' (кэш)' : ''}
