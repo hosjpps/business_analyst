@@ -295,10 +295,14 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
       <style jsx>{`
         .profile-card {
           background: var(--color-canvas-subtle);
-          border: 1px solid var(--color-border-default);
+          border: 1px solid var(--border-default);
           border-radius: 8px;
           padding: 16px;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
+        }
+
+        .profile-card:not(:last-child) {
+          border-bottom: 2px solid var(--border-default);
         }
 
         .profile-header {
@@ -326,21 +330,26 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         }
 
         .expand-btn {
-          background: transparent;
-          border: 1px solid var(--color-border-default);
-          border-radius: 4px;
-          width: 24px;
-          height: 24px;
+          background: var(--accent-green);
+          border: none;
+          border-radius: 6px;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: var(--color-fg-muted);
-          font-size: 10px;
+          color: #ffffff;
+          font-size: 12px;
+          font-weight: 600;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 4px rgba(35, 134, 54, 0.3);
         }
 
         .expand-btn:hover {
-          background: var(--color-canvas-default);
+          background: #2ea043;
+          transform: scale(1.05);
+          box-shadow: 0 4px 8px rgba(35, 134, 54, 0.4);
         }
 
         .description {
@@ -571,7 +580,7 @@ function ComparisonMatrix({
           text-align: left;
           font-weight: 600;
           color: var(--color-fg-default);
-          border-bottom: 1px solid var(--color-border-default);
+          border: 1px solid var(--border-default);
           white-space: nowrap;
         }
 
@@ -593,12 +602,8 @@ function ComparisonMatrix({
 
         td {
           padding: 10px 8px;
-          border-bottom: 1px solid var(--color-border-muted);
+          border: 1px solid var(--border-default);
           color: var(--color-fg-default);
-        }
-
-        tr:last-child td {
-          border-bottom: none;
         }
 
         .category-row td {

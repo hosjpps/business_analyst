@@ -1080,6 +1080,9 @@ function Home() {
                   onChange={(e) => setSaveToProject(e.target.checked)}
                   disabled={loading}
                 />
+                <span className="toggle-switch">
+                  <span className="toggle-slider" />
+                </span>
                 <span className="toggle-label">Сохранить в проект</span>
               </label>
 
@@ -1210,6 +1213,7 @@ function Home() {
             <div className="metadata">
               <span>Документов: {businessResult.metadata.documents_parsed}</span>
               <span>Символов: {businessResult.metadata.total_text_length}</span>
+              <span>Токенов: {businessResult.metadata.tokens_used}</span>
               <span>Время: {businessResult.metadata.analysis_duration_ms}ms</span>
             </div>
           )}
@@ -1300,6 +1304,7 @@ function Home() {
               <span>Усечено: {codeResult.metadata.files_truncated}</span>
             ) : null}
             <span>Строк: {codeResult.metadata.total_lines}</span>
+            <span>Токенов: {codeResult.metadata.tokens_used}</span>
             <span>
               Время: {codeResult.metadata.analysis_duration_ms}ms
               {codeResult.metadata.cached ? ' (кэш)' : ''}
@@ -1468,8 +1473,11 @@ function Home() {
               <span>Код: {Math.round(codeResult.metadata.analysis_duration_ms / 1000)}с</span>
             )}
             {gapResult?.metadata && (
-              <span>Анализ: {Math.round(gapResult.metadata.analysis_duration_ms / 1000)}с</span>
+              <span>Разрывы: {Math.round(gapResult.metadata.analysis_duration_ms / 1000)}с</span>
             )}
+            <span>
+              Токенов: {(businessResult?.metadata?.tokens_used || 0) + (codeResult?.metadata?.tokens_used || 0) + (gapResult?.metadata?.tokens_used || 0)}
+            </span>
           </div>
 
           {/* Chat - Full Analysis mode with all context */}
@@ -1606,15 +1614,51 @@ function Home() {
         .save-toggle {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
           cursor: pointer;
           user-select: none;
         }
         .save-toggle input[type="checkbox"] {
+          position: absolute;
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .toggle-switch {
+          position: relative;
+          width: 48px;
+          height: 26px;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-default);
+          border-radius: 26px;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
+        }
+        .toggle-slider {
+          position: absolute;
+          top: 3px;
+          left: 3px;
           width: 18px;
           height: 18px;
-          accent-color: var(--accent-blue);
-          cursor: pointer;
+          background: var(--text-muted);
+          border-radius: 50%;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .save-toggle input[type="checkbox"]:checked + .toggle-switch {
+          background: var(--accent-green);
+          border-color: var(--accent-green);
+        }
+        .save-toggle input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
+          transform: translateX(22px);
+          background: #ffffff;
+        }
+        .save-toggle input[type="checkbox"]:disabled + .toggle-switch {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .save-toggle:hover .toggle-switch {
+          border-color: var(--accent-blue);
         }
         .toggle-label {
           font-size: 14px;

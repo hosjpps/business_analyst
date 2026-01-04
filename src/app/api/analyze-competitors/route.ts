@@ -14,7 +14,7 @@ import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate
 
 const RequestSchema = z.object({
   competitors: z.array(CompetitorInputSchema).min(1).max(10),
-  canvas: BusinessCanvasSchema.optional(),
+  canvas: BusinessCanvasSchema.nullish(),
   product_description: z.string().max(5000).optional(),
   quick_mode: z.boolean().optional().default(false),
 });
