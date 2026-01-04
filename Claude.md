@@ -96,6 +96,7 @@
 - [x] Матрица сравнения
 - [x] Market Position (leader/challenger/niche/newcomer)
 - [x] Рекомендации по позиционированию
+- [x] Динамические соцсети (VK, Telegram, Instagram, YouTube и 15+ платформ с автоопределением)
 
 **Auth & Database:**
 - [x] Supabase интеграция
@@ -144,6 +145,12 @@
 **Bug Fixes (v0.6.4):**
 - [x] BUG-001: Gap Detection с пустыми URL конкурентов — CompetitorInputSchema + sanitization
 - [x] BUG-002: Gap Detection LLM validation failure — улучшен промпт + fallback с analyzeGapsQuick
+
+**Bug Fixes (v0.7.1):**
+- [x] BUG-003: Модель Opus 4 → Opus 4.5 — обновлён MODEL_OPUS в client.ts
+- [x] BUG-004: Competitor Analysis не запускался в Full Analysis — добавлен вызов /api/analyze-competitors
+- [x] BUG-005: Gap Detection validation failure с `fundamental_mismatch` — добавлена новая категория в схему
+- [x] BUG-006: Google Trends возвращал HTML вместо JSON — добавлен safeParseJSON с проверкой HTML
 
 **Sprint 2 Form Experience (v0.6.5):**
 - [x] Wizard форма — пошаговый ввод для Full Analysis
@@ -510,8 +517,8 @@ curl -X POST http://localhost:3000/api/trends \
 5. Смотреть логи сервера
 
 Ожидаемый результат:
-✓ В логах видно: "LLM Request: task=businessCanvas, model=anthropic/claude-opus-4"
-✓ Для Gap Detection: "LLM Request: task=gapDetection, model=anthropic/claude-opus-4"
+✓ В логах видно: "LLM Request: task=businessCanvas, model=anthropic/claude-opus-4.5"
+✓ Для Gap Detection: "LLM Request: task=gapDetection, model=anthropic/claude-opus-4.5"
 ✓ Для Chat: "LLM Request: task=chat, model=anthropic/claude-sonnet-4"
 ✓ Можно переопределить через LLM_MODEL в .env.local
 
@@ -692,7 +699,8 @@ src/
 │   ├── supabase/           # Supabase клиенты
 │   ├── business/           # Business Canvas логика
 │   ├── gaps/               # Gap Detection логика
-│   └── competitor/         # Competitor Analysis логика
+│   ├── competitor/         # Competitor Analysis логика
+│   └── utils/              # Утилиты (social-detector, retry, etc.)
 ├── types/                  # TypeScript типы
 └── hooks/                  # React hooks
 ```

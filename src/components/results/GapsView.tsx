@@ -140,6 +140,7 @@ const CATEGORY_ICONS: Record<Gap['category'], string> = {
   scalability: '⚡',
   documentation: '📚',
   testing: '🧪',
+  fundamental_mismatch: '⚠️',
 };
 
 const CATEGORY_LABELS_RU: Record<Gap['category'], string> = {
@@ -152,6 +153,7 @@ const CATEGORY_LABELS_RU: Record<Gap['category'], string> = {
   scalability: 'Масштабируемость',
   documentation: 'Документация',
   testing: 'Тестирование',
+  fundamental_mismatch: 'Несоответствие',
 };
 
 const IMPACT_LABELS: Record<Gap['impact'], string> = {

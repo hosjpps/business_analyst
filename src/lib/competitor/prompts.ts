@@ -3,6 +3,48 @@ import type { CompetitorInput, ParsedWebsite } from '@/types/competitor';
 import { summarizeForLLM } from './website-parser';
 
 // ===========================================
+// Helper: Extract Platform from URL
+// ===========================================
+
+function extractPlatformFromUrl(url: string): string {
+  if (!url) return 'unknown';
+
+  const normalizedUrl = url.toLowerCase();
+
+  // Common platform patterns
+  const patterns: [RegExp, string][] = [
+    [/vk\.com|vkontakte\.ru/, 'vk'],
+    [/t\.me|telegram\.me|telegram\.org/, 'telegram'],
+    [/instagram\.com|instagr\.am/, 'instagram'],
+    [/twitter\.com|x\.com/, 'twitter'],
+    [/linkedin\.com/, 'linkedin'],
+    [/youtube\.com|youtu\.be/, 'youtube'],
+    [/tiktok\.com/, 'tiktok'],
+    [/facebook\.com|fb\.com/, 'facebook'],
+    [/whatsapp\.com|wa\.me/, 'whatsapp'],
+    [/discord\.gg|discord\.com/, 'discord'],
+    [/github\.com/, 'github'],
+    [/ok\.ru|odnoklassniki\.ru/, 'ok'],
+    [/dzen\.ru|zen\.yandex/, 'dzen'],
+    [/rutube\.ru/, 'rutube'],
+  ];
+
+  for (const [pattern, name] of patterns) {
+    if (pattern.test(normalizedUrl)) {
+      return name;
+    }
+  }
+
+  // Extract domain as fallback
+  try {
+    const hostname = new URL(url.startsWith('http') ? url : `https://${url}`).hostname;
+    return hostname.replace('www.', '').split('.')[0];
+  } catch {
+    return 'other';
+  }
+}
+
+// ===========================================
 // Competitor Analysis System Prompt
 // ===========================================
 
@@ -155,9 +197,21 @@ export function buildCompetitorUserPrompt(
     }
 
     if (comp.social_links) {
-      const socials = Object.entries(comp.social_links)
-        .filter(([, v]) => v)
-        .map(([k]) => k);
+      // Handle both new array format and legacy object format
+      let socials: string[] = [];
+
+      if (Array.isArray(comp.social_links)) {
+        // New format: array of { url, platform? }
+        socials = comp.social_links
+          .filter((link) => link.url)
+          .map((link) => link.platform || extractPlatformFromUrl(link.url));
+      } else {
+        // Legacy format: object with platform keys
+        socials = Object.entries(comp.social_links)
+          .filter(([, v]) => v)
+          .map(([k]) => k);
+      }
+
       if (socials.length > 0) {
         parts.push(`Social presence: ${socials.join(', ')}`);
       }

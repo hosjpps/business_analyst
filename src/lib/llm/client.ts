@@ -32,7 +32,7 @@ function getClient(): OpenAI {
 // Model Configuration
 // ===========================================
 
-const MODEL_OPUS = 'anthropic/claude-opus-4';
+const MODEL_OPUS = 'anthropic/claude-opus-4.5';
 const MODEL_SONNET = 'anthropic/claude-sonnet-4';
 
 // Task types for model selection

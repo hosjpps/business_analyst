@@ -1,6 +1,8 @@
 'use client';
 
-import type { CompetitorInput } from '@/types/competitor';
+import { useState, useCallback } from 'react';
+import type { CompetitorInput, SocialLinkItem } from '@/types/competitor';
+import { getPlatformInfo, isValidUrl } from '@/lib/utils/social-detector';
 
 // ===========================================
 // Types
@@ -11,6 +13,164 @@ interface CompetitorInputFormProps {
   onChange: (competitors: CompetitorInput[]) => void;
   disabled?: boolean;
   maxCompetitors?: number;
+}
+
+// ===========================================
+// Social Link Item Component
+// ===========================================
+
+function SocialLinkInput({
+  link,
+  onUpdate,
+  onRemove,
+  disabled,
+}: {
+  link: SocialLinkItem;
+  onUpdate: (updated: SocialLinkItem) => void;
+  onRemove: () => void;
+  disabled?: boolean;
+}) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Get platform info from URL
+  const platformInfo = link.url ? getPlatformInfo(link.url) : null;
+  const showPlatform = platformInfo && link.url && isValidUrl(link.url);
+
+  const handleChange = useCallback((url: string) => {
+    // Auto-detect platform when URL changes
+    const platform = url ? getPlatformInfo(url) : null;
+    onUpdate({
+      url,
+      platform: platform?.id,
+    });
+  }, [onUpdate]);
+
+  return (
+    <div className="social-link-item">
+      <div className={`input-wrapper ${isFocused ? 'focused' : ''} ${showPlatform ? 'has-platform' : ''}`}>
+        {showPlatform && (
+          <span
+            className="platform-badge"
+            style={{ backgroundColor: platformInfo.color }}
+            title={platformInfo.name}
+          >
+            {platformInfo.icon}
+          </span>
+        )}
+        <input
+          type="url"
+          placeholder="Вставьте ссылку на соцсеть..."
+          value={link.url}
+          onChange={(e) => handleChange(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          disabled={disabled}
+        />
+        <button
+          type="button"
+          className="remove-link-btn"
+          onClick={onRemove}
+          disabled={disabled}
+          title="Удалить ссылку"
+        >
+          ✕
+        </button>
+      </div>
+      {showPlatform && (
+        <span className="platform-name">{platformInfo.name}</span>
+      )}
+
+      <style jsx>{`
+        .social-link-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .input-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-default);
+          border-radius: 6px;
+          padding: 4px 8px;
+          transition: all 0.2s;
+        }
+
+        .input-wrapper.focused {
+          border-color: var(--accent-blue);
+        }
+
+        .input-wrapper.has-platform {
+          border-color: var(--color-success-muted);
+        }
+
+        .platform-badge {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 4px;
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+
+        .input-wrapper input {
+          flex: 1;
+          border: none;
+          background: transparent;
+          padding: 6px 0;
+          font-size: 13px;
+          color: var(--text-primary);
+          outline: none;
+          min-width: 0;
+        }
+
+        .input-wrapper input::placeholder {
+          color: var(--text-muted);
+        }
+
+        .input-wrapper input:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .remove-link-btn {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: none;
+          border-radius: 4px;
+          color: var(--text-muted);
+          cursor: pointer;
+          font-size: 11px;
+          flex-shrink: 0;
+          transition: all 0.2s;
+        }
+
+        .remove-link-btn:hover:not(:disabled) {
+          background: rgba(248, 81, 73, 0.15);
+          color: var(--accent-red);
+        }
+
+        .remove-link-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .platform-name {
+          font-size: 11px;
+          color: var(--color-success-fg);
+          padding-left: 36px;
+        }
+      `}</style>
+    </div>
+  );
 }
 
 // ===========================================
@@ -30,6 +190,34 @@ function CompetitorCard({
   onRemove: (index: number) => void;
   disabled?: boolean;
 }) {
+  // Ensure social_links is always an array
+  const socialLinks: SocialLinkItem[] = Array.isArray(competitor.social_links)
+    ? competitor.social_links
+    : [];
+
+  const handleAddSocialLink = () => {
+    onUpdate(index, {
+      ...competitor,
+      social_links: [...socialLinks, { url: '' }],
+    });
+  };
+
+  const handleUpdateSocialLink = (linkIndex: number, updated: SocialLinkItem) => {
+    const newLinks = [...socialLinks];
+    newLinks[linkIndex] = updated;
+    onUpdate(index, {
+      ...competitor,
+      social_links: newLinks,
+    });
+  };
+
+  const handleRemoveSocialLink = (linkIndex: number) => {
+    onUpdate(index, {
+      ...competitor,
+      social_links: socialLinks.filter((_, i) => i !== linkIndex),
+    });
+  };
+
   return (
     <div className="competitor-card">
       {/* Header with number and remove button */}
@@ -77,58 +265,39 @@ function CompetitorCard({
           />
         </div>
 
-        {/* Social Links - Optional */}
+        {/* Dynamic Social Links */}
         <div className="social-section">
           <label className="section-label">
             Соцсети <span className="optional-badge">опционально</span>
           </label>
-          <div className="social-links-grid">
-            <input
-              type="url"
-              placeholder="Instagram URL"
-              value={competitor.social_links?.instagram || ''}
-              onChange={(e) =>
-                onUpdate(index, {
-                  ...competitor,
-                  social_links: {
-                    ...competitor.social_links,
-                    instagram: e.target.value,
-                  },
-                })
-              }
-              disabled={disabled}
-            />
-            <input
-              type="url"
-              placeholder="LinkedIn URL"
-              value={competitor.social_links?.linkedin || ''}
-              onChange={(e) =>
-                onUpdate(index, {
-                  ...competitor,
-                  social_links: {
-                    ...competitor.social_links,
-                    linkedin: e.target.value,
-                  },
-                })
-              }
-              disabled={disabled}
-            />
-            <input
-              type="url"
-              placeholder="Twitter URL"
-              value={competitor.social_links?.twitter || ''}
-              onChange={(e) =>
-                onUpdate(index, {
-                  ...competitor,
-                  social_links: {
-                    ...competitor.social_links,
-                    twitter: e.target.value,
-                  },
-                })
-              }
-              disabled={disabled}
-            />
+
+          {/* List of social links */}
+          <div className="social-links-list">
+            {socialLinks.map((link, linkIndex) => (
+              <SocialLinkInput
+                key={linkIndex}
+                link={link}
+                onUpdate={(updated) => handleUpdateSocialLink(linkIndex, updated)}
+                onRemove={() => handleRemoveSocialLink(linkIndex)}
+                disabled={disabled}
+              />
+            ))}
           </div>
+
+          {/* Add social link button */}
+          <button
+            type="button"
+            className="add-social-btn"
+            onClick={handleAddSocialLink}
+            disabled={disabled}
+          >
+            <span className="add-icon">+</span>
+            <span>Добавить соцсеть</span>
+          </button>
+
+          <p className="social-hint">
+            VK, Telegram, Instagram, YouTube, TikTok, LinkedIn и другие — определятся автоматически
+          </p>
         </div>
 
         {/* Notes */}
@@ -278,37 +447,49 @@ function CompetitorCard({
           gap: 8px;
         }
 
-        .social-links-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
+        .social-links-list {
+          display: flex;
+          flex-direction: column;
           gap: 8px;
         }
 
-        .social-links-grid input {
-          width: 100%;
-          padding: 8px 10px;
-          font-size: 13px;
-          background: var(--bg-primary);
-          border: 1px solid var(--border-default);
+        .add-social-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 8px 12px;
+          font-size: 12px;
+          font-weight: 500;
+          background: transparent;
+          border: 1px dashed var(--border-default);
           border-radius: 6px;
-          color: var(--text-primary);
-          transition: border-color 0.2s;
+          color: var(--text-muted);
+          cursor: pointer;
+          transition: all 0.2s;
         }
 
-        .social-links-grid input:focus {
-          outline: none;
+        .add-social-btn:hover:not(:disabled) {
+          background: rgba(88, 166, 255, 0.08);
           border-color: var(--accent-blue);
+          color: var(--accent-blue);
         }
 
-        .social-links-grid input:disabled {
-          opacity: 0.6;
+        .add-social-btn:disabled {
+          opacity: 0.5;
           cursor: not-allowed;
         }
 
-        @media (max-width: 600px) {
-          .social-links-grid {
-            grid-template-columns: 1fr;
-          }
+        .add-social-btn .add-icon {
+          font-size: 14px;
+          font-weight: 300;
+        }
+
+        .social-hint {
+          font-size: 11px;
+          color: var(--text-muted);
+          margin: 0;
+          padding-left: 2px;
         }
       `}</style>
     </div>
@@ -329,7 +510,7 @@ export function CompetitorInputForm({
     if (competitors.length >= maxCompetitors) return;
     onChange([
       ...competitors,
-      { name: '', url: '', social_links: {}, notes: '' },
+      { name: '', url: '', social_links: [], notes: '' },
     ]);
   };
 

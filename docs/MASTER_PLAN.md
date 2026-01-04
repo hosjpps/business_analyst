@@ -2428,7 +2428,7 @@ export function downloadFile(content: string, filename: string, type: 'md' | 'js
 const MODEL_SONNET = 'anthropic/claude-sonnet-4';
 
 // НОВАЯ МОДЕЛЬ ДЛЯ ГЛУБОКОГО АНАЛИЗА
-const MODEL_OPUS = 'anthropic/claude-opus-4';
+const MODEL_OPUS = 'anthropic/claude-opus-4.5';
 
 // Использовать разные модели для разных задач
 export const MODEL_CONFIG = {

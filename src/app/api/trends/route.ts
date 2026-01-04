@@ -102,6 +102,30 @@ function calculateTrend(data: TrendDataPoint[]): 'rising' | 'falling' | 'stable'
   return 'stable';
 }
 
+/**
+ * Safely parse JSON response from Google Trends API
+ * Google sometimes returns HTML (error pages, captcha) instead of JSON
+ */
+function safeParseJSON(response: string, context: string): unknown {
+  if (!response || typeof response !== 'string') {
+    throw new Error(`Empty response from Google Trends for ${context}`);
+  }
+
+  // Check if response looks like HTML instead of JSON
+  const trimmed = response.trim();
+  if (trimmed.startsWith('<') || trimmed.startsWith('<!DOCTYPE')) {
+    throw new Error(`Google Trends returned HTML instead of JSON for ${context}. This may be due to rate limiting or regional restrictions.`);
+  }
+
+  try {
+    return JSON.parse(response);
+  } catch (parseError) {
+    // Include first 100 chars of response in error for debugging
+    const preview = response.substring(0, 100);
+    throw new Error(`Failed to parse Google Trends response for ${context}: ${preview}...`);
+  }
+}
+
 // ===========================================
 // POST /api/trends
 // ===========================================
@@ -157,10 +181,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<TrendsRes
           geo: geo || undefined,
         });
 
-        const interestData = JSON.parse(interestResponse);
+        const interestData = safeParseJSON(interestResponse, keyword) as { default?: { timelineData?: Array<{ time: string; formattedTime: string; value: number[] }> } };
         const timelineData = interestData?.default?.timelineData || [];
 
-        const data: TrendDataPoint[] = timelineData.map((item: { time: string; formattedTime: string; value: number[] }) => ({
+        const data: TrendDataPoint[] = timelineData.map((item) => ({
           date: new Date(parseInt(item.time) * 1000).toISOString(),
           value: item.value?.[0] || 0,
           formattedDate: item.formattedTime || '',
@@ -176,17 +200,18 @@ export async function POST(request: NextRequest): Promise<NextResponse<TrendsRes
             geo: geo || undefined,
           });
 
-          const relatedData = JSON.parse(relatedResponse);
+          interface RankedKeyword { query: string; value: number | string }
+          const relatedData = safeParseJSON(relatedResponse, `${keyword} related`) as { default?: { rankedList?: Array<{ rankedKeyword?: RankedKeyword[] }> } };
           const topQueries = relatedData?.default?.rankedList?.[0]?.rankedKeyword || [];
           const risingQueries = relatedData?.default?.rankedList?.[1]?.rankedKeyword || [];
 
           relatedQueries = [
-            ...topQueries.slice(0, 5).map((q: { query: string; value: number }) => ({
+            ...topQueries.slice(0, 5).map((q) => ({
               query: q.query,
               value: q.value,
               type: 'top' as const,
             })),
-            ...risingQueries.slice(0, 5).map((q: { query: string; value: string }) => ({
+            ...risingQueries.slice(0, 5).map((q) => ({
               query: q.query,
               value: q.value,
               type: 'rising' as const,

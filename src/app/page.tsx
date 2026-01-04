@@ -501,6 +501,30 @@ function Home() {
 
         setGapResult(gapData);
 
+        // Step 3: Run competitor analysis if competitors provided
+        if (validCompetitors.length > 0 && businessData.canvas) {
+          try {
+            const competitorResponse = await fetch('/api/analyze-competitors', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                canvas: businessData.canvas,
+                product_description: bInput.description,
+                competitors: validCompetitors,
+              }),
+            });
+
+            const competitorData: CompetitorAnalyzeResponse = await competitorResponse.json();
+
+            if (competitorData.success) {
+              setCompetitorResult(competitorData);
+            }
+            // Don't fail the whole analysis if competitor analysis fails - just log and continue
+          } catch (competitorErr) {
+            console.error('Competitor analysis failed:', competitorErr);
+          }
+        }
+
         // Save to project if enabled - save the gap result for full analysis
         if (saveToProject && selectedProjectId) {
           await saveAnalysisToProject(selectedProjectId, 'full', gapData);
@@ -1456,11 +1480,20 @@ function Home() {
             </details>
           )}
 
+          {/* Competitor Analysis (collapsible) - only if competitors were analyzed */}
+          {competitorResult?.success && (
+            <details className="results-section">
+              <summary>📊 Анализ конкурентов</summary>
+              <CompetitorComparisonView result={competitorResult} />
+            </details>
+          )}
+
           {/* Export Panel - full mode with options */}
           <ExportButtons
             businessResult={businessResult}
             codeResult={codeResult}
             gapResult={gapResult}
+            competitorResult={competitorResult}
             mode="full"
           />
 
@@ -1475,8 +1508,11 @@ function Home() {
             {gapResult?.metadata && (
               <span>Разрывы: {Math.round(gapResult.metadata.analysis_duration_ms / 1000)}с</span>
             )}
+            {competitorResult?.metadata && (
+              <span>Конкуренты: {Math.round(competitorResult.metadata.analysis_duration_ms / 1000)}с</span>
+            )}
             <span>
-              Токенов: {(businessResult?.metadata?.tokens_used || 0) + (codeResult?.metadata?.tokens_used || 0) + (gapResult?.metadata?.tokens_used || 0)}
+              Токенов: {(businessResult?.metadata?.tokens_used || 0) + (codeResult?.metadata?.tokens_used || 0) + (gapResult?.metadata?.tokens_used || 0) + (competitorResult?.metadata?.tokens_used || 0)}
             </span>
           </div>
 

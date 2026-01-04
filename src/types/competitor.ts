@@ -1,34 +1,57 @@
 import { z } from 'zod';
 
 // ===========================================
+// Social Link Types (Dynamic)
+// ===========================================
+
+export interface SocialLinkItem {
+  url: string;
+  platform?: string;  // Auto-detected from URL (e.g., 'vk', 'telegram', 'instagram')
+}
+
+export const SocialLinkItemSchema = z.object({
+  url: z.string().min(1),
+  platform: z.string().optional(),
+});
+
+// Legacy social_links format (for backward compatibility)
+const LegacySocialLinksSchema = z.object({
+  instagram: z.string().url().optional().or(z.literal('')),
+  linkedin: z.string().url().optional().or(z.literal('')),
+  twitter: z.string().url().optional().or(z.literal('')),
+  facebook: z.string().url().optional().or(z.literal('')),
+  youtube: z.string().url().optional().or(z.literal('')),
+});
+
+// ===========================================
 // Competitor Input Types
 // ===========================================
 
 export interface CompetitorInput {
   name: string;
   url?: string;
-  social_links?: {
-    instagram?: string;
-    linkedin?: string;
-    twitter?: string;
-    facebook?: string;
-    youtube?: string;
-  };
+  social_links?: SocialLinkItem[];  // Dynamic array of social links
   notes?: string;
 }
 
+// Schema accepts both new array format and legacy object format
 export const CompetitorInputSchema = z.object({
   name: z.string().min(1, 'Название конкурента обязательно'),
   url: z.string().url().optional().or(z.literal('')),
-  social_links: z
-    .object({
-      instagram: z.string().url().optional().or(z.literal('')),
-      linkedin: z.string().url().optional().or(z.literal('')),
-      twitter: z.string().url().optional().or(z.literal('')),
-      facebook: z.string().url().optional().or(z.literal('')),
-      youtube: z.string().url().optional().or(z.literal('')),
-    })
-    .optional(),
+  social_links: z.union([
+    // New format: array of { url, platform? }
+    z.array(SocialLinkItemSchema),
+    // Legacy format: { instagram?, linkedin?, ... } - transform to array
+    LegacySocialLinksSchema.transform((obj): SocialLinkItem[] => {
+      const links: SocialLinkItem[] = [];
+      if (obj.instagram) links.push({ url: obj.instagram, platform: 'instagram' });
+      if (obj.linkedin) links.push({ url: obj.linkedin, platform: 'linkedin' });
+      if (obj.twitter) links.push({ url: obj.twitter, platform: 'twitter' });
+      if (obj.facebook) links.push({ url: obj.facebook, platform: 'facebook' });
+      if (obj.youtube) links.push({ url: obj.youtube, platform: 'youtube' });
+      return links;
+    }),
+  ]).optional(),
   notes: z.string().max(2000).optional(),
 });
 

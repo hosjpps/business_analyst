@@ -87,6 +87,13 @@ export function buildGapDetectionSystemPrompt(): string {
 - Есть ли E2E тесты?
 - Есть ли TypeScript для типобезопасности?
 
+### 10. **ФУНДАМЕНТАЛЬНОЕ НЕСООТВЕТСТВИЕ** (fundamental_mismatch)
+Используй эту категорию ТОЛЬКО когда:
+- Бизнес-описание НЕ соответствует коду (например: фитнес-студия + UI библиотека)
+- Код вообще не решает бизнес-задачу
+- Нужен полный pivot или замена кодовой базы
+Это ВСЕГДА critical severity.
+
 ## Severity Levels (Серьёзность)
 
 - **critical** - Блокирует доход или рост, ИСПРАВИТЬ НЕМЕДЛЕННО
@@ -168,7 +175,7 @@ Respond with valid JSON only:
     {
       "id": "gap-1",
       "type": "critical|warning|info",
-      "category": "category_name",
+      "category": "monetization|growth|security|ux|infrastructure|marketing|scalability|documentation|testing|fundamental_mismatch",
       "hook": "One compelling sentence why this matters - grabs attention",
       "business_goal": "What the business wants to achieve",
       "current_state": "What the code/product currently does",
