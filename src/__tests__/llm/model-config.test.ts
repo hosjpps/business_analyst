@@ -11,6 +11,7 @@ describe('MODEL_CONFIG', () => {
       'fullAnalysis',
       'gapDetection',
       'businessCanvas',
+      'competitorAnalysis',
       'codeAnalysis',
       'chat',
       'clarification',
@@ -44,7 +45,7 @@ describe('MODEL_CONFIG', () => {
   });
 
   describe('Opus model tasks', () => {
-    const opusTasks: LLMTaskType[] = ['fullAnalysis', 'gapDetection', 'businessCanvas'];
+    const opusTasks: LLMTaskType[] = ['fullAnalysis', 'gapDetection', 'businessCanvas', 'competitorAnalysis'];
 
     opusTasks.forEach(taskType => {
       it(`should use Opus for ${taskType}`, () => {
@@ -106,6 +107,7 @@ describe('getModelConfig', () => {
       'fullAnalysis',
       'gapDetection',
       'businessCanvas',
+      'competitorAnalysis',
       'codeAnalysis',
       'chat',
       'clarification',
@@ -142,7 +144,7 @@ describe('getModelConfig', () => {
 
 describe('Model Selection Logic', () => {
   it('should use Opus for deep analysis tasks', () => {
-    const deepAnalysisTasks: LLMTaskType[] = ['fullAnalysis', 'gapDetection', 'businessCanvas'];
+    const deepAnalysisTasks: LLMTaskType[] = ['fullAnalysis', 'gapDetection', 'businessCanvas', 'competitorAnalysis'];
 
     deepAnalysisTasks.forEach(taskType => {
       const config = getModelConfig(taskType);
@@ -183,6 +185,7 @@ describe('LLMTaskType', () => {
       'fullAnalysis',
       'gapDetection',
       'businessCanvas',
+      'competitorAnalysis',
       'codeAnalysis',
       'chat',
       'clarification',
@@ -198,6 +201,7 @@ describe('LLMTaskType', () => {
       'fullAnalysis',
       'gapDetection',
       'businessCanvas',
+      'competitorAnalysis',
       'codeAnalysis',
       'chat',
       'clarification',

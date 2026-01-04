@@ -416,10 +416,7 @@ function Home() {
       setError('Укажите GitHub URL или загрузите файлы');
       return;
     }
-    if (!desc.trim()) {
-      setError('Опишите свой проект');
-      return;
-    }
+    // In Full Analysis mode, use business description for code analysis (no separate project description needed)
 
     setLoading(true);
     setError(null);
@@ -444,7 +441,8 @@ function Home() {
           body: JSON.stringify({
             repo_url: rUrl || undefined,
             files: uFiles.length > 0 ? uFiles : undefined,
-            project_description: desc,
+            // Use business description for code analysis in Full Analysis mode
+            project_description: bInput.description,
           }),
         }),
       ]);
@@ -626,20 +624,63 @@ function Home() {
   const extractKeywordsForTrends = useCallback((canvas: BusinessAnalyzeResponse['canvas']) => {
     if (!canvas) return [];
 
+    // Generic/stopwords to filter out (Russian and English)
+    const stopwords = new Set([
+      'платформа', 'сервис', 'приложение', 'система', 'решение', 'инструмент',
+      'открытый', 'альтернатива', 'бесплатный', 'простой', 'удобный',
+      'пользователь', 'клиент', 'бизнес', 'компания', 'команда',
+      'platform', 'service', 'application', 'system', 'solution', 'tool',
+      'open', 'source', 'free', 'simple', 'easy', 'user', 'customer',
+      'business', 'company', 'team', 'для', 'это', 'который', 'позволяет'
+    ]);
+
     const keywords: string[] = [];
 
-    // Extract from value proposition
-    if (canvas.value_proposition) {
-      const words = canvas.value_proposition
-        .split(/[\s,]+/)
-        .filter((w) => w.length > 4)
-        .slice(0, 2);
-      keywords.push(...words);
+    // Extract meaningful phrases from key_activities (best source for what the product does)
+    if (canvas.key_activities?.length > 0) {
+      for (const activity of canvas.key_activities.slice(0, 2)) {
+        // Extract 2-3 word phrases
+        const words = activity.toLowerCase().split(/[\s,—–-]+/).filter(w =>
+          w.length > 3 && !stopwords.has(w)
+        );
+        if (words.length >= 2) {
+          keywords.push(words.slice(0, 2).join(' '));
+        } else if (words[0]) {
+          keywords.push(words[0]);
+        }
+      }
     }
 
-    // Extract from customer segments
-    if (canvas.customer_segments.length > 0) {
-      keywords.push(canvas.customer_segments[0].split(/[\s,]+/)[0]);
+    // Extract from value proposition - look for product category/type
+    if (canvas.value_proposition && keywords.length < 2) {
+      const vpWords = canvas.value_proposition.toLowerCase()
+        .split(/[\s,—–-]+/)
+        .filter(w => w.length > 4 && !stopwords.has(w));
+
+      // Find meaningful noun phrases (skip first few generic words)
+      for (const word of vpWords.slice(0, 5)) {
+        if (!keywords.includes(word) && keywords.length < 3) {
+          keywords.push(word);
+        }
+      }
+    }
+
+    // Extract target audience from customer_segments
+    if (canvas.customer_segments?.length > 0 && keywords.length < 3) {
+      const segment = canvas.customer_segments[0].toLowerCase();
+      const segmentWords = segment.split(/[\s,—–-]+/).filter(w =>
+        w.length > 4 && !stopwords.has(w) && !keywords.includes(w)
+      );
+      if (segmentWords[0]) {
+        keywords.push(segmentWords[0]);
+      }
+    }
+
+    // Ensure we have at least one keyword - use channels as fallback
+    if (keywords.length === 0 && canvas.channels?.length > 0) {
+      const channel = canvas.channels[0].toLowerCase();
+      const channelWords = channel.split(/[\s,]+/).filter(w => w.length > 3);
+      if (channelWords[0]) keywords.push(channelWords[0]);
     }
 
     return keywords.slice(0, 3);
@@ -789,8 +830,8 @@ function Home() {
       ? businessInput.description.length >= 50
       : analysisMode === 'full'
       ? businessInput.description.length >= 50 &&
-        (repoUrl || uploadedFiles.length > 0) &&
-        description.trim()
+        (repoUrl || uploadedFiles.length > 0)
+        // Note: no separate project description needed - uses business description
       : analysisMode === 'competitor'
       ? competitors.filter((c) => c.name.trim()).length > 0
       : false;
@@ -819,9 +860,7 @@ function Home() {
       if (!repoUrl && uploadedFiles.length === 0) {
         errors.push('Укажите GitHub URL или загрузите файлы');
       }
-      if (!description.trim()) {
-        errors.push('Опишите проект (что он делает)');
-      }
+      // Note: project description is taken from business description automatically
     } else if (analysisMode === 'competitor') {
       if (competitors.filter((c) => c.name.trim()).length === 0) {
         errors.push('Добавьте хотя бы одного конкурента');
@@ -1021,17 +1060,10 @@ function Home() {
                         disabled={loading}
                       />
 
-                      {/* Project Description */}
-                      <div className="form-group" style={{ marginTop: '16px' }}>
-                        <label htmlFor="description-full">Опишите свой проект</label>
-                        <textarea
-                          id="description-full"
-                          placeholder="Чем занимается твой проект? Какую проблему решает?"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          disabled={loading}
-                        />
-                      </div>
+                      {/* Note: Project description is taken from business description in Full Analysis */}
+                      <p className="form-hint" style={{ marginTop: '12px', fontSize: '13px', color: 'var(--color-fg-muted)' }}>
+                        💡 Описание проекта будет взято из бизнес-описания (Шаг 1)
+                      </p>
                     </div>
                   </div>
 
