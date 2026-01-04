@@ -166,22 +166,10 @@ function CodeStep({
         disabled={disabled}
       />
 
-      {/* Project Description */}
-      <div className="form-group" style={{ marginTop: '20px' }}>
-        <label htmlFor="wizard-description">
-          Опишите свой проект <span className="required">*</span>
-        </label>
-        <p className="form-hint">Что делает проект? Какую проблему решает?</p>
-        <textarea
-          id="wizard-description"
-          placeholder="Это приложение для... Оно помогает пользователям..."
-          value={description}
-          onChange={(e) => onDescriptionChange(e.target.value)}
-          disabled={disabled}
-          className="form-textarea"
-          rows={4}
-        />
-      </div>
+      {/* Note: Project description is taken from business description in Full Analysis */}
+      <p className="form-hint" style={{ marginTop: '16px', fontSize: '13px', color: 'var(--color-fg-muted)', background: 'var(--color-canvas-subtle)', padding: '12px', borderRadius: '6px' }}>
+        💡 Описание проекта будет взято из бизнес-описания (Шаг 1)
+      </p>
 
       <style jsx>{`
         .wizard-step-code {
@@ -397,10 +385,9 @@ export function AnalysisWizard({
         break;
 
       case 'code':
+        // Project description is taken from business description (step 1)
         if (!repoUrl && uploadedFiles.length === 0) {
           error = 'Укажите GitHub URL или загрузите файлы';
-        } else if (!description.trim()) {
-          error = 'Опишите свой проект';
         }
         break;
 
@@ -419,7 +406,7 @@ export function AnalysisWizard({
 
     setErrors({ ...errors, [stepId]: '' });
     return true;
-  }, [currentStep, businessInput, repoUrl, uploadedFiles, description, errors]);
+  }, [currentStep, businessInput, repoUrl, uploadedFiles, errors]);
 
   // Error handler for child components
   const handleError = (error: string | null) => {

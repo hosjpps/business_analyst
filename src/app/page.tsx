@@ -470,14 +470,28 @@ function Home() {
       if (businessData.canvas && codeData.analysis) {
         setAnalysisStep('generating');
 
-        // Include competitors if provided - sanitize empty URLs
+        // Include competitors if provided - sanitize and transform data
         const validCompetitors = comps
           .filter((c) => c.name.trim())
-          .map((c) => ({
-            ...c,
-            // Remove empty string URLs to avoid validation issues
-            url: c.url?.trim() || undefined,
-          }));
+          .map((c) => {
+            // Transform social_links array to object format expected by API
+            const socialLinksObj: Record<string, string> = {};
+            if (Array.isArray(c.social_links)) {
+              c.social_links.forEach((link: { url?: string; platform?: string }) => {
+                if (link.url && link.platform) {
+                  socialLinksObj[link.platform] = link.url;
+                }
+              });
+            }
+
+            return {
+              name: c.name,
+              url: c.url?.trim() || undefined,
+              notes: c.notes,
+              // Use socials field which accepts Record<string, string>
+              socials: Object.keys(socialLinksObj).length > 0 ? socialLinksObj : undefined,
+            };
+          });
 
         const gapResponse = await fetch('/api/analyze-gaps', {
           method: 'POST',
@@ -762,13 +776,27 @@ function Home() {
       if (newCodeData.analysis && businessResult?.canvas) {
         setAnalysisStep('generating');
 
-        // Sanitize competitors - remove empty URLs
+        // Sanitize competitors - transform social_links array to object
         const validCompetitors = competitors
           .filter((c) => c.name.trim())
-          .map((c) => ({
-            ...c,
-            url: c.url?.trim() || undefined,
-          }));
+          .map((c) => {
+            // Transform social_links array to object format expected by API
+            const socialLinksObj: Record<string, string> = {};
+            if (Array.isArray(c.social_links)) {
+              c.social_links.forEach((link: { url?: string; platform?: string }) => {
+                if (link.url && link.platform) {
+                  socialLinksObj[link.platform] = link.url;
+                }
+              });
+            }
+
+            return {
+              name: c.name,
+              url: c.url?.trim() || undefined,
+              notes: c.notes,
+              socials: Object.keys(socialLinksObj).length > 0 ? socialLinksObj : undefined,
+            };
+          });
 
         const gapResponse = await fetch('/api/analyze-gaps', {
           method: 'POST',
