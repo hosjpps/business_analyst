@@ -69,12 +69,15 @@ function getMaxTokens(): number {
 
 export function getModelConfig(taskType?: LLMTaskType): { model: string; maxTokens: number; temperature: number } {
   if (taskType && MODEL_CONFIG[taskType]) {
-    // Allow env override
-    const envModel = process.env.LLM_MODEL;
     const config = MODEL_CONFIG[taskType];
+    // Only allow env override for fast tasks (chat, clarification, codeAnalysis)
+    // Deep analysis tasks (fullAnalysis, gapDetection, businessCanvas, competitorAnalysis) always use Opus
+    const deepAnalysisTasks: LLMTaskType[] = ['fullAnalysis', 'gapDetection', 'businessCanvas', 'competitorAnalysis'];
+    const envModel = process.env.LLM_MODEL;
+
     return {
       ...config,
-      model: envModel || config.model,
+      model: deepAnalysisTasks.includes(taskType) ? config.model : (envModel || config.model),
     };
   }
   return {
@@ -123,39 +126,18 @@ export async function sendToLLM(
 
   console.log(`LLM Request: task=${taskType || 'default'}, model=${modelToUse}, maxTokens=${maxTokens}`);
 
-  // Task-specific prefills to guide JSON structure
-  const PREFILLS: Record<string, string> = {
-    codeAnalysis: '{\n  "needs_clarification":',
-    fullAnalysis: '{\n  "needs_clarification":',
-    businessCanvas: '{\n  "business_stage":',
-    gapDetection: '{\n  "alignment_score":',
-    competitorAnalysis: '{\n  "competitors":',
-    chat: '',
-    clarification: '',
-  };
-
-  const prefill = taskType ? (PREFILLS[taskType] || '') : '{\n  "needs_clarification":';
-
   return withLLMRetry(async () => {
     try {
       const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
         {
           role: 'system',
-          content: 'You are a JSON-only API. You respond EXCLUSIVELY with valid JSON objects. Never use markdown, never add explanations, never add text before or after JSON. Your entire response must be parseable by JSON.parse().'
+          content: 'You are a JSON-only API. You respond EXCLUSIVELY with valid JSON objects. Never use markdown code blocks, never add explanations, never add text before or after JSON. Start your response with { and end with }. Your entire response must be parseable by JSON.parse().'
         },
         {
           role: 'user',
           content: prompt
         },
       ];
-
-      // Add prefill only if specified (helps guide JSON structure)
-      if (prefill) {
-        messages.push({
-          role: 'assistant',
-          content: prefill
-        });
-      }
 
       const response = await client.chat.completions.create({
         model: modelToUse,
@@ -164,9 +146,7 @@ export async function sendToLLM(
         messages
       });
 
-      // Prepend the prefill since Claude continues from it
-      const rawContent = response.choices[0]?.message?.content || '';
-      const content = prefill ? (prefill + rawContent) : rawContent;
+      const content = response.choices[0]?.message?.content || '';
       const tokensUsed = response.usage?.total_tokens || 0;
 
       console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
