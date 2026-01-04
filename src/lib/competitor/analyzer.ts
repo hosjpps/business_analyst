@@ -40,7 +40,7 @@ export async function analyzeCompetitors(
 
   // Call LLM with retry (use Opus for thorough competitor analysis)
   const response = await withLLMRetry(async () => {
-    const result = await sendToLLM(prompt, { taskType: 'businessCanvas' });
+    const result = await sendToLLM(prompt, { taskType: 'competitorAnalysis' });
     return result;
   });
 
@@ -53,10 +53,8 @@ export async function analyzeCompetitors(
   if (!validation.success) {
     const errors = validation.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
     console.error('Competitor analysis response validation failed:', errors);
-    console.log('Falling back to quick analysis...');
-
-    // Fallback to quick analysis instead of throwing
-    return analyzeCompetitorsQuick(competitors, parsedWebsites) as CompetitorAnalysisResult;
+    console.error('Raw parsed content:', JSON.stringify(parsed).slice(0, 500));
+    throw new Error(`Response validation failed: ${errors}`);
   }
 
   return validation.data;

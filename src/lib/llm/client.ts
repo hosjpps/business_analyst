@@ -37,12 +37,13 @@ const MODEL_SONNET = 'anthropic/claude-sonnet-4';
 
 // Task types for model selection
 export type LLMTaskType =
-  | 'fullAnalysis'     // Deep analysis - use Opus
-  | 'gapDetection'     // Gap detection - use Opus
-  | 'businessCanvas'   // Business model - use Opus
-  | 'codeAnalysis'     // Code review - can use Sonnet for speed
-  | 'chat'             // Follow-up chat - use Sonnet for speed
-  | 'clarification';   // Quick clarification - use Sonnet
+  | 'fullAnalysis'        // Deep analysis - use Opus
+  | 'gapDetection'        // Gap detection - use Opus
+  | 'businessCanvas'      // Business model - use Opus
+  | 'competitorAnalysis'  // Competitor analysis - use Opus
+  | 'codeAnalysis'        // Code review - can use Sonnet for speed
+  | 'chat'                // Follow-up chat - use Sonnet for speed
+  | 'clarification';      // Quick clarification - use Sonnet
 
 // Model config based on task type
 export const MODEL_CONFIG: Record<LLMTaskType, { model: string; maxTokens: number; temperature: number }> = {
@@ -50,6 +51,7 @@ export const MODEL_CONFIG: Record<LLMTaskType, { model: string; maxTokens: numbe
   fullAnalysis: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.3 },
   gapDetection: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.3 },
   businessCanvas: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.4 },
+  competitorAnalysis: { model: MODEL_OPUS, maxTokens: 8000, temperature: 0.4 },
 
   // Sonnet for faster operations
   codeAnalysis: { model: MODEL_SONNET, maxTokens: 8000, temperature: 0.5 },
@@ -121,31 +123,50 @@ export async function sendToLLM(
 
   console.log(`LLM Request: task=${taskType || 'default'}, model=${modelToUse}, maxTokens=${maxTokens}`);
 
+  // Task-specific prefills to guide JSON structure
+  const PREFILLS: Record<string, string> = {
+    codeAnalysis: '{\n  "needs_clarification":',
+    fullAnalysis: '{\n  "needs_clarification":',
+    businessCanvas: '{\n  "business_stage":',
+    gapDetection: '{\n  "alignment_score":',
+    competitorAnalysis: '{\n  "competitors":',
+    chat: '',
+    clarification: '',
+  };
+
+  const prefill = taskType ? (PREFILLS[taskType] || '') : '{\n  "needs_clarification":';
+
   return withLLMRetry(async () => {
     try {
+      const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+        {
+          role: 'system',
+          content: 'You are a JSON-only API. You respond EXCLUSIVELY with valid JSON objects. Never use markdown, never add explanations, never add text before or after JSON. Your entire response must be parseable by JSON.parse().'
+        },
+        {
+          role: 'user',
+          content: prompt
+        },
+      ];
+
+      // Add prefill only if specified (helps guide JSON structure)
+      if (prefill) {
+        messages.push({
+          role: 'assistant',
+          content: prefill
+        });
+      }
+
       const response = await client.chat.completions.create({
         model: modelToUse,
         max_tokens: maxTokens,
         temperature: config.temperature,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a JSON-only API. You respond EXCLUSIVELY with valid JSON objects. Never use markdown, never add explanations, never add text before or after JSON. Your entire response must be parseable by JSON.parse().'
-          },
-          {
-            role: 'user',
-            content: prompt
-          },
-          // Prefill technique: start assistant response to force JSON continuation
-          {
-            role: 'assistant',
-            content: '{\n  "needs_clarification":'
-          }
-        ]
+        messages
       });
 
       // Prepend the prefill since Claude continues from it
-      const content = '{\n  "needs_clarification":' + (response.choices[0]?.message?.content || '');
+      const rawContent = response.choices[0]?.message?.content || '';
+      const content = prefill ? (prefill + rawContent) : rawContent;
       const tokensUsed = response.usage?.total_tokens || 0;
 
       console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
