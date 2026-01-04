@@ -106,7 +106,9 @@ Respond with valid JSON only:
   ],
   "market_position": "leader|challenger|follower|niche",
   "market_position_explanation": "Why this position"
-}`;
+}
+
+CRITICAL: Output ONLY valid JSON. No explanations, no markdown, no text before or after the JSON object. Start your response with { and end with }.`;
 }
 
 // ===========================================

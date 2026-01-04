@@ -53,7 +53,10 @@ export async function analyzeCompetitors(
   if (!validation.success) {
     const errors = validation.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
     console.error('Competitor analysis response validation failed:', errors);
-    throw new Error(`Response validation failed: ${errors}`);
+    console.log('Falling back to quick analysis...');
+
+    // Fallback to quick analysis instead of throwing
+    return analyzeCompetitorsQuick(competitors, parsedWebsites) as CompetitorAnalysisResult;
   }
 
   return validation.data;
