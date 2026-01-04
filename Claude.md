@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.7.0
+## Текущий статус: v0.7.2
 
 ### Готово
 
@@ -151,6 +151,11 @@
 - [x] BUG-004: Competitor Analysis не запускался в Full Analysis — добавлен вызов /api/analyze-competitors
 - [x] BUG-005: Gap Detection validation failure с `fundamental_mismatch` — добавлена новая категория в схему
 - [x] BUG-006: Google Trends возвращал HTML вместо JSON — добавлен safeParseJSON с проверкой HTML
+
+**Bug Fixes (v0.7.2):**
+- [x] BUG-007: Дублирование поля "Описание проекта" в Full Analysis — заменено на подсказку
+- [x] BUG-008: Валидация конкурентов `social_links: Expected object, received array` — трансформация массива в объект
+- [x] BUG-009: Улучшены сообщения об ошибках валидации — добавлен путь к полю (например `competitors.0.social_links`)
 
 **Sprint 2 Form Experience (v0.6.5):**
 - [x] Wizard форма — пошаговый ввод для Full Analysis
