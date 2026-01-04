@@ -18,7 +18,8 @@ export type GapCategory =
   | 'marketing'
   | 'scalability'
   | 'documentation'
-  | 'testing';
+  | 'testing'
+  | 'fundamental_mismatch';
 
 export const GapCategorySchema = z.enum([
   'monetization',
@@ -30,6 +31,7 @@ export const GapCategorySchema = z.enum([
   'scalability',
   'documentation',
   'testing',
+  'fundamental_mismatch',
 ]);
 
 // Labels for UI
@@ -43,6 +45,7 @@ export const GAP_CATEGORY_LABELS: Record<GapCategory, string> = {
   scalability: 'Scalability',
   documentation: 'Documentation',
   testing: 'Testing',
+  fundamental_mismatch: 'Несоответствие',
 };
 
 export const GAP_SEVERITY_LABELS: Record<GapSeverity, string> = {

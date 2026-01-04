@@ -16,6 +16,7 @@ const SEVERITY_PENALTIES: Record<GapSeverity, number> = {
 // ===========================================
 
 const CATEGORY_WEIGHTS: Record<GapCategory, number> = {
+  fundamental_mismatch: 2.0, // Critical - code doesn't match business
   monetization: 1.5,   // High impact on business
   security: 1.4,       // Critical for trust
   growth: 1.3,         // Important for scaling

@@ -67,7 +67,11 @@ export async function buildCanvas(input: BusinessInput): Promise<BuildCanvasResu
 
   // Step 4: Parse and validate response
   const parsed = parseJSONResponse<unknown>(llmResponse.content);
-  const validation = LLMBusinessCanvasResponseSchema.safeParse(parsed);
+
+  // Sanitize gaps_in_model (LLM may return objects instead of strings)
+  const sanitized = sanitizeBusinessResponse(parsed);
+
+  const validation = LLMBusinessCanvasResponseSchema.safeParse(sanitized);
 
   const durationMs = Date.now() - startTime;
 
@@ -167,6 +171,44 @@ function extractPartialData(parsed: unknown): Partial<BuildCanvasResult> {
   }
 
   return result;
+}
+
+// ===========================================
+// Sanitization Helper
+// ===========================================
+
+/**
+ * Sanitize LLM response before validation
+ * LLM (especially Opus) may return objects instead of strings for gaps_in_model
+ */
+function sanitizeBusinessResponse(parsed: unknown): unknown {
+  if (!parsed || typeof parsed !== 'object') {
+    return parsed;
+  }
+
+  const obj = parsed as Record<string, unknown>;
+
+  // Sanitize gaps_in_model: convert objects to strings
+  if (Array.isArray(obj.gaps_in_model)) {
+    obj.gaps_in_model = obj.gaps_in_model.map((gap: unknown) => {
+      if (typeof gap === 'string') return gap;
+      if (typeof gap === 'object' && gap !== null) {
+        const gapObj = gap as Record<string, unknown>;
+        // Try common field names for gap description
+        return (
+          gapObj.gap ||
+          gapObj.description ||
+          gapObj.issue ||
+          gapObj.problem ||
+          gapObj.text ||
+          JSON.stringify(gap)
+        );
+      }
+      return String(gap);
+    });
+  }
+
+  return obj;
 }
 
 // ===========================================
