@@ -48,14 +48,14 @@ interface CanvasBlockProps {
   titleRu: string;
   items: string[] | string;
   color?: string;
-  gridArea: string;
+  gridArea?: string;
 }
 
-function CanvasBlock({ title, titleRu, items, color, gridArea }: CanvasBlockProps) {
+function CanvasBlock({ title, titleRu, items, color }: CanvasBlockProps) {
   const content = Array.isArray(items) ? items : [items].filter(Boolean);
 
   return (
-    <div className="canvas-block" style={{ gridArea, borderLeftColor: color }}>
+    <div className="canvas-block" style={{ borderLeftColor: color }}>
       <div className="block-header">
         <span className="block-title">{titleRu}</span>
         <span className="block-title-en">{title}</span>
@@ -75,9 +75,8 @@ function CanvasBlock({ title, titleRu, items, color, gridArea }: CanvasBlockProp
           background: var(--bg-secondary);
           border: 1px solid var(--border-default);
           border-left: 3px solid var(--border-default);
-          border-radius: 6px;
-          padding: 12px;
-          min-height: 100px;
+          border-radius: 8px;
+          padding: 16px 20px;
         }
 
         .block-header {
@@ -285,43 +284,9 @@ export function CanvasView({
         }
 
         .canvas-grid {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          grid-template-rows: repeat(4, auto);
-          gap: 8px;
-          grid-template-areas:
-            "partners activities value relationships segments"
-            "partners activities value relationships segments"
-            "partners resources  value channels     segments"
-            "costs    costs      costs  revenue     revenue";
-        }
-
-        @media (max-width: 900px) {
-          .canvas-grid {
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-areas:
-              "partners activities"
-              "resources value"
-              "relationships channels"
-              "segments segments"
-              "costs revenue";
-          }
-        }
-
-        @media (max-width: 600px) {
-          .canvas-grid {
-            grid-template-columns: 1fr;
-            grid-template-areas:
-              "value"
-              "segments"
-              "channels"
-              "relationships"
-              "activities"
-              "resources"
-              "partners"
-              "revenue"
-              "costs";
-          }
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
         }
 
         .canvas-gaps {

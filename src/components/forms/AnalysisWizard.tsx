@@ -634,8 +634,10 @@ export function AnalysisWizard({
           align-items: center;
           gap: 12px;
           cursor: pointer;
-          padding: 8px 0;
+          padding: 8px 12px;
           z-index: 1;
+          position: relative;
+          background: var(--bg-primary);
         }
 
         .progress-step:not(.active):not(.completed) {
