@@ -553,24 +553,49 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                   stats: { critical: number; high: number; medium: number; low: number; files_scanned: number };
                   has_critical_issues: boolean;
                 };
-                gaps?: Array<{ category: string; severity: string; title: string; detail: string }>;
+                // Gap type: type = 'critical' | 'warning' | 'info', category = 'monetization' | etc.
+                gaps?: Array<{
+                  id: string;
+                  type: string; // severity: critical/warning/info
+                  category: string;
+                  business_goal: string;
+                  current_state: string;
+                  recommendation: string;
+                  hook?: string; // short catchy summary
+                  why_matters?: string;
+                  action_steps?: string[];
+                  time_to_fix?: string;
+                }>;
                 tasks?: Array<{ title: string; description: string; priority: string; category?: string }>;
                 alignment_score?: number;
                 verdict?: string;
+                verdict_explanation?: string;
+                summary?: string;
+                strengths?: string[];
+                market_insights?: {
+                  icp?: string;
+                  go_to_market?: string[];
+                  fit_score?: number;
+                };
                 canvas?: { value_proposition?: string };
                 success?: boolean;
                 needs_clarification?: boolean;
               };
               const codeAnalysis = resultData?.analysis;
               const securityAnalysis = resultData?.security_analysis;
-              const summary = codeAnalysis?.project_summary ||
+              const summary = resultData?.summary ||
+                            codeAnalysis?.project_summary ||
                             resultData?.canvas?.value_proposition ||
+                            resultData?.verdict_explanation ||
                             null;
               const alignmentScore = resultData?.alignment_score;
               const verdict = resultData?.verdict;
               const gaps = resultData?.gaps;
               const tasks = resultData?.tasks || codeAnalysis?.tasks;
-              const hasNoMainAnalysis = !codeAnalysis && !resultData?.canvas;
+              const marketInsights = resultData?.market_insights;
+              const strengths = resultData?.strengths;
+              // Only show warning if truly no data at all
+              const hasNoMainAnalysis = !codeAnalysis && !resultData?.canvas && !gaps?.length && alignmentScore === undefined;
 
               return (
                 <div key={analysis.id} className="analysis-card">
@@ -624,8 +649,49 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
 
                   {summary && (
                     <p className="analysis-summary">
-                      {summary.slice(0, 200)}{summary.length > 200 ? '...' : ''}
+                      {summary.slice(0, 400)}{summary.length > 400 ? '...' : ''}
                     </p>
+                  )}
+
+                  {/* Strengths */}
+                  {strengths && strengths.length > 0 && (
+                    <div className="analysis-strengths">
+                      <h4>💪 Сильные стороны</h4>
+                      <ul className="strengths-list">
+                        {strengths.slice(0, 4).map((strength, i) => (
+                          <li key={i}>{strength}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Market Insights */}
+                  {marketInsights && (
+                    <div className="analysis-market-insights">
+                      <h4>📊 Рыночные инсайты</h4>
+                      {marketInsights.icp && (
+                        <div className="insight-item">
+                          <span className="insight-label">Идеальный клиент:</span>
+                          <span className="insight-value">{marketInsights.icp}</span>
+                        </div>
+                      )}
+                      {marketInsights.fit_score && (
+                        <div className="insight-item">
+                          <span className="insight-label">Product-Market Fit:</span>
+                          <span className="insight-value">{marketInsights.fit_score}/10</span>
+                        </div>
+                      )}
+                      {marketInsights.go_to_market && marketInsights.go_to_market.length > 0 && (
+                        <div className="insight-item insight-gtm">
+                          <span className="insight-label">Выход на рынок:</span>
+                          <ul className="gtm-list">
+                            {marketInsights.go_to_market.slice(0, 3).map((gtm, i) => (
+                              <li key={i}>{gtm}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   )}
 
                   {/* Tech Stack */}
@@ -643,16 +709,22 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                       <h4>🎯 Что нужно улучшить</h4>
                       <p className="section-hint">Разница между вашими целями и текущим состоянием продукта</p>
                       <div className="gaps-list">
-                        {gaps.slice(0, 3).map((gap, i) => (
-                          <div key={i} className={`gap-item gap-${gap.severity}`}>
-                            <span className="gap-title">
-                              <AutoTooltipText text={gap.title} />
-                            </span>
-                            <span className={`gap-severity severity-${gap.severity}`}>
-                              {gap.severity === 'critical' ? '❗ Важно' : gap.severity === 'warning' ? '⚡ Желательно' : '💡 Совет'}
-                            </span>
-                          </div>
-                        ))}
+                        {gaps.slice(0, 3).map((gap, i) => {
+                          // gap.type is the severity: 'critical' | 'warning' | 'info'
+                          const severity = gap.type || 'info';
+                          // Use hook (short summary) or fallback to recommendation
+                          const gapTitle = gap.hook || gap.recommendation || gap.business_goal || 'Рекомендация';
+                          return (
+                            <div key={gap.id || i} className={`gap-item gap-${severity}`}>
+                              <span className="gap-title">
+                                <AutoTooltipText text={gapTitle.length > 80 ? gapTitle.slice(0, 80) + '...' : gapTitle} />
+                              </span>
+                              <span className={`gap-severity severity-${severity}`}>
+                                {severity === 'critical' ? '❗ Важно' : severity === 'warning' ? '⚡ Желательно' : '💡 Совет'}
+                              </span>
+                            </div>
+                          );
+                        })}
                         {gaps.length > 3 && (
                           <p className="more-items">и ещё {gaps.length - 3}...</p>
                         )}
@@ -1414,6 +1486,84 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
           border-radius: 4px;
           font-size: 0.75rem;
           font-weight: 500;
+        }
+
+        /* Strengths Section */
+        .analysis-strengths {
+          margin: 1rem 0;
+          padding: 0.75rem;
+          background: rgba(63, 185, 80, 0.05);
+          border-radius: 6px;
+          border: 1px solid rgba(63, 185, 80, 0.2);
+        }
+
+        .analysis-strengths h4 {
+          margin: 0 0 0.5rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #3fb950;
+        }
+
+        .strengths-list {
+          margin: 0;
+          padding-left: 1.25rem;
+          color: #8b949e;
+          font-size: 0.8125rem;
+          line-height: 1.6;
+        }
+
+        .strengths-list li {
+          margin-bottom: 0.25rem;
+        }
+
+        /* Market Insights Section */
+        .analysis-market-insights {
+          margin: 1rem 0;
+          padding: 0.75rem;
+          background: rgba(163, 113, 247, 0.05);
+          border-radius: 6px;
+          border: 1px solid rgba(163, 113, 247, 0.2);
+        }
+
+        .analysis-market-insights h4 {
+          margin: 0 0 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #a371f7;
+        }
+
+        .insight-item {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+          font-size: 0.8125rem;
+        }
+
+        .insight-item.insight-gtm {
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .insight-label {
+          color: #8b949e;
+          font-weight: 500;
+          flex-shrink: 0;
+        }
+
+        .insight-value {
+          color: #c9d1d9;
+        }
+
+        .gtm-list {
+          margin: 0.25rem 0 0;
+          padding-left: 1.25rem;
+          color: #8b949e;
+          font-size: 0.75rem;
+          line-height: 1.5;
+        }
+
+        .gtm-list li {
+          margin-bottom: 0.25rem;
         }
 
         .analysis-gaps-summary,
