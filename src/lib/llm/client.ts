@@ -33,7 +33,7 @@ function getClient(): OpenAI {
 // ===========================================
 
 const MODEL_OPUS = 'anthropic/claude-opus-4.5';
-const MODEL_SONNET = 'anthropic/claude-sonnet-4';
+const MODEL_SONNET = 'anthropic/claude-sonnet-4.5';
 
 // Task types for model selection
 export type LLMTaskType =
