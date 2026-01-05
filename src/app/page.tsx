@@ -111,10 +111,10 @@ function Home() {
   const [description, setDescription] = usePersistedDescription();
   const [persistedResult, setPersistedResult] = usePersistedResult();
 
-  // Project saving state
+  // Project saving state (saveToProject defaults to true when authenticated with projects)
   const [userProjects, setUserProjects] = useState<SimpleProject[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [saveToProject, setSaveToProject] = useState(false);
+  const [saveToProject, setSaveToProject] = useState(true); // Default ON - user must choose project or disable
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [savingToProject, setSavingToProject] = useState(false);
   const [savedToProjectMessage, setSavedToProjectMessage] = useState<string | null>(null);
@@ -138,14 +138,23 @@ function Home() {
           const response = await fetch('/api/projects');
           if (response.ok) {
             const data = await response.json();
-            setUserProjects(data.projects.map((p: { id: string; name: string }) => ({
+            const projects = data.projects.map((p: { id: string; name: string }) => ({
               id: p.id,
               name: p.name
-            })));
+            }));
+            setUserProjects(projects);
+
+            // Auto-select first project if only one exists and no project param in URL
+            if (projects.length === 1 && !projectParam) {
+              setSelectedProjectId(projects[0].id);
+            }
           }
         } catch (err) {
           console.error('Failed to load projects:', err);
         }
+      } else {
+        // Not authenticated - disable save by default
+        setSaveToProject(false);
       }
     };
 
@@ -262,6 +271,12 @@ function Home() {
       return;
     }
 
+    // Validate project selection if saving is enabled
+    if (saveToProject && !selectedProjectId) {
+      setError('Выберите проект для сохранения или отключите сохранение');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setPersistedResult(null);
@@ -347,6 +362,12 @@ function Home() {
       return;
     }
 
+    // Validate project selection if saving is enabled
+    if (saveToProject && !selectedProjectId) {
+      setError('Выберите проект для сохранения или отключите сохранение');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setBusinessResult(null);
@@ -414,6 +435,11 @@ function Home() {
     }
     if (!rUrl && uFiles.length === 0) {
       setError('Укажите GitHub URL или загрузите файлы');
+      return;
+    }
+    // Validate project selection if saving is enabled
+    if (saveToProject && !selectedProjectId) {
+      setError('Выберите проект для сохранения или отключите сохранение');
       return;
     }
     // In Full Analysis mode, use business description for code analysis (no separate project description needed)
@@ -541,6 +567,23 @@ function Home() {
         if (saveToProject && selectedProjectId) {
           await saveAnalysisToProject(selectedProjectId, 'full', gapData);
         }
+      } else if (codeData.needs_clarification && codeData.questions && codeData.questions.length > 0) {
+        // Code analysis needs clarification - show questions to user
+        console.log('[Full Analysis] Code analysis needs clarification:', {
+          needs_clarification: codeData.needs_clarification,
+          questions_count: codeData.questions.length,
+          questions: codeData.questions.map(q => q.question),
+          has_partial_analysis: !!codeData.partial_analysis,
+        });
+        // Don't proceed to gap detection - wait for user to answer questions
+        // The UI will show ClarificationQuestions component based on codeResult state
+      } else if (!codeData.analysis) {
+        // No analysis and no clarification needed - something went wrong
+        console.warn('[Full Analysis] Code analysis returned no analysis and no clarification:', {
+          needs_clarification: codeData.needs_clarification,
+          has_questions: !!codeData.questions?.length,
+          has_partial_analysis: !!codeData.partial_analysis,
+        });
       }
 
       setAnalysisStep('complete');
@@ -562,6 +605,12 @@ function Home() {
     const validCompetitors = competitors.filter((c) => c.name.trim());
     if (validCompetitors.length === 0) {
       setError('Добавьте хотя бы одного конкурента');
+      return;
+    }
+
+    // Validate project selection if saving is enabled
+    if (saveToProject && !selectedProjectId) {
+      setError('Выберите проект для сохранения или отключите сохранение');
       return;
     }
 
@@ -1167,23 +1216,33 @@ function Home() {
                 <span className="toggle-switch">
                   <span className="toggle-slider" />
                 </span>
-                <span className="toggle-label">Сохранить в проект</span>
+                <span className="toggle-label">
+                  💾 Сохранить в проект
+                  {!saveToProject && <span className="toggle-hint">(отключено)</span>}
+                </span>
               </label>
 
               {saveToProject && (
-                <select
-                  className="project-selector"
-                  value={selectedProjectId || ''}
-                  onChange={(e) => setSelectedProjectId(e.target.value || null)}
-                  disabled={loading}
-                >
-                  <option value="">Выберите проект...</option>
-                  {userProjects.map((project) => (
-                    <option key={project.id} value={project.id}>
-                      {project.name}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <select
+                    className={`project-selector ${!selectedProjectId ? 'required' : ''}`}
+                    value={selectedProjectId || ''}
+                    onChange={(e) => setSelectedProjectId(e.target.value || null)}
+                    disabled={loading}
+                  >
+                    <option value="">⚠️ Выберите проект...</option>
+                    {userProjects.map((project) => (
+                      <option key={project.id} value={project.id}>
+                        {project.name}
+                      </option>
+                    ))}
+                  </select>
+                  {!selectedProjectId && (
+                    <p className="project-required-hint">
+                      Выберите проект или отключите сохранение
+                    </p>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -1450,7 +1509,7 @@ function Home() {
           )}
 
           {/* CASE 2: Code needs clarification - show questions */}
-          {!gapResult && codeResult?.needs_clarification && codeResult?.questions && (
+          {!gapResult && codeResult?.needs_clarification === true && codeResult?.questions && codeResult.questions.length > 0 && (
             <div className="clarification-needed-section">
               <div className="full-results-header">
                 <h3>⚠️ Требуется уточнение</h3>
@@ -1499,11 +1558,20 @@ function Home() {
             </div>
           )}
 
-          {/* CASE 3: No gap result and no clarification needed - something went wrong */}
-          {!gapResult && !codeResult?.needs_clarification && codeResult?.success && !codeResult?.analysis && (
+          {/* CASE 3: needs_clarification is true but questions are missing/empty */}
+          {!gapResult && codeResult?.needs_clarification === true && (!codeResult?.questions || codeResult.questions.length === 0) && (
+            <div className="analysis-incomplete">
+              <h3>⚠️ Требуется дополнительная информация</h3>
+              <p>Для анализа нужны уточнения, но система не смогла сформулировать вопросы.</p>
+              <p>Попробуйте добавить больше деталей в описание бизнеса или проверьте, что репозиторий содержит достаточно кода.</p>
+            </div>
+          )}
+
+          {/* CASE 4: No gap result and no clarification needed - something went wrong */}
+          {!gapResult && codeResult?.needs_clarification !== true && codeResult?.success && !codeResult?.analysis && (
             <div className="analysis-incomplete">
               <h3>⚠️ Анализ кода не завершён</h3>
-              <p>Не удалось получить полный анализ кода. Попробуйте уточнить описание проекта.</p>
+              <p>Не удалось получить полный анализ кода. Попробуйте уточнить описание бизнеса или использовать другой репозиторий.</p>
             </div>
           )}
 
@@ -1760,6 +1828,14 @@ function Home() {
           font-size: 14px;
           font-weight: 500;
           color: var(--text-primary);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .toggle-hint {
+          font-size: 12px;
+          color: var(--text-muted);
+          font-weight: 400;
         }
         .project-selector {
           flex: 1;
@@ -1772,6 +1848,10 @@ function Home() {
           color: var(--text-primary);
           cursor: pointer;
         }
+        .project-selector.required {
+          border-color: var(--accent-orange);
+          background: rgba(210, 153, 34, 0.05);
+        }
         .project-selector:focus {
           outline: none;
           border-color: var(--accent-blue);
@@ -1779,6 +1859,11 @@ function Home() {
         .project-selector option {
           background: var(--bg-primary);
           color: var(--text-primary);
+        }
+        .project-required-hint {
+          font-size: 12px;
+          color: var(--accent-orange);
+          margin: 6px 0 0 0;
         }
 
         /* Submit Section */
