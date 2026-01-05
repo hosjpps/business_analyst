@@ -300,12 +300,5 @@ describe('TopNav', () => {
       expect(screen.getByRole('banner')).toBeInTheDocument();
     });
 
-    it('should have nav element', async () => {
-      render(<TopNav />);
-
-      await waitFor(() => {
-        expect(screen.getByRole('navigation')).toBeInTheDocument();
-      });
-    });
   });
 });

@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.7.4
+## Текущий статус: v0.8.1
 
 ### Готово
 
@@ -189,10 +189,36 @@
   - `/api/analyze-gaps` — 10 тестов (gap detection, categories, tasks)
   - Full Analysis Flow — 9 тестов (clarification handling, edge cases)
 
+**Tier 1: Post-MVP Features (v0.8.0):**
+- [x] Demo Mode — режим демонстрации без реальных API вызовов ($0 cost)
+  - Мок-данные для всех типов анализа (code, business, gaps, competitors)
+  - 10 тестов для demo-analyze
+- [x] Upstash Redis Cache — распределённый кэш для продакшена
+  - Абстракция CacheProvider с автоматическим fallback на memory
+  - Интеграция с @upstash/redis и @upstash/ratelimit
+  - Rate limiting со sliding window алгоритмом
+  - 57 тестов для cache модуля
+- [x] GitHub Issues Export — экспорт задач напрямую в GitHub Issues
+  - API endpoint `/api/export/github-issues`
+  - GitHubIssuesService для работы с GitHub API v3
+  - UI компонент GitHubExportButton с модальным окном
+  - Автоматические labels (priority + category)
+  - Форматирование body с чеклистами
+  - 56 тестов для GitHub Issues
+
+**Tier 1 UI Improvements (v0.8.1):**
+- [x] Demo Button — большая, заметная кнопка на всю ширину контента
+  - Зелёный градиент, крупный шрифт 18px
+  - Badge "3 анализа" для привлечения внимания
+- [x] Demo Scenario Selector — расширенный модал 900px
+  - 3-колоночная сетка для сценариев
+  - Карточки с иконками, описанием и тегами
+
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
-- [x] 966 unit + integration тестов (полное покрытие API + UI)
+- [x] Upstash Redis для продакшена (с fallback на memory)
+- [x] 1177 unit + integration тестов (полное покрытие API + UI)
 
 ---
 
@@ -617,6 +643,19 @@ npm run test:watch
 | PATCH | `/api/projects/[id]` | Обновить проект |
 | DELETE | `/api/projects/[id]` | Удалить проект |
 
+### Export
+
+| Method | Endpoint | Описание |
+|--------|----------|----------|
+| POST | `/api/export/github-issues` | Экспорт задач в GitHub Issues |
+| GET | `/api/export/github-issues` | Проверка доступа к репозиторию |
+
+### Demo
+
+| Method | Endpoint | Описание |
+|--------|----------|----------|
+| POST | `/api/demo-analyze` | Анализ с мок-данными (без LLM) |
+
 ### Утилиты
 
 | Method | Endpoint | Описание |
@@ -654,6 +693,10 @@ OPENROUTER_API_KEY=sk-or-...
 # Для Supabase (Auth + Database)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Для Upstash Redis (продакшен кэш)
+UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-token
 
 # Опционально
 GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
@@ -831,4 +874,6 @@ Environment variables нужно добавить в Vercel Dashboard.
 - `OPENROUTER_API_KEY` — обязательно
 - `NEXT_PUBLIC_SUPABASE_URL` — для auth
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — для auth
+- `UPSTASH_REDIS_REST_URL` — для продакшен кэша (опционально, fallback на memory)
+- `UPSTASH_REDIS_REST_TOKEN` — для продакшен кэша
 - `GITHUB_TOKEN` — опционально

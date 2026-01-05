@@ -780,10 +780,15 @@ export function CompetitorComparisonView({ result }: CompetitorComparisonViewPro
       {/* Competitor Profiles */}
       {competitors.length > 0 && (
         <section className="section">
-          <h3>Профили конкурентов</h3>
-          {competitors.map((profile, i) => (
-            <CompetitorProfileCard key={i} profile={profile} />
-          ))}
+          <h3>Профили конкурентов ({competitors.length})</h3>
+          <div className="profiles-list">
+            {competitors.map((profile, i) => (
+              <div key={i} className="profile-wrapper">
+                <CompetitorProfileCard profile={profile} />
+                {i < competitors.length - 1 && <div className="profile-divider" />}
+              </div>
+            ))}
+          </div>
         </section>
       )}
 
@@ -832,6 +837,35 @@ export function CompetitorComparisonView({ result }: CompetitorComparisonViewPro
           padding: 12px;
           background: var(--color-canvas-subtle);
           border-radius: 6px;
+        }
+
+        .profiles-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+
+        .profile-wrapper {
+          margin-bottom: 0;
+        }
+
+        .profile-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, var(--color-border-default), transparent);
+          margin: 16px 0;
+          position: relative;
+        }
+
+        .profile-divider::before {
+          content: '•';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          background: var(--color-canvas-default);
+          padding: 0 12px;
+          color: var(--color-fg-muted);
+          font-size: 10px;
         }
       `}</style>
     </div>

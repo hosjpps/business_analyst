@@ -48,22 +48,25 @@ export function Tooltip({
       let top = 0;
       let left = 0;
 
+      // Increased offset from 8px to 16px to prevent tooltips from overlapping with content
+      const tooltipOffset = 16;
+
       switch (position) {
         case 'top':
-          top = triggerRect.top - tooltipRect.height - 8;
+          top = triggerRect.top - tooltipRect.height - tooltipOffset;
           left = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
           break;
         case 'bottom':
-          top = triggerRect.bottom + 8;
+          top = triggerRect.bottom + tooltipOffset;
           left = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
           break;
         case 'left':
           top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
-          left = triggerRect.left - tooltipRect.width - 8;
+          left = triggerRect.left - tooltipRect.width - tooltipOffset;
           break;
         case 'right':
           top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
-          left = triggerRect.right + 8;
+          left = triggerRect.right + tooltipOffset;
           break;
       }
 

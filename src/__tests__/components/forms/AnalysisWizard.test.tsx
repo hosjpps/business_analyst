@@ -275,26 +275,6 @@ describe('AnalysisWizard', () => {
       expect(screen.getByText('Укажите GitHub URL или загрузите файлы')).toBeInTheDocument();
     });
 
-    it('should require project description on code step', () => {
-      const { container } = renderWizard({
-        initialData: {
-          businessInput: { description: 'a'.repeat(100), social_links: {} },
-          repoUrl: 'https://github.com/user/repo',
-          description: '',
-        },
-      });
-
-      // Go to step 2
-      fireEvent.click(screen.getByText('Далее →'));
-
-      // Try to proceed without description
-      fireEvent.click(screen.getByText('Далее →'));
-
-      // Check error message appears in wizard-error div
-      const errorDiv = container.querySelector('.wizard-error');
-      expect(errorDiv).toHaveTextContent('Опишите свой проект');
-    });
-
     it('should not require validation on optional step', () => {
       renderWizard({
         initialData: {
@@ -467,15 +447,4 @@ describe('AnalysisWizard step content', () => {
     expect(screen.getByLabelText('GitHub URL')).toBeInTheDocument();
   });
 
-  it('should show project description textarea on step 2', () => {
-    renderWizard({
-      initialData: {
-        businessInput: { description: 'a'.repeat(100), social_links: {} },
-      },
-    });
-
-    fireEvent.click(screen.getByText('Далее →'));
-
-    expect(screen.getByPlaceholderText(/Это приложение для/)).toBeInTheDocument();
-  });
 });

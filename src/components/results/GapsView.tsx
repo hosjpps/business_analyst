@@ -694,6 +694,9 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
 
         .gaps-list {
           margin-bottom: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
         .gap-card-wrapper {
@@ -947,11 +950,11 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
 
         /* ===== Actionable Gap Card (NEW) ===== */
         .actionable-gap-card {
-          padding: 20px;
+          padding: 24px;
           background: var(--bg-secondary);
           border: 1px solid var(--border-default);
           border-radius: 12px;
-          margin-bottom: 16px;
+          margin-bottom: 0; /* Using gap in parent instead */
           transition: all 0.25s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
         }
 

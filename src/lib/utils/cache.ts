@@ -1,14 +1,15 @@
 /**
  * Analysis Cache
  *
- * In-memory cache for analysis results with LRU eviction.
+ * Hybrid cache with Redis (when available) + in-memory fallback.
  * Key: hash of repo_url + commit_sha
  * TTL: 1 hour (configurable)
  *
- * Note: For production with persistent cache, consider Vercel KV or Redis.
+ * Uses Upstash Redis when UPSTASH_REDIS_REST_URL is configured.
  */
 
 import crypto from 'crypto';
+import { getCacheProvider } from '@/lib/cache';
 
 interface CacheEntry<T> {
   value: T;
@@ -26,6 +27,12 @@ const DEFAULT_CONFIG: CacheConfig = {
   ttlMs: 60 * 60 * 1000, // 1 hour
 };
 
+/**
+ * Analysis Cache with Redis + Memory fallback
+ *
+ * Note: For backward compatibility, synchronous methods use memory cache only.
+ * Use async methods (getAsync, setAsync) for Redis support.
+ */
 class AnalysisCache<T> {
   private cache: Map<string, CacheEntry<T>> = new Map();
   private config: CacheConfig;
@@ -43,7 +50,8 @@ class AnalysisCache<T> {
   }
 
   /**
-   * Get a value from cache
+   * Get a value from cache (synchronous - memory only)
+   * For Redis support, use getAsync()
    */
   get(key: string): T | null {
     const entry = this.cache.get(key);
@@ -64,7 +72,31 @@ class AnalysisCache<T> {
   }
 
   /**
-   * Set a value in cache
+   * Get a value from cache (async - Redis + memory)
+   */
+  async getAsync(key: string): Promise<T | null> {
+    const cacheProvider = getCacheProvider();
+    const prefixedKey = `analysis:${key}`;
+
+    // Try Redis first
+    const redisValue = await cacheProvider.get<T>(prefixedKey);
+    if (redisValue !== null) {
+      // Also update memory cache
+      this.cache.set(key, {
+        value: redisValue,
+        timestamp: Date.now(),
+        hits: 1,
+      });
+      return redisValue;
+    }
+
+    // Fallback to memory cache
+    return this.get(key);
+  }
+
+  /**
+   * Set a value in cache (synchronous - memory only)
+   * For Redis support, use setAsync()
    */
   set(key: string, value: T): void {
     // Evict if at capacity
@@ -77,6 +109,33 @@ class AnalysisCache<T> {
       timestamp: Date.now(),
       hits: 1,
     });
+
+    // Fire-and-forget Redis update (non-blocking)
+    this.setRedis(key, value).catch(() => {
+      // Ignore Redis errors - memory cache is primary
+    });
+  }
+
+  /**
+   * Set a value in cache (async - Redis + memory)
+   */
+  async setAsync(key: string, value: T): Promise<void> {
+    // Set in memory
+    this.set(key, value);
+
+    // Set in Redis
+    await this.setRedis(key, value);
+  }
+
+  /**
+   * Set value in Redis (internal helper)
+   */
+  private async setRedis(key: string, value: T): Promise<void> {
+    const cacheProvider = getCacheProvider();
+    const prefixedKey = `analysis:${key}`;
+    const ttlSeconds = Math.floor(this.config.ttlMs / 1000);
+
+    await cacheProvider.set(prefixedKey, value, ttlSeconds);
   }
 
   /**
@@ -95,9 +154,29 @@ class AnalysisCache<T> {
   }
 
   /**
+   * Check if key exists (async - Redis + memory)
+   */
+  async hasAsync(key: string): Promise<boolean> {
+    const cacheProvider = getCacheProvider();
+    const prefixedKey = `analysis:${key}`;
+
+    const exists = await cacheProvider.has(prefixedKey);
+    if (exists) return true;
+
+    return this.has(key);
+  }
+
+  /**
    * Delete a key from cache
    */
   delete(key: string): boolean {
+    // Fire-and-forget Redis delete
+    const cacheProvider = getCacheProvider();
+    const prefixedKey = `analysis:${key}`;
+    cacheProvider.delete(prefixedKey).catch(() => {
+      // Ignore Redis errors
+    });
+
     return this.cache.delete(key);
   }
 
@@ -111,11 +190,13 @@ class AnalysisCache<T> {
   /**
    * Get cache statistics
    */
-  stats(): { size: number; maxEntries: number; ttlMs: number } {
+  stats(): { size: number; maxEntries: number; ttlMs: number; type: 'redis' | 'memory' } {
+    const cacheProvider = getCacheProvider();
     return {
       size: this.cache.size,
       maxEntries: this.config.maxEntries,
       ttlMs: this.config.ttlMs,
+      type: cacheProvider.getType(),
     };
   }
 

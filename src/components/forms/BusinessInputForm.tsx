@@ -202,6 +202,9 @@ export function BusinessInputForm({
         <label className="form-label">
           Ссылки на соцсети <span className="optional">(опционально)</span>
         </label>
+        <p className="form-hint">
+          Например: Instagram, X (Twitter), VK, Telegram, YouTube, TikTok
+        </p>
         <div className="social-grid">
           {SOCIAL_FIELDS.map((field) => (
             <div key={field.key} className="social-field">

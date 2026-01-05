@@ -11,6 +11,8 @@ import { ProgressIndicator, type AnalysisStep } from '@/components/ProgressIndic
 import { AnalysisView } from '@/components/AnalysisView';
 import { ChatSection } from '@/components/ChatSection';
 import { ExportButtons } from '@/components/ExportButtons';
+import { GitHubExportButton } from '@/components/export/GitHubExportButton';
+import type { ExportTask } from '@/types/github-issues';
 import { AnalysisModeSelector, type AnalysisMode } from '@/components/forms/AnalysisModeSelector';
 import { BusinessInputForm } from '@/components/forms/BusinessInputForm';
 import { CompetitorInputForm } from '@/components/forms/CompetitorInputForm';
@@ -33,6 +35,8 @@ import {
   SkeletonGaps,
   SkeletonAnalysisResults,
 } from '@/components/ui/Skeleton';
+import { DemoButton, DemoScenarioSelector, DemoBadge } from '@/components/demo';
+import type { DemoScenarioInfo, DemoScenarioId, DemoLimitResult } from '@/types/demo';
 import { createClient } from '@/lib/supabase/client';
 import {
   usePersistedDescription,
@@ -189,6 +193,14 @@ function Home() {
   // Wizard mode for full analysis (default enabled)
   const [useWizardMode, setUseWizardMode] = useState(true);
 
+  // Demo Mode state
+  const [isDemo, setIsDemo] = useState(false);
+  const [showDemoSelector, setShowDemoSelector] = useState(false);
+  const [demoScenarios, setDemoScenarios] = useState<DemoScenarioInfo[]>([]);
+  const [demoRemaining, setDemoRemaining] = useState(3);
+  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoScenarioName, setDemoScenarioName] = useState<string | null>(null);
+
   // Client-side cache for GitHub repos
   const { getCached, setCache, isCacheValid, clearAllCaches } = useAnalysisCache();
 
@@ -209,6 +221,10 @@ function Home() {
     setError(null);
     setAnalysisStep('idle');
     setAnalysisMode(null);
+    // Clear demo state
+    setIsDemo(false);
+    setDemoScenarioName(null);
+    setShowDemoSelector(false);
     window.location.reload();
   }, [clearAllCaches]);
 
@@ -760,6 +776,87 @@ function Home() {
   }, [businessResult?.canvas, trendsResults.length, trendsLoading, extractKeywordsForTrends, fetchTrends]);
 
   // ===========================================
+  // Demo Mode Handlers
+  // ===========================================
+
+  // Fetch demo scenarios on button click
+  const handleOpenDemoSelector = useCallback(async () => {
+    setShowDemoSelector(true);
+
+    try {
+      const response = await fetch('/api/demo/analyze');
+      const data = await response.json();
+
+      if (data.success) {
+        setDemoScenarios(data.scenarios);
+        setDemoRemaining(data.remaining);
+      }
+    } catch (err) {
+      console.error('Failed to fetch demo scenarios:', err);
+    }
+  }, []);
+
+  // Handle demo scenario selection
+  const handleDemoSelect = useCallback(async (scenarioId: DemoScenarioId) => {
+    setDemoLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/demo/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenarioId }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        setError(data.error || 'Ошибка демо-анализа');
+        return;
+      }
+
+      // Set demo mode flag
+      setIsDemo(true);
+      setShowDemoSelector(false);
+      setDemoScenarioName(data.scenarioInfo?.name || null);
+
+      // Update remaining demos
+      if (data.demoLimit) {
+        setDemoRemaining(data.demoLimit.remaining);
+      }
+
+      // Set all results from demo data
+      setBusinessResult(data.businessResult);
+      setPersistedResult(data.codeResult);
+      setGapResult(data.gapResult);
+      setCompetitorResult(data.competitorResult);
+
+      // Set analysis mode to full to show all results
+      setAnalysisMode('full');
+      setAnalysisStep('complete');
+
+    } catch (err) {
+      console.error('Failed to load demo:', err);
+      setError('Не удалось загрузить демо-анализ');
+    } finally {
+      setDemoLoading(false);
+    }
+  }, [setPersistedResult]);
+
+  // Clear demo state when clearing all
+  const clearDemoState = useCallback(() => {
+    setIsDemo(false);
+    setDemoScenarioName(null);
+    setShowDemoSelector(false);
+  }, []);
+
+  // Handle CTA click from demo badge - go back to real analysis
+  const handleDemoCtaClick = useCallback(() => {
+    clearDemoState();
+    handleClearAll();
+  }, [clearDemoState, handleClearAll]);
+
+  // ===========================================
   // Handle clarification answers
   // ===========================================
 
@@ -978,6 +1075,36 @@ function Home() {
       <p className="subtitle">
         Ультимативная платформа для улучшения бизнеса
       </p>
+
+      {/* Demo Button - show when no results */}
+      {!hasAnyResult && !loading && (
+        <div className="demo-button-container">
+          <DemoButton
+            onClick={handleOpenDemoSelector}
+            remaining={demoRemaining}
+          />
+        </div>
+      )}
+
+      {/* Demo Scenario Selector Modal */}
+      {showDemoSelector && (
+        <DemoScenarioSelector
+          scenarios={demoScenarios}
+          onSelect={handleDemoSelect}
+          onClose={() => setShowDemoSelector(false)}
+          remaining={demoRemaining}
+          isLoading={demoLoading}
+        />
+      )}
+
+      {/* Demo Badge - show when viewing demo results */}
+      {isDemo && hasAnyResult && (
+        <DemoBadge
+          scenarioName={demoScenarioName || undefined}
+          showCTA={true}
+          onCTAClick={handleDemoCtaClick}
+        />
+      )}
 
       {/* Mode Selector */}
       <AnalysisModeSelector
@@ -1625,6 +1752,22 @@ function Home() {
             mode="full"
           />
 
+          {/* GitHub Issues Export - converts tasks to GitHub issues */}
+          {gapResult?.tasks && gapResult.tasks.length > 0 && (
+            <div style={{ marginTop: '12px' }}>
+              <GitHubExportButton
+                tasks={gapResult.tasks.map((task): ExportTask => ({
+                  title: task.title,
+                  description: task.description,
+                  priority: task.priority === 'high' ? 'high' : task.priority === 'medium' ? 'medium' : 'low',
+                  category: task.category,
+                  effort: `${task.estimated_minutes} мин`,
+                }))}
+                defaultRepoUrl={repoUrl}
+              />
+            </div>
+          )}
+
           {/* Metadata */}
           <div className="metadata">
             {businessResult?.metadata && (
@@ -2087,6 +2230,12 @@ function Home() {
           color: var(--text-primary);
           margin: 0 0 24px 0;
           text-align: center;
+        }
+
+        /* Demo Button Container */
+        .demo-button-container {
+          width: 100%;
+          margin: 24px 0 32px 0;
         }
       `}</style>
     </div>
