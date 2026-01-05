@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.7.3
+## Текущий статус: v0.7.4
 
 ### Готово
 
@@ -181,10 +181,18 @@
 - [x] AI Result Validation — валидация и санитизация ответов LLM
 - [x] 118 новых тестов — validator.test.ts, prompts-enhanced.test.ts, model-config.test.ts
 
+**Sprint 5 Quality & Testing (v0.7.4):**
+- [x] P2-HIGH-01: Упрощённая терминология — замена технических терминов на понятные
+- [x] P3-QUALITY: Интеграционные тесты — 50 тестов для критических API endpoints
+  - `/api/analyze` — 16 тестов (валидация, LLM flow, GitHub, ошибки)
+  - `/api/analyze-business` — 15 тестов (canvas, clarification, metadata)
+  - `/api/analyze-gaps` — 10 тестов (gap detection, categories, tasks)
+  - Full Analysis Flow — 9 тестов (clarification handling, edge cases)
+
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
-- [x] 918 unit тестов (полное покрытие API + UI)
+- [x] 966 unit + integration тестов (полное покрытие API + UI)
 
 ---
 
@@ -217,6 +225,7 @@
 | **S2** | Form Experience | ✅ DONE | См. ниже |
 | **S3** | Advanced Features | ✅ DONE | См. ниже |
 | **S4** | AI Quality | ✅ DONE | См. ниже |
+| **S5** | Quality & Testing | ✅ DONE | 50 интеграционных тестов |
 
 ### Недоделки и TODO
 
@@ -679,7 +688,7 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 
 **Тестирование:**
 - Vitest
-- 609 unit тестов:
+- 966 тестов (unit + integration):
   - Code Analysis: 15 тестов
   - Business Analysis: 71 тест (21 + 50 metrics)
   - Gap Detection: 91 тест (23 + 68 scorer v2)
@@ -687,6 +696,7 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
   - Security Analysis: 42 теста
   - UI Components: 329 тестов
   - Utils: 38 тестов
+  - **Integration Tests: 50 тестов** (API endpoints, LLM flow, clarification)
 
 ---
 
