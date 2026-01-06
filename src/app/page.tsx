@@ -1047,6 +1047,12 @@ function Home() {
   const getValidationErrors = (): string[] => {
     const errors: string[] = [];
 
+    // Block analysis in demo mode
+    if (isDemo) {
+      errors.push('Вы в демо-режиме. Нажмите "Начать свой анализ" чтобы запустить реальный анализ.');
+      return errors;
+    }
+
     if (analysisMode === 'code') {
       if (!repoUrl && uploadedFiles.length === 0) {
         errors.push('Укажите GitHub URL или загрузите файлы');
@@ -1245,7 +1251,8 @@ function Home() {
                     competitors,
                   }}
                   onComplete={handleFullAnalyze}
-                  disabled={loading}
+                  disabled={loading || isDemo}
+                  disabledMessage={isDemo ? 'Вы в демо-режиме. Нажмите "Начать свой анализ" чтобы запустить реальный анализ.' : undefined}
                 />
               ) : (
                 <>
@@ -1413,7 +1420,7 @@ function Home() {
             <button
               className="submit-btn"
               onClick={handleAnalyze}
-              disabled={loading || !canSubmit || (saveToProject && !selectedProjectId)}
+              disabled={loading || !canSubmit || (saveToProject && !selectedProjectId) || isDemo}
             >
               {loading
                 ? analysisMode === 'full'

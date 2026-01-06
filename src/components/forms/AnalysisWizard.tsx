@@ -25,6 +25,7 @@ interface AnalysisWizardProps {
   onComplete: (data: AnalysisWizardData) => void;
   onStepChange?: (step: number) => void;
   disabled?: boolean;
+  disabledMessage?: string;
 }
 
 type WizardStep = 'business' | 'code' | 'competitors';
@@ -344,6 +345,7 @@ export function AnalysisWizard({
   onComplete,
   onStepChange,
   disabled = false,
+  disabledMessage,
 }: AnalysisWizardProps) {
   // State
   const [currentStep, setCurrentStep] = useState(0);
@@ -597,6 +599,14 @@ export function AnalysisWizard({
             {isLastStep ? '🚀 Запустить анализ' : 'Далее →'}
           </button>
         </div>
+
+        {/* Disabled message (e.g., demo mode warning) */}
+        {disabled && disabledMessage && (
+          <div className="wizard-disabled-message">
+            <span className="icon">ℹ️</span>
+            <span>{disabledMessage}</span>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -943,6 +953,25 @@ export function AnalysisWizard({
 
         .wizard-btn-ghost:active:not(:disabled) {
           transform: scale(0.97);
+        }
+
+        /* Disabled message (demo mode warning) */
+        .wizard-disabled-message {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 18px;
+          background: rgba(210, 153, 34, 0.1);
+          border: 1px solid rgba(210, 153, 34, 0.3);
+          border-radius: 8px;
+          font-size: 14px;
+          color: var(--accent-orange);
+          line-height: 1.5;
+        }
+
+        .wizard-disabled-message .icon {
+          font-size: 18px;
+          flex-shrink: 0;
         }
 
         @media (max-width: 480px) {
