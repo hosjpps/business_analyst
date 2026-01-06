@@ -301,10 +301,10 @@
 |-----------|--------|------------|
 | TopNav | ✅ Интегрирован | Добавлен в `src/app/layout.tsx` |
 | Deploy на Vercel | ✅ Настроен | Auto-deploy из GitHub (main branch) |
-| AnalysisTimeline | ⬜ TODO | Компонент готов, требуется интеграция в страницу проекта |
-| VersionDiff | ⬜ TODO | Компонент готов, требуется интеграция в страницу проекта |
-| Console cleanup | ⬜ TODO | 37 файлов с debug логами |
-| Error Boundaries | ⬜ TODO | Нет error.tsx файлов |
+| AnalysisTimeline | ✅ Интегрирован | Добавлен в страницу проекта (v0.8.3) |
+| VersionDiff | ✅ Интегрирован | Добавлен в страницу проекта (v0.8.3) |
+| Console cleanup | ✅ Выполнено | Заменено на logger utility |
+| Error Boundaries | ✅ Созданы | error.tsx, global-error.tsx, dashboard/error.tsx, projects/[id]/error.tsx |
 
 ### Sprint 0: Тест-чеклист (для тестировщика)
 
