@@ -75,11 +75,11 @@ describe('Demo Scenarios', () => {
             expect(scenario.competitorResult).toBeDefined();
             expect(scenario.competitorResult.success).toBe(true);
             expect(Array.isArray(scenario.competitorResult.competitors)).toBe(true);
-            expect(scenario.competitorResult.competitors.length).toBeGreaterThan(0);
+            expect(scenario.competitorResult.competitors!.length).toBeGreaterThan(0);
           });
 
           it('should have business canvas with all required fields', () => {
-            const canvas = scenario.businessResult.canvas;
+            const canvas = scenario.businessResult.canvas!;
             expect(canvas.value_proposition).toBeTruthy();
             expect(Array.isArray(canvas.customer_segments)).toBe(true);
             expect(Array.isArray(canvas.channels)).toBe(true);
@@ -91,7 +91,7 @@ describe('Demo Scenarios', () => {
           });
 
           it('should have code analysis with tech stack', () => {
-            const analysis = scenario.codeResult.analysis;
+            const analysis = scenario.codeResult.analysis!;
             expect(analysis.project_summary).toBeTruthy();
             expect(analysis.detected_stage).toBeTruthy();
             expect(Array.isArray(analysis.tech_stack)).toBe(true);

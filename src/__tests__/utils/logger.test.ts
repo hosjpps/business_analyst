@@ -5,7 +5,6 @@ describe('Logger Utility', () => {
   const originalConsoleLog = console.log;
   const originalConsoleWarn = console.warn;
   const originalConsoleError = console.error;
-  const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
     console.log = vi.fn();
@@ -17,7 +16,6 @@ describe('Logger Utility', () => {
     console.log = originalConsoleLog;
     console.warn = originalConsoleWarn;
     console.error = originalConsoleError;
-    process.env.NODE_ENV = originalEnv;
   });
 
   describe('Log Levels', () => {

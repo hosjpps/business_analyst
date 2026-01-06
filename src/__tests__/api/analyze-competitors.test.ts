@@ -28,10 +28,10 @@ const mockCompetitorInputs: CompetitorInput[] = [
   {
     name: 'Notion',
     url: 'https://notion.so',
-    social_links: {
-      twitter: 'https://twitter.com/NotionHQ',
-      linkedin: 'https://linkedin.com/company/notionhq'
-    },
+    social_links: [
+      { url: 'https://twitter.com/NotionHQ', platform: 'twitter' },
+      { url: 'https://linkedin.com/company/notionhq', platform: 'linkedin' }
+    ],
     notes: 'Очень популярен среди команд и индивидуальных пользователей'
   },
   {
@@ -42,9 +42,9 @@ const mockCompetitorInputs: CompetitorInput[] = [
   {
     name: 'Airtable',
     url: 'https://airtable.com',
-    social_links: {
-      twitter: 'https://twitter.com/Airtable'
-    },
+    social_links: [
+      { url: 'https://twitter.com/Airtable', platform: 'twitter' }
+    ],
     notes: 'Лучше для структурированных данных'
   }
 ];

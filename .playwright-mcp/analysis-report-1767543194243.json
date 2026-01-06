@@ -1,0 +1,142 @@
+{
+  "businessResult": null,
+  "codeResult": {
+    "success": true,
+    "needs_clarification": false,
+    "questions": [],
+    "analysis": {
+      "project_summary": "shadcn/ui — это библиотека готовых React компонентов для создания красивых интерфейсов. Проект представляет собой монорепозиторий с документацией, демо-примерами и инструментами для публикации компонентов. Использует Next.js, React 19, Tailwind CSS v4 и TypeScript.",
+      "detected_stage": "launched",
+      "tech_stack": [
+        "TypeScript",
+        "React",
+        "Next.js",
+        "Tailwind CSS",
+        "Turborepo",
+        "pnpm",
+        "Changesets",
+        "MDX",
+        "Recharts"
+      ],
+      "strengths": [
+        {
+          "area": "Архитектура проекта",
+          "detail": "Отлично организованный монорепозиторий с чёткой структурой: отдельные приложения (apps/v4), переиспользуемые пакеты (packages/shadcn), систему управления версиями через changesets и автоматизацию через GitHub Actions"
+        },
+        {
+          "area": "Качество компонентов",
+          "detail": "Богатая библиотека современных компонентов (Button, Input, Dialog, Charts и др.) с поддержкой доступности (ARIA), темизации и адаптивности. Все компоненты хорошо документированы с примерами использования"
+        },
+        {
+          "area": "Developer Experience",
+          "detail": "Продуманная система для разработчиков: TypeScript для типобезопасности, ESLint и Prettier для качества кода, Turborepo для быстрой сборки, подробная документация по контрибьюции"
+        },
+        {
+          "area": "Документация и примеры",
+          "detail": "Множество реальных примеров использования (authentication, dashboard, charts), интерактивные демо, документация по всем компонентам, система блоков для быстрого старта"
+        }
+      ],
+      "issues": [
+        {
+          "severity": "high",
+          "area": "Отсутствие автоматического тестирования",
+          "detail": "В проекте нет ни одного теста (нет папок __tests__, *.test.ts файлов). Для UI библиотеки это критично — нет гарантий, что компоненты работают корректно после изменений, особенно при поддержке React 19. Риск поломки при обновлениях и рефакторинге очень высок",
+          "file_path": null
+        },
+        {
+          "severity": "high",
+          "area": "Отсутствие CI/CD конфигурации",
+          "detail": "В .github/ есть только вспомогательные скрипты (changeset-version.js, version-script-*.js), но нет workflows для автоматической проверки кода, сборки и деплоя. Каждый релиз требует ручной работы, высок риск человеческих ошибок",
+          "file_path": ".github/"
+        },
+        {
+          "severity": "medium",
+          "area": "Отсутствие package.json в корне",
+          "detail": "Нет главного package.json с описанием проекта, скриптами и зависимостями для всего монорепозитория. Это затрудняет понимание структуры проекта, управление зависимостями и запуск команд для новых контрибьюторов",
+          "file_path": null
+        },
+        {
+          "severity": "medium",
+          "area": "Неполная документация для контрибьюторов",
+          "detail": "CONTRIBUTING.md обрывается на середине (truncated), нет информации о том, как запускать тесты (их и нет), как работает процесс релиза, какие есть соглашения о коде. Это создаёт барьер для новых участников проекта",
+          "file_path": "CONTRIBUTING.md"
+        },
+        {
+          "severity": "low",
+          "area": "Отсутствие примеров окружения",
+          "detail": "Файл .env.example содержит только 2 переменные (NEXT_PUBLIC_V0_URL, NEXT_PUBLIC_APP_URL), но вероятно для полноценной работы приложения нужно больше настроек. Новым разработчикам будет непонятно, что ещё нужно настроить",
+          "file_path": "apps/v4/.env.example"
+        }
+      ],
+      "tasks": [
+        {
+          "title": "Настроить автоматическое тестирование компонентов",
+          "description": "Добавить тестирование UI компонентов, чтобы гарантировать их работу:\n1. Установить Jest (инструмент для тестов) и React Testing Library (для тестирования React)\n2. Создать файл конфигурации jest.config.js в корне проекта\n3. Написать первые тесты для базовых компонентов (Button, Input, Dialog) в файлах *.test.tsx\n4. Добавить скрипт 'test' в package.json для запуска тестов\n5. Настроить coverage (проверку покрытия кода тестами) — минимум 70%\n\nПример теста для кнопки:\n- Проверить что кнопка рендерится с текстом\n- Проверить что onClick срабатывает при клике\n- Проверить что disabled кнопка не кликабельна",
+          "priority": "high",
+          "category": "technical",
+          "estimated_minutes": 180,
+          "depends_on": null
+        },
+        {
+          "title": "Создать GitHub Actions для автоматической проверки кода",
+          "description": "Настроить автоматическую проверку кода при каждом коммите:\n1. Создать файл .github/workflows/ci.yml\n2. Добавить шаги в workflow:\n   - Установка Node.js и pnpm\n   - Установка зависимостей (pnpm install)\n   - Проверка TypeScript (tsc --noEmit)\n   - Проверка линтера (pnpm lint)\n   - Запуск тестов (pnpm test)\n   - Проверка сборки (pnpm build)\n3. Настроить запуск на каждый pull request и push в main\n4. Добавить бейдж статуса CI в README.md\n\nТак каждое изменение будет автоматически проверяться перед добавлением в проект",
+          "priority": "high",
+          "category": "technical",
+          "estimated_minutes": 120,
+          "depends_on": "Настроить автоматическое тестирование компонентов"
+        },
+        {
+          "title": "Создать корневой package.json для монорепозитория",
+          "description": "Добавить главный файл конфигурации проекта:\n1. Создать package.json в корне проекта\n2. Заполнить основную информацию:\n   - name: 'shadcn-ui'\n   - description: описание из README\n   - repository, bugs, homepage — ссылки на GitHub\n   - author: 'shadcn'\n   - license: 'MIT'\n3. Добавить workspaces: ['apps/*', 'packages/*']\n4. Добавить общие скрипты:\n   - dev: запуск всех приложений в dev режиме\n   - build: сборка всех пакетов\n   - lint: проверка всего кода\n   - test: запуск всех тестов\n5. Добавить общие devDependencies: typescript, prettier, eslint\n\nЭто упростит работу с проектом и сделает его структуру понятнее",
+          "priority": "high",
+          "category": "technical",
+          "estimated_minutes": 60,
+          "depends_on": null
+        },
+        {
+          "title": "Дополнить документацию для контрибьюторов",
+          "description": "Улучшить CONTRIBUTING.md файл, чтобы новым участникам было легче начать:\n1. Восстановить обрезанную часть документа (сейчас он truncated)\n2. Добавить раздел 'Запуск тестов' с командами для разных типов тестов\n3. Добавить раздел 'Процесс релиза':\n   - Как создавать changeset (описание изменений)\n   - Как работает версионирование\n   - Кто может делать релизы\n4. Добавить раздел 'Соглашения о коде':\n   - Стиль написания компонентов\n   - Правила именования\n   - Требования к доступности (a11y)\n5. Добавить раздел 'Частые проблемы' (troubleshooting)\n6. Добавить примеры хороших pull request\n\nЭто снизит барьер входа и улучшит качество контрибьюций",
+          "priority": "medium",
+          "category": "documentation",
+          "estimated_minutes": 90,
+          "depends_on": null
+        },
+        {
+          "title": "Создать Storybook для просмотра компонентов",
+          "description": "Добавить Storybook — инструмент для разработки и документирования компонентов в изоляции:\n1. Установить Storybook: npx storybook@latest init\n2. Настроить конфигурацию для Tailwind CSS и темизации\n3. Создать stories (примеры) для ключевых компонентов:\n   - Button с разными вариантами (variant, size)\n   - Input с разными состояниями (disabled, error, success)\n   - Dialog с примерами содержимого\n4. Добавить аддон для проверки доступности (@storybook/addon-a11y)\n5. Настроить деплой Storybook на GitHub Pages или Vercel\n6. Добавить ссылку на Storybook в README\n\nЭто упростит разработку, тестирование и демонстрацию компонентов",
+          "priority": "medium",
+          "category": "technical",
+          "estimated_minutes": 150,
+          "depends_on": null
+        }
+      ],
+      "next_milestone": "Достичь стабильности проекта: покрыть все компоненты тестами (70%+ coverage), настроить автоматический CI/CD pipeline, завершить документацию для контрибьюторов. После этого — фокус на расширение библиотеки компонентов и улучшение developer experience через Storybook и автоматическую генерацию документации"
+    },
+    "security_analysis": {
+      "findings": [],
+      "stats": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "files_scanned": 39
+      },
+      "has_critical_issues": false
+    },
+    "metadata": {
+      "files_analyzed": 50,
+      "files_total": 50,
+      "files_truncated": 0,
+      "total_lines": 3832,
+      "model_used": "anthropic/claude-sonnet-4.5",
+      "tokens_used": 26406,
+      "analysis_duration_ms": 55384,
+      "commit_sha": "ccafdaf7c6f6747a24f54e84436b42ec42f01779",
+      "repo_url": "https://github.com/shadcn/ui"
+    }
+  },
+  "gapResult": null,
+  "competitorResult": null,
+  "exportedAt": "2026-01-04T16:13:14.137Z",
+  "version": "2.0"
+}

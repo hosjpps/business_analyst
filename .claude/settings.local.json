@@ -54,7 +54,32 @@
       "mcp__playwright__browser_evaluate",
       "mcp__playwright__browser_select_option",
       "Bash(ls:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__playwright__browser_resize",
+      "Bash(python3:*)",
+      "Bash(git reset:*)",
+      "mcp__memory__create_relations",
+      "Bash(Claude.md )",
+      "Bash(docs/MASTER_PLAN.md )",
+      "Bash(docs/README.md )",
+      "Bash(docs/data-models.md )",
+      "Bash(docs/project-status.md )",
+      "Bash(docs/testing.md )",
+      "Bash(src/app/\\\\\\(protected\\\\\\)/projects/[id]/page.tsx )",
+      "Bash(src/app/\\\\\\(protected\\\\\\)/projects/[id]/error.tsx )",
+      "Bash(src/app/\\\\\\(protected\\\\\\)/dashboard/error.tsx )",
+      "Bash(src/app/globals.css )",
+      "Bash(src/app/layout.tsx )",
+      "Bash(src/app/error.tsx )",
+      "Bash(src/app/global-error.tsx )",
+      "Bash(src/lib/llm/client.ts )",
+      "Bash(src/lib/utils/accessibility.ts )",
+      "Bash(src/lib/utils/logger.ts )",
+      "Bash(src/__tests__/utils/accessibility.test.ts )",
+      "Bash(src/__tests__/utils/logger.test.ts )",
+      "Bash(src/components/export/GitHubExportButton.tsx )",
+      "Bash(src/components/results/GapsView.tsx )",
+      "Bash(src/components/results/TrendsChart.tsx)"
     ]
   }
 }
