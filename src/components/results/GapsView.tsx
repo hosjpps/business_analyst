@@ -1031,11 +1031,12 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
           display: flex;
           align-items: flex-start;
           gap: 12px;
-          padding: 12px 16px 12px 20px;
+          padding: 14px 18px;
           background: rgba(248, 81, 73, 0.08);
           border-radius: 8px;
           margin-bottom: 16px;
-          margin-left: 8px;
+          margin-left: 12px;
+          margin-top: 12px;
         }
 
         .actionable-gap-card.severity-warning .agc-problem {
@@ -1064,6 +1065,10 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
           color: var(--text-secondary);
           line-height: 1.6;
           margin: 0 0 16px 0;
+          padding: 12px 16px;
+          background: rgba(88, 166, 255, 0.06);
+          border-radius: 8px;
+          border-left: 3px solid var(--accent-blue);
         }
 
         .agc-context {
@@ -1071,6 +1076,9 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
           color: var(--text-secondary);
           line-height: 1.5;
           margin: 0 0 16px 0;
+          padding: 12px 16px;
+          background: var(--color-canvas-subtle);
+          border-radius: 8px;
         }
 
         .agc-context strong {
@@ -1078,10 +1086,11 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
         }
 
         .agc-actions-card {
-          background: var(--bg-primary);
-          border: 1px solid var(--border-default);
+          background: rgba(35, 134, 54, 0.06);
+          border: 1px solid rgba(35, 134, 54, 0.2);
+          border-left: 3px solid var(--accent-green);
           border-radius: 8px;
-          padding: 16px;
+          padding: 16px 18px;
           margin-bottom: 12px;
         }
 
@@ -1288,7 +1297,8 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
           transition: max-height 0.3s ease, opacity 0.2s ease;
           max-height: 2000px; /* Large enough for any content */
           opacity: 1;
-          padding-left: 8px;
+          padding-left: 12px;
+          padding-top: 8px;
         }
 
         .agc-collapsible.collapsed {

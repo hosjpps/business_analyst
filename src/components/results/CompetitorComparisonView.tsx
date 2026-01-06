@@ -393,36 +393,42 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         .detail-row {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 6px;
           margin-bottom: 16px;
           font-size: 14px;
-          padding: 10px 14px;
-          background: var(--color-canvas-subtle);
-          border-radius: 6px;
+          padding: 14px 18px;
+          background: rgba(88, 166, 255, 0.06);
+          border-radius: 10px;
+          border-left: 3px solid var(--color-accent-fg);
         }
 
         .detail-row .label {
-          color: var(--color-fg-muted);
-          font-weight: 500;
+          color: var(--color-accent-fg);
+          font-weight: 600;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .detail-row .value {
           color: var(--color-fg-default);
+          line-height: 1.6;
         }
 
         .detail-section {
           margin-top: 20px;
-          padding: 14px;
-          background: var(--color-canvas-subtle);
-          border-radius: 8px;
+          padding: 16px 18px;
+          background: rgba(139, 92, 246, 0.06);
+          border-radius: 10px;
+          border-left: 3px solid #8b5cf6;
         }
 
         .detail-section .label {
           display: block;
           font-size: 12px;
           font-weight: 600;
-          color: var(--color-fg-muted);
-          margin-bottom: 10px;
+          color: #8b5cf6;
+          margin-bottom: 12px;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -436,7 +442,7 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
           font-size: 14px;
           color: var(--color-fg-default);
           margin-bottom: 10px;
-          line-height: 1.5;
+          line-height: 1.6;
         }
 
         .detail-section li:last-child {
@@ -446,7 +452,7 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         .strengths-weaknesses {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 20px;
+          gap: 16px;
           margin-top: 20px;
         }
 
@@ -457,9 +463,18 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         }
 
         .sw-column {
-          padding: 14px;
-          background: var(--color-canvas-subtle);
-          border-radius: 8px;
+          padding: 16px 18px;
+          border-radius: 10px;
+        }
+
+        .sw-column:first-child {
+          background: rgba(35, 134, 54, 0.08);
+          border-left: 3px solid var(--color-success-fg);
+        }
+
+        .sw-column:last-child {
+          background: rgba(210, 153, 34, 0.08);
+          border-left: 3px solid var(--color-attention-fg);
         }
 
         .sw-column .label {
@@ -488,7 +503,7 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
           font-size: 14px;
           color: var(--color-fg-default);
           margin-bottom: 10px;
-          line-height: 1.5;
+          line-height: 1.6;
         }
 
         .sw-column li:last-child {
@@ -496,7 +511,7 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         }
 
         .label.accent {
-          color: var(--color-accent-fg);
+          color: #8b5cf6;
         }
       `}</style>
     </div>
