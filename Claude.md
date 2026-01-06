@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.8.3
+## Текущий статус: v0.9.0
 
 ### Готово
 
@@ -256,11 +256,30 @@
   - CSS: sr-only, focus-visible, prefers-reduced-motion, prefers-contrast
   - 55 тестов для accessibility
 
+**Tier 3: Testing & Performance (v0.9.0):**
+- [x] E2E Testing with Playwright — полноценное end-to-end тестирование
+  - Multi-browser support: Chromium, Firefox, WebKit, Mobile Chrome/Safari
+  - Page Object Model: HomePage, AuthPage, DashboardPage
+  - Test suites: demo-mode, code-analysis, business-analysis, full-analysis, auth
+  - CI/CD workflow: `.github/workflows/e2e.yml`
+  - Timeouts: 120s для LLM операций, 60s для UI
+  - 47 E2E тестов (5 test suites)
+- [x] Performance Optimizations — оптимизация производительности
+  - Bundle Analyzer (`npm run analyze`) для анализа размера бандла
+  - Code Splitting с `next/dynamic` — 10 lazy-loaded компонентов
+  - SWR Hooks для client-side кэширования API запросов
+  - Web Vitals tracking (LCP, FID, CLS, TTFB, INP, FCP)
+  - Image optimization, package imports optimization
+  - Webpack config для tree-shaking
+
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
 - [x] Upstash Redis для продакшена (с fallback на memory)
-- [x] 1364 unit + integration тестов (полное покрытие API + UI + utils)
+- [x] E2E testing с Playwright (multi-browser)
+- [x] Bundle analyzer для мониторинга размера
+- [x] Web Vitals для мониторинга производительности
+- [x] ~1400 unit + integration + E2E тестов (полное покрытие)
 
 ---
 
@@ -633,11 +652,14 @@ npm run dev
 # Открыть в браузере
 open http://localhost:3000
 
-# Запустить unit тесты
-npm run test:run
+# Unit тесты
+npm run test:run       # Запуск всех unit тестов
+npm run test:watch     # Watch mode
 
-# Запустить с watch mode
-npm run test:watch
+# E2E тесты (требуют запущенный dev сервер)
+npm run test:e2e       # Запуск E2E тестов
+npm run test:e2e:ui    # Playwright UI режим
+npm run test:e2e:debug # Debug mode
 ```
 
 Детальный план с задачами: [ROADMAP.md](./ROADMAP.md)
@@ -721,13 +743,21 @@ npm install
 # Разработка
 npm run dev
 
-# Тесты
+# Unit тесты
 npm run test
 npm run test:watch
 npm run test:coverage
 
-# Build
+# E2E тесты (Playwright)
+npm run test:e2e           # Запуск E2E тестов
+npm run test:e2e:ui        # UI режим Playwright
+npm run test:e2e:debug     # Debug режим
+npm run test:e2e:headed    # С видимым браузером
+npm run test:e2e:chromium  # Только Chromium
+
+# Build & Performance
 npm run build
+npm run analyze            # Bundle analyzer
 ```
 
 ### Environment Variables
@@ -774,10 +804,12 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 - Octokit (GitHub API)
 - pdf-parse, mammoth (документы)
 - Cheerio (парсинг сайтов)
+- SWR (client-side кэширование)
 
 **Тестирование:**
-- Vitest
-- 1364 тестов (unit + integration):
+- Vitest (unit + integration)
+- Playwright (E2E)
+- ~1400 тестов:
   - Code Analysis: 15 тестов
   - Business Analysis: 71 тест (21 + 50 metrics)
   - Gap Detection: 91 тест (23 + 68 scorer v2)
@@ -786,7 +818,13 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
   - UI Components: 329 тестов
   - Utils: 107 тестов (38 + 14 logger + 55 accessibility)
   - Integration Tests: 50 тестов (API endpoints, LLM flow, clarification)
-  - **Version Comparison: 122 теста** (History API, Timeline, VersionDiff, Progressive)
+  - Version Comparison: 122 теста (History API, Timeline, VersionDiff, Progressive)
+  - **E2E Tests: 47 тестов** (demo-mode, code-analysis, business-analysis, full-analysis, auth)
+
+**Performance:**
+- @next/bundle-analyzer
+- next/dynamic (code splitting)
+- Web Vitals tracking
 
 ---
 
@@ -808,15 +846,21 @@ src/
 │   ├── auth/               # Компоненты аутентификации
 │   ├── forms/              # Формы ввода
 │   ├── results/            # Компоненты результатов
+│   ├── lazy.tsx            # Lazy-loaded компоненты (code splitting)
 │   └── ui/                 # UI библиотека (Tooltips, Icons, Progress, Wizard, Checklist, FAQ, PDF Export)
 ├── lib/
 │   ├── supabase/           # Supabase клиенты
 │   ├── business/           # Business Canvas логика
 │   ├── gaps/               # Gap Detection логика
 │   ├── competitor/         # Competitor Analysis логика
-│   └── utils/              # Утилиты (logger, accessibility, social-detector, retry)
+│   └── utils/              # Утилиты (logger, accessibility, social-detector, retry, web-vitals)
 ├── types/                  # TypeScript типы
-└── hooks/                  # React hooks
+└── hooks/                  # React hooks (useSWR для кэширования)
+
+e2e/
+├── fixtures/               # Test data и selectors
+├── pages/                  # Page Objects (HomePage, AuthPage, DashboardPage)
+└── tests/                  # Test suites (demo-mode, code-analysis, business-analysis, full-analysis, auth)
 ```
 
 ---
