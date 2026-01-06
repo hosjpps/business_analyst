@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { withLLMRetry } from '@/lib/utils/retry';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // OpenRouter Client (Compatible with OpenAI SDK)
@@ -124,7 +125,7 @@ export async function sendToLLM(
   const modelToUse = modelOverride || config.model;
   const maxTokens = config.maxTokens;
 
-  console.log(`LLM Request: task=${taskType || 'default'}, model=${modelToUse}, maxTokens=${maxTokens}`);
+  logger.llm(taskType || 'default', modelToUse, { maxTokens });
 
   return withLLMRetry(async () => {
     try {
@@ -149,7 +150,7 @@ export async function sendToLLM(
       const content = response.choices[0]?.message?.content || '';
       const tokensUsed = response.usage?.total_tokens || 0;
 
-      console.log(`LLM response in ${Date.now() - startTime}ms, tokens: ${tokensUsed}`);
+      logger.debug(`LLM response completed`, { durationMs: Date.now() - startTime, tokens: tokensUsed });
 
       return {
         content,
@@ -157,7 +158,7 @@ export async function sendToLLM(
         tokens_used: tokensUsed
       };
     } catch (error) {
-      console.error('LLM Error:', error);
+      logger.error('LLM request failed', error);
       throw new Error(
         error instanceof Error
           ? `LLM Error: ${error.message}`
@@ -297,7 +298,7 @@ export function parseJSONResponse<T>(content: string): T {
   let cleaned = content.trim();
 
   // Log original content length for debugging
-  console.log('parseJSONResponse: content length =', content.length);
+  logger.debug('parseJSONResponse', { contentLength: content.length });
 
   // Удаляем markdown блоки кода
   cleaned = cleaned.replace(/```json\s*/gi, '');
@@ -314,7 +315,7 @@ export function parseJSONResponse<T>(content: string): T {
   if (lastBrace !== -1 && lastBrace < cleaned.length - 1) {
     const afterJson = cleaned.substring(lastBrace + 1).trim();
     if (afterJson.length > 0 && !afterJson.startsWith('{')) {
-      console.log('parseJSONResponse: removing trailing text after JSON:', afterJson.slice(0, 100));
+      logger.debug('parseJSONResponse: removing trailing text after JSON', { preview: afterJson.slice(0, 100) });
       cleaned = cleaned.substring(0, lastBrace + 1);
     }
   }
@@ -322,13 +323,12 @@ export function parseJSONResponse<T>(content: string): T {
   // Удаляем текст до первого { (LLM иногда пишет пояснения перед JSON)
   const firstBrace = cleaned.indexOf('{');
   if (firstBrace === -1) {
-    console.error('parseJSONResponse: no { found in content');
-    console.error('Content preview:', content.slice(0, 500));
+    logger.error('parseJSONResponse: no { found in content', undefined, { contentPreview: content.slice(0, 500) });
     throw new Error('No JSON object found in response');
   }
 
   if (firstBrace > 0) {
-    console.log('parseJSONResponse: removing leading text:', cleaned.slice(0, firstBrace));
+    logger.debug('parseJSONResponse: removing leading text', { leadingText: cleaned.slice(0, firstBrace) });
   }
   cleaned = cleaned.substring(firstBrace);
 
@@ -385,10 +385,11 @@ export function parseJSONResponse<T>(content: string): T {
   }
 
   // Финальная ошибка с диагностикой
-  console.error('JSON Parse Error - all attempts failed');
-  console.error('Content length:', content.length);
-  console.error('Content preview (first 500 chars):', content.slice(0, 500));
-  console.error('Content preview (last 300 chars):', content.slice(-300));
+  logger.error('JSON Parse Error - all attempts failed', undefined, {
+    contentLength: content.length,
+    contentStart: content.slice(0, 500),
+    contentEnd: content.slice(-300),
+  });
 
   // Определяем вероятную причину ошибки для пользователя
   let errorHint = '';
@@ -415,7 +416,7 @@ export function parseJSONResponse<T>(content: string): T {
 function normalizeAnalysisResponse(parsed: Record<string, unknown>): Record<string, unknown> {
   // Check if analysis object already exists
   if (parsed.analysis && typeof parsed.analysis === 'object') {
-    console.log('normalizeAnalysisResponse: analysis object exists');
+    logger.debug('normalizeAnalysisResponse: analysis object exists');
     return parsed;
   }
 
@@ -424,7 +425,7 @@ function normalizeAnalysisResponse(parsed: Record<string, unknown>): Record<stri
   const foundFields = analysisFields.filter(field => field in parsed);
 
   if (foundFields.length >= 3) {
-    console.log('normalizeAnalysisResponse: found flat structure, wrapping fields:', foundFields);
+    logger.debug('normalizeAnalysisResponse: found flat structure, wrapping fields', { fields: foundFields });
 
     // Wrap into analysis object
     const analysis: Record<string, unknown> = {};
@@ -445,7 +446,7 @@ function normalizeAnalysisResponse(parsed: Record<string, unknown>): Record<stri
     };
   }
 
-  console.log('normalizeAnalysisResponse: no transformation needed');
+  logger.debug('normalizeAnalysisResponse: no transformation needed');
   return parsed;
 }
 
@@ -457,15 +458,16 @@ export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisRe
   // First, parse JSON
   const parsed = parseJSONResponse<Record<string, unknown>>(content);
 
-  console.log('Raw parsed JSON keys:', Object.keys(parsed));
-  console.log('Raw parsed JSON preview:', JSON.stringify(parsed, null, 2).slice(0, 1000));
+  logger.debug('Raw parsed JSON', { keys: Object.keys(parsed) });
 
   // Normalize structure (wrap flat fields into analysis object if needed)
   const normalized = normalizeAnalysisResponse(parsed);
 
   if (normalized !== parsed) {
-    console.log('Normalized JSON keys:', Object.keys(normalized));
-    console.log('Normalized analysis keys:', Object.keys(normalized.analysis || {}));
+    logger.debug('Normalized JSON structure', {
+      keys: Object.keys(normalized),
+      analysisKeys: Object.keys(normalized.analysis || {})
+    });
   }
 
   // Then validate with Zod
@@ -473,8 +475,7 @@ export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisRe
 
   if (!validation.success) {
     const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
-    console.error('LLM Response validation failed:', errors);
-    console.error('Normalized response:', JSON.stringify(normalized, null, 2).slice(0, 2000));
+    logger.error('LLM Response validation failed', undefined, { errors });
 
     // Try to salvage partial data
     throw new Error(`LLM response validation failed: ${errors}`);
@@ -484,9 +485,7 @@ export function parseAndValidateAnalysisResponse(content: string): LLMAnalysisRe
 
   // Warn if no analysis and no clarification needed - this might indicate a problem
   if (!result.analysis && !result.needs_clarification) {
-    console.warn('WARNING: LLM response has no analysis and needs_clarification is false');
-    console.warn('This might indicate the LLM failed to generate proper output');
-    console.warn('Full parsed data:', JSON.stringify(parsed, null, 2));
+    logger.warn('LLM response has no analysis and needs_clarification is false. This might indicate the LLM failed to generate proper output.');
   }
 
   return result;
@@ -516,7 +515,7 @@ export async function sendChatMessage(
       tokens_used: response.usage?.total_tokens || 0
     };
   } catch (error) {
-    console.error('Chat Error:', error);
+    logger.error('Chat request failed', error);
     throw new Error(
       error instanceof Error
         ? `Chat Error: ${error.message}`

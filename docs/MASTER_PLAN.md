@@ -2877,31 +2877,137 @@ function inferVerdict(score: number): 'ON_TRACK' | 'ITERATE' | 'PIVOT' {
 
 ---
 
+## Tier 2 Quality & Infrastructure (v0.8.3) ✅ DONE
+
+### T2-03: History Tab Integration ✅ DONE
+
+**Приоритет:** 🟡 HIGH
+**Effort:** 2-3 часа
+**Статус:** ✅ Выполнено 2025-01-06
+
+**Описание:**
+Интеграция компонентов AnalysisTimeline и VersionDiff в страницу проекта через новый таб "История".
+
+**Реализация:**
+- Файл: `src/app/(protected)/projects/[id]/page.tsx`
+- Новый таб "🕐 История" в tabs array
+- State management для выбора версий (`selectedVersions`, `showVersionDiff`)
+- Обработчики `handleCompareVersions` и `handleCloseDiff`
+- Условный рендеринг AnalysisTimeline / VersionDiff
+
+### T2-04: Error Boundaries ✅ DONE
+
+**Приоритет:** 🟡 HIGH
+**Effort:** 2-3 часа
+**Статус:** ✅ Выполнено 2025-01-06
+
+**Описание:**
+Graceful error handling на всех уровнях приложения с контекстными сообщениями на русском языке.
+
+**Файлы:**
+- `src/app/error.tsx` — глобальный error boundary
+- `src/app/global-error.tsx` — error boundary для root layout
+- `src/app/(protected)/dashboard/error.tsx` — dashboard-specific ошибки
+- `src/app/(protected)/projects/[id]/error.tsx` — project page ошибки
+
+**Особенности:**
+- Кнопки "Попробовать снова" и "На главную"
+- Контекстные сообщения (401 → "Необходима авторизация", 404 → "Проект не найден")
+- ARIA атрибуты для accessibility
+
+### T2-05: Logger Utility ✅ DONE
+
+**Приоритет:** 🟢 MEDIUM
+**Effort:** 2 часа
+**Статус:** ✅ Выполнено 2025-01-06
+
+**Описание:**
+Production-ready логирование с форматированием, уровнями и специализированными методами.
+
+**Файлы:**
+- `src/lib/utils/logger.ts` — logger utility
+- `src/lib/llm/client.ts` — замена console.log на logger
+
+**API:**
+```typescript
+logger.debug(message, context?)   // Только в development
+logger.info(message, context?)    // Информационные сообщения
+logger.warn(message, context?)    // Предупреждения
+logger.error(message, error?, context?)  // Ошибки
+logger.api(method, path, context?)       // API запросы
+logger.llm(task, model, context?)        // LLM запросы
+```
+
+**Тесты:**
+- `src/__tests__/utils/logger.test.ts` — 14 тестов
+
+### T2-06: Accessibility Improvements ✅ DONE
+
+**Приоритет:** 🟡 HIGH
+**Effort:** 3-4 часа
+**Статус:** ✅ Выполнено 2025-01-06
+
+**Описание:**
+WCAG 2.1 compliance — keyboard navigation, screen reader support, focus management.
+
+**Файлы:**
+- `src/lib/utils/accessibility.ts` — accessibility utilities
+- `src/app/globals.css` — accessibility CSS
+- `src/app/layout.tsx` — skip link
+
+**Компоненты accessibility.ts:**
+- `ARIA_ROLES`, `ARIA_LIVE`, `KEYBOARD` — константы
+- `isActivationKey(event)` — проверка Enter/Space
+- `handleKeyboardActivation(event, handler)` — keyboard handler
+- `generateAriaId(prefix)` — генерация уникальных ID
+- `getFocusableElements(container)` — focusable elements
+- `announceToScreenReader(message, priority)` — screen reader
+- `ariaPatterns` — patterns для loadingButton, expandable, tab, modal, progress, alert
+
+**CSS features:**
+- `.sr-only`, `.sr-only-focusable` — visually hidden
+- `.skip-link` — skip navigation
+- `:focus-visible` — focus indicators
+- `prefers-reduced-motion: reduce` — reduced motion support
+- `prefers-contrast: high` — high contrast support
+
+**Тесты:**
+- `src/__tests__/utils/accessibility.test.ts` — 55 тестов
+
+---
+
 ## Критерии успеха v2.0
 
 ### Функциональные
 
-- [ ] Full Analysis показывает ВСЕ результаты (Canvas + Code + Gaps + Tasks)
-- [ ] Clarification вопросы отображаются и обрабатываются
-- [ ] Wizard форма работает для всех режимов
-- [ ] Экспорт в Markdown и JSON работает
-- [ ] Google Trends интегрирован (при наличии API key)
-- [ ] Opus 4.5 используется для глубокого анализа
+- [x] Full Analysis показывает ВСЕ результаты (Canvas + Code + Gaps + Tasks)
+- [x] Clarification вопросы отображаются и обрабатываются
+- [x] Wizard форма работает для всех режимов
+- [x] Экспорт в Markdown и JSON работает
+- [x] Google Trends интегрирован (при наличии API key)
+- [x] Opus 4.5 используется для глубокого анализа
 
 ### UX
 
-- [ ] Нет английского жаргона без объяснений
-- [ ] Все обязательные поля помечены
-- [ ] Прогресс анализа показывает детальные шаги
-- [ ] Skeleton loading вместо спиннеров
-- [ ] Анимации работают плавно
+- [x] Нет английского жаргона без объяснений
+- [x] Все обязательные поля помечены
+- [x] Прогресс анализа показывает детальные шаги
+- [x] Skeleton loading вместо спиннеров
+- [x] Анимации работают плавно
 
 ### Качество
 
-- [ ] AI результаты валидируются
-- [ ] Нет дублирующихся gaps
-- [ ] Action steps конкретные и исполнимые
-- [ ] Estimated hours реалистичны
+- [x] AI результаты валидируются
+- [x] Нет дублирующихся gaps
+- [x] Action steps конкретные и исполнимые
+- [x] Estimated hours реалистичны
+
+### Инфраструктура (v0.8.3)
+
+- [x] Error boundaries на всех уровнях
+- [x] Logger utility для production
+- [x] Accessibility (WCAG 2.1)
+- [x] History tab интегрирован
 
 ---
 

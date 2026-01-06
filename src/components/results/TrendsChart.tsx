@@ -73,8 +73,14 @@ function LineChart({ data, keyword, color, width = 400, height = 150 }: LineChar
     );
   }
 
+  // Use viewBox for responsive scaling
   return (
-    <svg width={width} height={height} className="trends-line-chart">
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="xMidYMid meet"
+      className="trends-line-chart"
+      style={{ width: '100%', height: 'auto', maxHeight: `${height}px` }}
+    >
       {/* Grid lines */}
       {yTicks.map((tick) => (
         <line
@@ -228,7 +234,7 @@ function TrendCard({ result, index }: { result: TrendResult; index: number }) {
         </div>
       </div>
 
-      <LineChart data={result.data} keyword={result.keyword} color={color} width={380} height={140} />
+      <LineChart data={result.data} keyword={result.keyword} color={color} />
 
       {result.relatedQueries.length > 0 && (
         <>

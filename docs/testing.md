@@ -1,5 +1,42 @@
 # Тестирование
 
+## Unit & Integration тесты
+
+**Всего тестов:** 1364
+**Фреймворк:** Vitest
+
+```bash
+# Запуск всех тестов
+npm run test:run
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm run test:coverage
+```
+
+### Распределение тестов
+
+| Категория | Кол-во | Файлы |
+|-----------|--------|-------|
+| Code Analysis | 15 | `analyze-code.test.ts` |
+| Business Analysis | 71 | `analyze-business.test.ts`, `business-metrics.test.ts` |
+| Gap Detection | 91 | `analyze-gaps.test.ts`, `scorer-v2.test.ts` |
+| Competitor Analysis | 23 | `analyze-competitors.test.ts` |
+| Security Analysis | 42 | `security-analyzer.test.ts` |
+| UI Components | 329 | `*/*.test.tsx` |
+| Utils | 107 | `logger.test.ts`, `accessibility.test.ts`, и др. |
+| Integration | 50 | API endpoints, LLM flow |
+| Version Comparison | 122 | `history.test.ts`, `AnalysisTimeline.test.ts`, `VersionDiff.test.ts` |
+
+### Новые тесты (v0.8.3)
+
+- `src/__tests__/utils/logger.test.ts` — 14 тестов для logger utility
+- `src/__tests__/utils/accessibility.test.ts` — 55 тестов для ARIA patterns
+
+---
+
 ## Быстрый старт
 
 ```bash

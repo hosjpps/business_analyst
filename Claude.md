@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.8.2
+## Текущий статус: v0.8.3
 
 ### Готово
 
@@ -229,11 +229,38 @@
   - Score delta визуализация (▲ green / ▼ red / = gray)
   - 87 тестов для History API, Timeline, VersionDiff
 
+**Tier 2 Quality & Infrastructure (v0.8.3):**
+- [x] History Tab Integration — интеграция компонентов в страницу проекта
+  - Новый таб "История" с timeline и сравнением версий
+  - State management для выбора версий и показа diff
+  - Обработчики handleCompareVersions и handleCloseDiff
+- [x] Error Boundaries — graceful error handling
+  - `error.tsx` — глобальный error boundary
+  - `global-error.tsx` — error boundary для root layout
+  - `dashboard/error.tsx` — dashboard-specific ошибки
+  - `projects/[id]/error.tsx` — project page ошибки
+  - Контекстные сообщения на русском языке
+- [x] Logger Utility — production-ready логирование
+  - Уровни: debug, info, warn, error
+  - Форматирование с timestamp и context
+  - Специализированные методы: api(), llm()
+  - Замена console.log в LLM клиенте
+  - 14 тестов для logger
+- [x] Accessibility Improvements — WCAG 2.1 compliance
+  - ARIA roles и live regions constants
+  - Keyboard navigation helpers (isActivationKey, handleKeyboardActivation)
+  - Focus management utilities (getFocusableElements)
+  - Screen reader announcements (announceToScreenReader)
+  - ariaPatterns для common UI patterns
+  - Skip link в root layout
+  - CSS: sr-only, focus-visible, prefers-reduced-motion, prefers-contrast
+  - 55 тестов для accessibility
+
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
 - [x] Upstash Redis для продакшена (с fallback на memory)
-- [x] 1309 unit + integration тестов (полное покрытие API + UI)
+- [x] 1364 unit + integration тестов (полное покрытие API + UI + utils)
 
 ---
 
@@ -273,7 +300,11 @@
 | Компонент | Статус | Примечание |
 |-----------|--------|------------|
 | TopNav | ✅ Интегрирован | Добавлен в `src/app/layout.tsx` |
-| Deploy на Vercel | ⬜ TODO | Требуется деплой |
+| Deploy на Vercel | ✅ Настроен | Auto-deploy из GitHub (main branch) |
+| AnalysisTimeline | ⬜ TODO | Компонент готов, требуется интеграция в страницу проекта |
+| VersionDiff | ⬜ TODO | Компонент готов, требуется интеграция в страницу проекта |
+| Console cleanup | ⬜ TODO | 37 файлов с debug логами |
+| Error Boundaries | ⬜ TODO | Нет error.tsx файлов |
 
 ### Sprint 0: Тест-чеклист (для тестировщика)
 
@@ -746,15 +777,16 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 
 **Тестирование:**
 - Vitest
-- 966 тестов (unit + integration):
+- 1364 тестов (unit + integration):
   - Code Analysis: 15 тестов
   - Business Analysis: 71 тест (21 + 50 metrics)
   - Gap Detection: 91 тест (23 + 68 scorer v2)
   - Competitor Analysis: 23 теста
   - Security Analysis: 42 теста
   - UI Components: 329 тестов
-  - Utils: 38 тестов
-  - **Integration Tests: 50 тестов** (API endpoints, LLM flow, clarification)
+  - Utils: 107 тестов (38 + 14 logger + 55 accessibility)
+  - Integration Tests: 50 тестов (API endpoints, LLM flow, clarification)
+  - **Version Comparison: 122 теста** (History API, Timeline, VersionDiff, Progressive)
 
 ---
 
@@ -764,11 +796,13 @@ GITHUB_TOKEN=ghp_...  # Для приватных репозиториев
 src/
 ├── app/                    # Next.js App Router
 │   ├── (protected)/        # Защищённые маршруты (требуют auth)
-│   │   ├── dashboard/      # Список проектов + задачи по проектам
-│   │   └── projects/[id]/  # Детали проекта с табами анализов
+│   │   ├── dashboard/      # Список проектов + задачи по проектам (+ error.tsx)
+│   │   └── projects/[id]/  # Детали проекта с табами анализов (+ error.tsx)
 │   ├── api/                # API endpoints
 │   ├── login/              # Страница входа
 │   ├── signup/             # Страница регистрации
+│   ├── error.tsx           # Global error boundary
+│   ├── global-error.tsx    # Root layout error boundary
 │   └── page.tsx            # Главная страница анализа
 ├── components/
 │   ├── auth/               # Компоненты аутентификации
@@ -780,7 +814,7 @@ src/
 │   ├── business/           # Business Canvas логика
 │   ├── gaps/               # Gap Detection логика
 │   ├── competitor/         # Competitor Analysis логика
-│   └── utils/              # Утилиты (social-detector, retry, etc.)
+│   └── utils/              # Утилиты (logger, accessibility, social-detector, retry)
 ├── types/                  # TypeScript типы
 └── hooks/                  # React hooks
 ```
@@ -875,15 +909,30 @@ newcomer   — новичок
 
 ## Deployment
 
+### Автоматический деплой (настроен)
+
+Проект подключен к Vercel с автоматическим деплоем:
+- **Production**: автоматически деплоится при push в `main`
+- **Preview**: создаётся для каждого Pull Request
+- **Репозиторий**: `hosjpps/business_analyst`
+
+```
+GitHub Push → Vercel Build → Production Deploy
+     ↓
+  [main branch] → https://business-analyst-*.vercel.app
+```
+
+### Ручной деплой (при необходимости)
+
 ```bash
-# Vercel (рекомендуется)
+# Vercel CLI
 vercel deploy
 
-# Или
+# Или локальный билд
 npm run build && npm start
 ```
 
-Environment variables нужно добавить в Vercel Dashboard.
+Environment variables настроены в Vercel Dashboard.
 
 ### Переменные для Vercel:
 - `OPENROUTER_API_KEY` — обязательно

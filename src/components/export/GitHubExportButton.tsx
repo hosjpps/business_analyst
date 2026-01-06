@@ -685,6 +685,80 @@ export function GitHubExportButton({
         .export-result-errors li {
           color: #f85149;
         }
+
+        /* ===== Mobile Full-Screen ===== */
+        @media (max-width: 768px) {
+          .export-modal-overlay {
+            padding: 0;
+            align-items: stretch;
+          }
+
+          .export-modal {
+            max-width: none;
+            width: 100%;
+            border-radius: 0;
+            max-height: none;
+            min-height: 100vh;
+            min-height: 100dvh;
+          }
+
+          .export-modal-header {
+            padding: 16px;
+            padding-top: max(16px, env(safe-area-inset-top));
+          }
+
+          .export-modal-content {
+            padding: 16px;
+            flex: 1;
+          }
+
+          .export-modal-actions {
+            flex-direction: column-reverse;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+          }
+
+          .export-modal-close {
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .export-btn-primary,
+          .export-btn-secondary {
+            width: 100%;
+            min-height: 48px;
+          }
+
+          .export-task-item {
+            min-height: 48px;
+          }
+
+          .export-form-options {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .export-checkbox {
+            min-height: 44px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .export-modal-header h2 {
+            font-size: 16px;
+          }
+
+          .export-form-field input {
+            font-size: 16px; /* Prevents zoom on iOS */
+            padding: 12px;
+          }
+
+          .export-task-list {
+            max-height: 250px;
+          }
+        }
       `}</style>
     </>
   );

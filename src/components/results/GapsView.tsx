@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { Gap, GapTask } from '@/types/gaps';
 import { GAP_CATEGORY_LABELS } from '@/types/gaps';
 import { formatTimeEstimate } from '@/lib/gaps/task-generator';
@@ -163,10 +164,11 @@ const IMPACT_LABELS: Record<Gap['impact'], string> = {
 };
 
 // ===========================================
-// Actionable Gap Card (NEW DESIGN)
+// Actionable Gap Card (NEW DESIGN with Mobile Collapse)
 // ===========================================
 
-function ActionableGapCard({ gap }: { gap: Gap }) {
+function ActionableGapCard({ gap, defaultCollapsed = false }: { gap: Gap; defaultCollapsed?: boolean }) {
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const categoryIcon = CATEGORY_ICONS[gap.category];
   const categoryLabel = CATEGORY_LABELS_RU[gap.category];
   const impactLabel = IMPACT_LABELS[gap.impact];
@@ -175,98 +177,111 @@ function ActionableGapCard({ gap }: { gap: Gap }) {
   const problemSummary = gap.hook || gap.current_state;
 
   return (
-    <div className={`actionable-gap-card severity-${gap.type}`}>
-      {/* Header: Category + Severity */}
+    <div className={`actionable-gap-card severity-${gap.type} ${isCollapsed ? 'collapsed' : ''}`}>
+      {/* Header: Category + Severity + Collapse Toggle */}
       <div className="agc-header">
         <div className="agc-category">
           <span className="agc-category-icon">{categoryIcon}</span>
           <span className="agc-category-label">{categoryLabel.toUpperCase()}</span>
         </div>
-        <SeverityBadge severity={gap.type} />
+        <div className="agc-header-right">
+          <SeverityBadge severity={gap.type} />
+          <button
+            className="agc-collapse-toggle"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-expanded={!isCollapsed}
+            aria-label={isCollapsed ? 'Развернуть' : 'Свернуть'}
+          >
+            <span className={`agc-toggle-icon ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
+          </button>
+        </div>
       </div>
 
-      {/* Problem Summary */}
+      {/* Problem Summary - Always visible */}
       <div className="agc-problem">
         <span className="agc-problem-icon">⚠️</span>
         <span className="agc-problem-text">{problemSummary}</span>
       </div>
 
-      {/* Why Matters */}
-      {gap.why_matters && (
-        <p className="agc-why-matters">{gap.why_matters}</p>
-      )}
+      {/* Collapsible Content */}
+      <div className={`agc-collapsible ${isCollapsed ? 'collapsed' : ''}`}>
+        {/* Why Matters */}
+        {gap.why_matters && (
+          <p className="agc-why-matters">{gap.why_matters}</p>
+        )}
 
-      {/* If no why_matters, show business goal context */}
-      {!gap.why_matters && (
-        <p className="agc-context">
-          <strong>Цель:</strong> {gap.business_goal}
-        </p>
-      )}
+        {/* If no why_matters, show business goal context */}
+        {!gap.why_matters && (
+          <p className="agc-context">
+            <strong>Цель:</strong> {gap.business_goal}
+          </p>
+        )}
 
-      {/* Action Steps Card */}
-      {gap.action_steps && gap.action_steps.length > 0 && (
-        <div className="agc-actions-card">
-          <div className="agc-actions-header">
-            <span className="agc-actions-icon">💡</span>
-            <span className="agc-actions-title">Что делать:</span>
+        {/* Action Steps Card */}
+        {gap.action_steps && gap.action_steps.length > 0 && (
+          <div className="agc-actions-card">
+            <div className="agc-actions-header">
+              <span className="agc-actions-icon">💡</span>
+              <span className="agc-actions-title">Что делать:</span>
+            </div>
+            <ol className="agc-steps">
+              {gap.action_steps.map((step, idx) => (
+                <li key={idx}>{step}</li>
+              ))}
+            </ol>
+            <div className="agc-actions-footer">
+              {gap.time_to_fix && (
+                <span className="agc-time">
+                  <span className="agc-time-icon">⏱️</span>
+                  {gap.time_to_fix}
+                </span>
+              )}
+              <span className={`agc-impact impact-${gap.impact}`}>
+                <span className="agc-impact-icon">📈</span>
+                {impactLabel}
+              </span>
+            </div>
           </div>
-          <ol className="agc-steps">
-            {gap.action_steps.map((step, idx) => (
-              <li key={idx}>{step}</li>
+        )}
+
+        {/* Recommendation (if no action steps) */}
+        {(!gap.action_steps || gap.action_steps.length === 0) && (
+          <div className="agc-recommendation">
+            <span className="agc-rec-label">Рекомендация:</span>
+            <p className="agc-rec-text">{gap.recommendation}</p>
+            <div className="agc-meta">
+              {gap.time_to_fix && (
+                <span className="agc-time">
+                  <span className="agc-time-icon">⏱️</span>
+                  {gap.time_to_fix}
+                </span>
+              )}
+              <span className={`agc-impact impact-${gap.impact}`}>
+                <span className="agc-impact-icon">📈</span>
+                {impactLabel}
+              </span>
+              <LevelIndicator label="Усилия" level={gap.effort} />
+            </div>
+          </div>
+        )}
+
+        {/* Resources & Actions */}
+        {gap.resources && gap.resources.length > 0 && (
+          <div className="agc-resources">
+            {gap.resources.map((resource, idx) => (
+              <a
+                key={idx}
+                href={resource}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="agc-resource-link"
+              >
+                📚 Документация
+              </a>
             ))}
-          </ol>
-          <div className="agc-actions-footer">
-            {gap.time_to_fix && (
-              <span className="agc-time">
-                <span className="agc-time-icon">⏱️</span>
-                {gap.time_to_fix}
-              </span>
-            )}
-            <span className={`agc-impact impact-${gap.impact}`}>
-              <span className="agc-impact-icon">📈</span>
-              {impactLabel}
-            </span>
           </div>
-        </div>
-      )}
-
-      {/* Recommendation (if no action steps) */}
-      {(!gap.action_steps || gap.action_steps.length === 0) && (
-        <div className="agc-recommendation">
-          <span className="agc-rec-label">Рекомендация:</span>
-          <p className="agc-rec-text">{gap.recommendation}</p>
-          <div className="agc-meta">
-            {gap.time_to_fix && (
-              <span className="agc-time">
-                <span className="agc-time-icon">⏱️</span>
-                {gap.time_to_fix}
-              </span>
-            )}
-            <span className={`agc-impact impact-${gap.impact}`}>
-              <span className="agc-impact-icon">📈</span>
-              {impactLabel}
-            </span>
-            <LevelIndicator label="Усилия" level={gap.effort} />
-          </div>
-        </div>
-      )}
-
-      {/* Resources & Actions */}
-      {gap.resources && gap.resources.length > 0 && (
-        <div className="agc-resources">
-          {gap.resources.map((resource, idx) => (
-            <a
-              key={idx}
-              href={resource}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="agc-resource-link"
-            >
-              📚 Документация
-            </a>
-          ))}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -1221,6 +1236,248 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
 
           .actionable-gap-card.severity-critical .severity-badge {
             animation: none;
+          }
+        }
+
+        /* ===== Collapse Toggle Button ===== */
+        .agc-header-right {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .agc-collapse-toggle {
+          display: none; /* Hidden by default, shown on mobile */
+          background: transparent;
+          border: none;
+          padding: 8px;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: background 0.2s ease;
+          min-width: 44px;
+          min-height: 44px;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .agc-collapse-toggle:hover {
+          background: var(--bg-tertiary);
+        }
+
+        .agc-collapse-toggle:focus {
+          outline: 2px solid var(--accent-blue);
+          outline-offset: 2px;
+        }
+
+        .agc-toggle-icon {
+          display: inline-block;
+          font-size: 12px;
+          color: var(--text-muted);
+          transition: transform 0.25s ease;
+        }
+
+        .agc-toggle-icon.collapsed {
+          transform: rotate(-90deg);
+        }
+
+        /* ===== Collapsible Content ===== */
+        .agc-collapsible {
+          overflow: hidden;
+          transition: max-height 0.3s ease, opacity 0.2s ease;
+          max-height: 2000px; /* Large enough for any content */
+          opacity: 1;
+        }
+
+        .agc-collapsible.collapsed {
+          max-height: 0;
+          opacity: 0;
+        }
+
+        /* ===== MOBILE STYLES (768px and below) ===== */
+        @media (max-width: 768px) {
+          .gaps-view {
+            margin: 16px 0;
+          }
+
+          /* Stats: Stack vertically on mobile */
+          .gaps-stats {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .stat-item {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .stat-number {
+            font-size: 24px;
+          }
+
+          /* Show collapse toggle on mobile */
+          .agc-collapse-toggle {
+            display: flex;
+          }
+
+          /* Actionable Gap Card mobile adjustments */
+          .actionable-gap-card {
+            padding: 16px;
+          }
+
+          .agc-header {
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+
+          .agc-problem {
+            padding: 10px 12px;
+          }
+
+          .agc-problem-text {
+            font-size: 14px;
+          }
+
+          .agc-actions-card {
+            padding: 12px;
+          }
+
+          .agc-actions-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
+
+          .agc-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+
+          /* Strengths and market insights */
+          .strengths-section,
+          .market-insights,
+          .analysis-summary {
+            padding: 12px;
+          }
+
+          .section-title {
+            font-size: 13px;
+          }
+
+          /* Next milestone */
+          .next-milestone {
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px;
+          }
+
+          .milestone-icon {
+            font-size: 24px;
+          }
+        }
+
+        /* ===== SMALL MOBILE (480px and below) ===== */
+        @media (max-width: 480px) {
+          .gaps-view {
+            margin: 12px 0;
+          }
+
+          /* Even smaller stats */
+          .stat-item {
+            padding: 10px 12px;
+          }
+
+          .stat-number {
+            font-size: 20px;
+          }
+
+          .stat-label {
+            font-size: 11px;
+          }
+
+          /* Gap card */
+          .actionable-gap-card {
+            padding: 12px;
+            border-radius: 8px;
+          }
+
+          .agc-category-label {
+            font-size: 10px;
+          }
+
+          .agc-category-icon {
+            font-size: 16px;
+          }
+
+          .agc-problem {
+            padding: 8px 10px;
+          }
+
+          .agc-problem-icon {
+            font-size: 14px;
+          }
+
+          .agc-problem-text {
+            font-size: 13px;
+          }
+
+          .agc-why-matters,
+          .agc-context,
+          .agc-rec-text {
+            font-size: 13px;
+          }
+
+          .agc-steps li {
+            font-size: 13px;
+          }
+
+          .agc-time,
+          .agc-impact {
+            font-size: 12px;
+          }
+
+          /* Level indicator dots smaller */
+          .dot {
+            width: 6px;
+            height: 6px;
+          }
+
+          /* Summary text */
+          .summary-text {
+            font-size: 13px;
+          }
+
+          /* Strengths */
+          .strengths-list li,
+          .gtm-list li {
+            font-size: 12px;
+          }
+
+          /* Fit score bar */
+          .fit-score {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+
+          .fit-bar {
+            width: 100%;
+            max-width: none;
+          }
+        }
+
+        /* ===== TOUCH-FRIENDLY: Ensure min 44px tap targets ===== */
+        @media (pointer: coarse) {
+          .agc-collapse-toggle,
+          .agc-resource-link {
+            min-width: 44px;
+            min-height: 44px;
+          }
+
+          .severity-badge {
+            padding: 4px 8px;
           }
         }
       `}</style>

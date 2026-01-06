@@ -1,30 +1,100 @@
 # Project Status
 
-## Current Phase: All Sprints Complete ✅
+## Current Phase: Tier 2 Complete ✅
 
-**Last Updated:** 2026-01-03
-**Version:** 0.7.0
+**Last Updated:** 2026-01-06
+**Version:** 0.8.3
 
 ---
 
-## Recent Changes (v0.7.0)
+## Recent Changes (v0.8.3)
 
 ### Summary
-All planned sprints (S0-S4) have been completed:
-- **918 unit tests** passing
+Tier 2 Quality & Infrastructure improvements completed:
+- **1364 unit + integration tests** passing
 - **Build successful**
-- Sprint 0: Critical Bugs ✅
-- Sprint 1: UX Polish ✅
-- Sprint 2: Form Experience ✅
-- Sprint 3: Advanced Features ✅
-- Sprint 4: AI Quality ✅
+- All Sprints (S0-S4) ✅
+- Tier 1 Post-MVP Features ✅
+- Tier 2 Advanced Features ✅
+
+### v0.8.3 Changes
+
+**T2-03: History Tab Integration**
+- Integrated AnalysisTimeline and VersionDiff components into project page
+- New "🕐 История" tab with version comparison UI
+- State management for selecting versions and showing diff
+
+**T2-04: Error Boundaries**
+- `src/app/error.tsx` — global error boundary
+- `src/app/global-error.tsx` — root layout error boundary
+- `src/app/(protected)/dashboard/error.tsx` — dashboard errors
+- `src/app/(protected)/projects/[id]/error.tsx` — project page errors
+- Context-aware error messages in Russian
+
+**T2-05: Logger Utility**
+- `src/lib/utils/logger.ts` — production-ready logging
+- Methods: debug, info, warn, error, api, llm
+- Replaced console.log in LLM client
+
+**T2-06: Accessibility Improvements (WCAG 2.1)**
+- `src/lib/utils/accessibility.ts` — ARIA patterns, keyboard handling
+- Skip link in root layout
+- CSS: focus-visible, prefers-reduced-motion, prefers-contrast
+- 55 new tests
 
 ### Known Issues
 - None! All components integrated.
 
 ---
 
-## Previous Changes (v0.6.5)
+## Previous Changes (v0.8.2)
+
+### Tier 2 Advanced Features
+
+**T2-01: Progressive Analysis**
+- Results appear as they become ready (Business → Code → Gap → Competitor)
+- Loading indicators between steps with shimmer animation
+- CSS classes `.progressive-loading-section` in `globals.css`
+- 35 tests for state machine and UI logic
+
+**T2-02: Version Comparison**
+- Database migration `002_analysis_versioning.sql`
+- History API `/api/projects/[id]/history`
+- `AnalysisTimeline` component with selection state
+- `VersionDiff` component with side-by-side and unified views
+- 87 tests total
+
+---
+
+## Previous Changes (v0.8.0-v0.8.1)
+
+### Tier 1 Post-MVP Features
+
+**Demo Mode**
+- Mock data for all analysis types (code, business, gaps, competitors)
+- Zero API cost for demonstrations
+- 10 tests for demo-analyze
+
+**Upstash Redis Cache**
+- CacheProvider abstraction with auto-fallback to memory
+- Rate limiting with sliding window algorithm
+- 57 tests for cache module
+
+**GitHub Issues Export**
+- API endpoint `/api/export/github-issues`
+- GitHubIssuesService for GitHub API v3
+- GitHubExportButton UI component
+- Automatic labels (priority + category)
+- 56 tests
+
+**Demo UI Improvements**
+- Large demo button with gradient
+- 3-column scenario selector modal
+- Cards with icons, descriptions, and tags
+
+---
+
+## Previous Changes (v0.7.x)
 
 ### S3-01: Google Trends Integration
 - Added `/api/trends` endpoint for fetching Google Trends data

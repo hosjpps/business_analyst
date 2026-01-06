@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Checklist } from '@/components/ui/Checklist';
 import { TermTooltip, AutoTooltipText } from '@/components/ui/TermTooltip';
 import { ProgressTrackerAdvanced } from '@/components/results/ProgressTrackerAdvanced';
+import { AnalysisTimeline } from '@/components/results/AnalysisTimeline';
+import { VersionDiff } from '@/components/results/VersionDiff';
 import type { Tables } from '@/types/database';
 import type { ChecklistItem, TooltipTerm } from '@/types/ux';
 
@@ -20,7 +22,7 @@ type ProjectWithRelations = Tables<'projects'> & {
 };
 
 // Типы анализов для табов
-type AnalysisTabType = 'all' | 'code' | 'business' | 'full' | 'competitor' | 'progress';
+type AnalysisTabType = 'all' | 'code' | 'business' | 'full' | 'competitor' | 'progress' | 'history';
 
 // Определения терминов для нетехнических пользователей
 const TERM_DEFINITIONS: Record<string, TooltipTerm> = {
@@ -73,10 +75,12 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
   const [editDescription, setEditDescription] = useState('');
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<AnalysisTabType>('all');
+  const [selectedVersions, setSelectedVersions] = useState<[number | null, number | null]>([null, null]);
+  const [showVersionDiff, setShowVersionDiff] = useState(false);
 
   // Подсчёт анализов по типам
   const analysisCounts = useMemo(() => {
-    if (!project?.analyses) return { all: 0, code: 0, business: 0, full: 0, competitor: 0, progress: 0 };
+    if (!project?.analyses) return { all: 0, code: 0, business: 0, full: 0, competitor: 0, progress: 0, history: 0 };
 
     // Count analyses with alignment_score for progress tracking
     const progressCount = project.analyses.filter(a => {
@@ -84,7 +88,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
       return result?.alignment_score !== undefined || result?.analysis?.alignment_score !== undefined;
     }).length;
 
-    const counts = { all: project.analyses.length, code: 0, business: 0, full: 0, competitor: 0, progress: progressCount };
+    const counts = { all: project.analyses.length, code: 0, business: 0, full: 0, competitor: 0, progress: progressCount, history: project.analyses.length };
     project.analyses.forEach(a => {
       if (a.type === 'code') counts.code++;
       else if (a.type === 'business') counts.business++;
@@ -93,6 +97,17 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     });
     return counts;
   }, [project?.analyses]);
+
+  // Callback for version comparison
+  const handleCompareVersions = useCallback((version1: number, version2: number) => {
+    setSelectedVersions([version1, version2]);
+    setShowVersionDiff(true);
+  }, []);
+
+  // Close diff view
+  const handleCloseDiff = useCallback(() => {
+    setShowVersionDiff(false);
+  }, []);
 
   // Фильтрация анализов по выбранному табу
   const filteredAnalyses = useMemo(() => {
@@ -382,6 +397,7 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     { key: 'full', label: 'Полный', icon: '🔬', description: 'Код + Бизнес + Разрывы' },
     { key: 'competitor', label: 'Конкуренты', icon: '🎯', description: 'Сравнение с конкурентами' },
     { key: 'progress', label: 'Прогресс', icon: '📈', description: 'График улучшений проекта' },
+    { key: 'history', label: 'История', icon: '🕐', description: 'История версий и сравнение' },
   ];
 
   return (
@@ -523,7 +539,25 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
               }))}
               projectName={project.name}
             />
-          ) : activeTab !== 'progress' && /* Filtered Analyses List */
+          ) : activeTab === 'history' && project ? (
+            /* History Tab Content */
+            <div className="history-tab-content">
+              {showVersionDiff && selectedVersions[0] !== null && selectedVersions[1] !== null ? (
+                <VersionDiff
+                  projectId={id}
+                  version1={selectedVersions[0]}
+                  version2={selectedVersions[1]}
+                  onClose={handleCloseDiff}
+                />
+              ) : (
+                <AnalysisTimeline
+                  projectId={id}
+                  onCompare={handleCompareVersions}
+                  selectedVersions={selectedVersions}
+                />
+              )}
+            </div>
+          ) : activeTab !== 'progress' && activeTab !== 'history' && /* Filtered Analyses List */
           filteredAnalyses.length > 0 ? (
             <div className="analyses-list">
               {filteredAnalyses.map(analysis => {
@@ -1796,6 +1830,15 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         .warning-text {
           font-size: 0.8125rem;
           color: #d29922;
+        }
+
+        /* History Tab Content */
+        .history-tab-content {
+          background: #161b22;
+          border: 1px solid #30363d;
+          border-radius: 8px;
+          padding: 1rem;
+          min-height: 300px;
         }
 
         @media (max-width: 768px) {

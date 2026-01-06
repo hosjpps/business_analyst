@@ -878,3 +878,85 @@ CREATE INDEX idx_projects_user_id ON projects(user_id);
 CREATE INDEX idx_analyses_project_id ON analyses(project_id);
 CREATE INDEX idx_tasks_project_id ON tasks(project_id);
 ```
+
+---
+
+## 10. Utility Types (v0.8.3)
+
+### Logger Types
+
+```typescript
+// src/lib/utils/logger.ts
+
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+interface LogContext {
+  [key: string]: unknown;
+}
+
+interface Logger {
+  debug(message: string, context?: LogContext): void;
+  info(message: string, context?: LogContext): void;
+  warn(message: string, context?: LogContext): void;
+  error(message: string, error?: Error | unknown, context?: LogContext): void;
+  api(method: string, path: string, context?: LogContext): void;
+  llm(task: string, model: string, context?: LogContext): void;
+}
+```
+
+### Accessibility Types
+
+```typescript
+// src/lib/utils/accessibility.ts
+
+/**
+ * Common ARIA roles for UI components
+ */
+const ARIA_ROLES = {
+  alert: 'alert',
+  button: 'button',
+  dialog: 'dialog',
+  navigation: 'navigation',
+  progressbar: 'progressbar',
+  tab: 'tab',
+  tablist: 'tablist',
+  tabpanel: 'tabpanel',
+  // ... more roles
+} as const;
+
+/**
+ * ARIA live region values
+ */
+const ARIA_LIVE = {
+  off: 'off',
+  polite: 'polite',
+  assertive: 'assertive',
+} as const;
+
+/**
+ * Keyboard constants for event handling
+ */
+const KEYBOARD = {
+  ENTER: 'Enter',
+  SPACE: ' ',
+  ESCAPE: 'Escape',
+  TAB: 'Tab',
+  ARROW_UP: 'ArrowUp',
+  ARROW_DOWN: 'ArrowDown',
+  // ... more keys
+} as const;
+
+/**
+ * ARIA patterns for common UI patterns
+ */
+interface AriaPatterns {
+  loadingButton(isLoading: boolean, loadingText?: string): AriaAttributes;
+  expandable(isExpanded: boolean, controlsId: string): AriaAttributes;
+  tab(isSelected: boolean, panelId: string): AriaAttributes;
+  tabPanel(labelledById: string, isHidden: boolean): AriaAttributes;
+  modal(labelledById: string, describedById?: string): AriaAttributes;
+  progress(value: number, min?: number, max?: number, label?: string): AriaAttributes;
+  errorMessage(hasError: boolean, errorId: string): AriaAttributes;
+  alert(type?: 'error' | 'warning' | 'success' | 'info'): AriaAttributes;
+}
+```

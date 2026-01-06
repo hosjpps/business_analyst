@@ -15,8 +15,14 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
+        {/* Skip link for keyboard users */}
+        <a href="#main-content" className="skip-link">
+          Перейти к основному содержимому
+        </a>
         <TopNav />
-        <main>{children}</main>
+        <main id="main-content" role="main" tabIndex={-1}>
+          {children}
+        </main>
       </body>
     </html>
   );

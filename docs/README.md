@@ -1,6 +1,6 @@
 # Documentation
 
-> Полная документация проекта Business & Code Analyzer v0.6.0
+> Полная документация проекта Business & Code Analyzer v0.8.3
 
 ---
 
@@ -9,13 +9,15 @@
 ```
 docs/
 ├── README.md                 ← Вы здесь
+├── MASTER_PLAN.md            # Главный план разработки
 ├── ARCHITECTURE_DETAILED.md  # Детальная архитектура
 ├── api-spec.md               # Спецификация API
 ├── data-models.md            # Модели данных + Zod схемы
 ├── prompts.md                # LLM промпты
 ├── ui-wireframes.md          # Структура UI
-├── changelog.md              # История изменений
-└── project-status.md         # Текущий статус
+├── testing.md                # Тестирование (1364 теста)
+├── project-status.md         # Текущий статус
+└── TIER1_IMPLEMENTATION_PLAN.md  # Tier 1 фичи
 ```
 
 ---
@@ -29,8 +31,19 @@ docs/
 | 3 | Full Integration | ✅ Завершена |
 | 4 | Competitor Snapshot | ✅ Завершена |
 | 5 | Auth + Database | ✅ Завершена |
-| 6 | Тесты и UX | ✅ Завершена |
-| 7 | Weekly Reports | Планируется |
+| 6 | Тесты и UX (S0-S4) | ✅ Завершена |
+| 7 | Tier 1 Post-MVP | ✅ Завершена |
+| 8 | Tier 2 Advanced | ✅ Завершена |
+| 9 | Weekly Reports | Планируется |
+
+### Версия 0.8.3 включает:
+- 1364 unit + integration теста
+- Progressive Analysis (результаты по мере готовности)
+- Version Comparison (история и сравнение версий)
+- History Tab (UI для истории)
+- Error Boundaries (graceful error handling)
+- Logger Utility (production-ready logging)
+- Accessibility (WCAG 2.1 compliance)
 
 ---
 
