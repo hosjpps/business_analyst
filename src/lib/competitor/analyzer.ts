@@ -9,6 +9,7 @@ import type {
 import { CompetitorAnalysisResultSchema } from '@/types/competitor';
 import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
 import { withLLMRetry } from '@/lib/utils/retry';
+import { logger } from '@/lib/utils/logger';
 import { parseMultipleWebsites } from './website-parser';
 import { buildFullCompetitorAnalysisPrompt } from './prompts';
 
@@ -52,8 +53,7 @@ export async function analyzeCompetitors(
 
   if (!validation.success) {
     const errors = validation.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
-    console.error('Competitor analysis response validation failed:', errors);
-    console.error('Raw parsed content:', JSON.stringify(parsed).slice(0, 500));
+    logger.error('Competitor analysis response validation failed', undefined, { errors });
     throw new Error(`Response validation failed: ${errors}`);
   }
 

@@ -38,6 +38,7 @@ import {
 import { DemoButton, DemoScenarioSelector, DemoBadge } from '@/components/demo';
 import type { DemoScenarioInfo, DemoScenarioId, DemoLimitResult } from '@/types/demo';
 import { createClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/utils/logger';
 import {
   usePersistedDescription,
   usePersistedRepoUrl,
@@ -154,7 +155,7 @@ function Home() {
             }
           }
         } catch (err) {
-          console.error('Failed to load projects:', err);
+          logger.error('Failed to load projects', err instanceof Error ? err : undefined);
         }
       } else {
         // Not authenticated - disable save by default
@@ -265,7 +266,7 @@ function Home() {
       // Clear message after 5 seconds
       setTimeout(() => setSavedToProjectMessage(null), 5000);
     } catch (err) {
-      console.error('Failed to save analysis:', err);
+      logger.error('Failed to save analysis', err instanceof Error ? err : undefined);
       setError(err instanceof Error ? err.message : 'Не удалось сохранить анализ');
     } finally {
       setSavingToProject(false);
@@ -362,7 +363,7 @@ function Home() {
     } catch (err) {
       setError('Не удалось выполнить запрос');
       setAnalysisStep('error');
-      console.error(err);
+      logger.error('Code analysis failed', err instanceof Error ? err : undefined);
     } finally {
       setLoading(false);
     }
@@ -417,7 +418,7 @@ function Home() {
     } catch (err) {
       setError('Не удалось выполнить запрос');
       setAnalysisStep('error');
-      console.error(err);
+      logger.error('Business analysis failed', err instanceof Error ? err : undefined);
     } finally {
       setLoading(false);
     }
@@ -585,7 +586,7 @@ function Home() {
             }
             // Don't fail the whole analysis if competitor analysis fails - just log and continue
           } catch (competitorErr) {
-            console.error('Competitor analysis failed:', competitorErr);
+            logger.error('Competitor analysis failed', competitorErr instanceof Error ? competitorErr : undefined);
           }
         }
 
@@ -595,17 +596,16 @@ function Home() {
         }
       } else if (codeData.needs_clarification && codeData.questions && codeData.questions.length > 0) {
         // Code analysis needs clarification - show questions to user
-        console.log('[Full Analysis] Code analysis needs clarification:', {
+        logger.debug('Full Analysis: Code analysis needs clarification', {
           needs_clarification: codeData.needs_clarification,
           questions_count: codeData.questions.length,
-          questions: codeData.questions.map(q => q.question),
           has_partial_analysis: !!codeData.partial_analysis,
         });
         // Don't proceed to gap detection - wait for user to answer questions
         // The UI will show ClarificationQuestions component based on codeResult state
       } else if (!codeData.analysis) {
         // No analysis and no clarification needed - something went wrong
-        console.warn('[Full Analysis] Code analysis returned no analysis and no clarification:', {
+        logger.warn('Full Analysis: Code analysis returned no analysis and no clarification', {
           needs_clarification: codeData.needs_clarification,
           has_questions: !!codeData.questions?.length,
           has_partial_analysis: !!codeData.partial_analysis,
@@ -616,7 +616,7 @@ function Home() {
     } catch (err) {
       setError('Не удалось выполнить запрос');
       setAnalysisStep('error');
-      console.error(err);
+      logger.error('Full analysis failed', err instanceof Error ? err : undefined);
     } finally {
       setLoading(false);
     }
@@ -677,7 +677,7 @@ function Home() {
     } catch (err) {
       setError('Не удалось выполнить запрос');
       setAnalysisStep('error');
-      console.error(err);
+      logger.error('Competitor analysis failed', err instanceof Error ? err : undefined);
     } finally {
       setLoading(false);
     }
@@ -703,7 +703,7 @@ function Home() {
         setTrendsResults(data.results);
       }
     } catch (error) {
-      console.error('Failed to fetch trends:', error);
+      logger.error('Failed to fetch trends', error instanceof Error ? error : undefined);
     } finally {
       setTrendsLoading(false);
     }
@@ -802,7 +802,7 @@ function Home() {
         setDemoRemaining(data.remaining);
       }
     } catch (err) {
-      console.error('Failed to fetch demo scenarios:', err);
+      logger.error('Failed to fetch demo scenarios', err instanceof Error ? err : undefined);
     }
   }, []);
 
@@ -869,7 +869,7 @@ function Home() {
       setAnalysisStep('complete');
 
     } catch (err) {
-      console.error('Failed to load demo:', err);
+      logger.error('Failed to load demo', err instanceof Error ? err : undefined);
       setError('Не удалось загрузить демо-анализ');
     } finally {
       setDemoLoading(false);
@@ -1007,7 +1007,7 @@ function Home() {
     } catch (err) {
       setError('Не удалось выполнить запрос');
       setAnalysisStep('error');
-      console.error(err);
+      logger.error('Full analysis clarification failed', err instanceof Error ? err : undefined);
     } finally {
       setLoading(false);
     }

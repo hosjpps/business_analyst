@@ -1,4 +1,5 @@
 import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
+import { logger } from '@/lib/utils/logger';
 import { parseDocuments } from './document-parser';
 import { buildFullCanvasPrompt } from './prompts';
 import { extractMetrics, inferStageFromMetrics } from './metrics-extractor';
@@ -77,7 +78,7 @@ export async function buildCanvas(input: BusinessInput): Promise<BuildCanvasResu
 
   if (!validation.success) {
     const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
-    console.error('Business Canvas validation failed:', errors);
+    logger.error('Business Canvas validation failed', undefined, { errors });
 
     // Try to extract partial data
     const partialResult = extractPartialData(parsed);

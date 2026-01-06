@@ -18,6 +18,7 @@ import { sendToLLM, parseAndValidateAnalysisResponse, type LLMAnalysisResponse }
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
 import { analysisCache, AnalysisCache } from '@/lib/utils/cache';
 import { validateEnv, getMissingEnvVars } from '@/lib/utils/env';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Request Validation
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
             });
           } else {
             // Invalid cache entry (missing analysis), delete it
-            console.log('Cache entry invalid (no analysis), re-analyzing:', cacheKey);
+            logger.debug('Cache entry invalid (no analysis), re-analyzing', { cacheKey });
             analysisCache.delete(cacheKey);
           }
         }
@@ -220,8 +221,12 @@ export async function POST(request: NextRequest) {
 
     // Log if files were excluded (for debugging)
     if (selection.excludedFiles.length > 0) {
-      console.log(`Large repo handling: ${getExcludedFilesSummary(selection.excludedFiles)}`);
-      console.log(`Selected ${selection.stats.outputFiles}/${selection.stats.inputFiles} files (~${selection.totalTokens} tokens)`);
+      logger.debug('Large repo handling', { summary: getExcludedFilesSummary(selection.excludedFiles) });
+      logger.debug('File selection stats', {
+        selected: selection.stats.outputFiles,
+        total: selection.stats.inputFiles,
+        tokens: selection.totalTokens
+      });
     }
 
     // Analyze structure locally (use selected files)
@@ -249,12 +254,11 @@ export async function POST(request: NextRequest) {
     // Parse and validate LLM response with Zod
     let parsedResponse: LLMAnalysisResponse;
     try {
-      console.log('LLM response length:', llmResponse.content.length);
-      console.log('LLM response preview:', llmResponse.content.slice(0, 500));
+      logger.debug('LLM response received', { length: llmResponse.content.length });
 
       parsedResponse = parseAndValidateAnalysisResponse(llmResponse.content);
 
-      console.log('Parsed response structure:', {
+      logger.debug('Parsed response structure', {
         needs_clarification: parsedResponse.needs_clarification,
         has_questions: !!parsedResponse.questions?.length,
         questions_count: parsedResponse.questions?.length || 0,
@@ -263,9 +267,9 @@ export async function POST(request: NextRequest) {
         analysis_tasks_count: parsedResponse.analysis?.tasks?.length || 0,
       });
     } catch (parseError) {
-      console.error('Failed to parse/validate LLM response:', parseError);
-      console.error('LLM response content (first 2000 chars):', llmResponse.content.slice(0, 2000));
-      console.error('LLM response content (last 500 chars):', llmResponse.content.slice(-500));
+      logger.error('Failed to parse/validate LLM response', parseError instanceof Error ? parseError : undefined, {
+        responsePreview: llmResponse.content.slice(0, 500),
+      });
       throw new Error(`Failed to parse LLM response: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
 
@@ -311,7 +315,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Analyze error:', error);
+    logger.error('Analyze error', error instanceof Error ? error : undefined);
 
     return NextResponse.json(
       {

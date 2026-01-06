@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import type { Json } from '@/types/database';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Schemas
@@ -55,7 +56,7 @@ export async function GET(
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching analyses:', error);
+    logger.error('Error fetching analyses', undefined, { error });
     return NextResponse.json(
       { error: 'Failed to fetch analyses' },
       { status: 500 }
@@ -125,7 +126,7 @@ export async function POST(
       .single();
 
     if (createError) {
-      console.error('Error creating analysis:', createError);
+      logger.error('Error creating analysis', undefined, { error: createError });
       return NextResponse.json(
         { error: 'Failed to create analysis' },
         { status: 500 }
@@ -141,7 +142,7 @@ export async function POST(
       estimated_minutes?: number;
     }> } };
 
-    console.log('Checking for tasks in result:', {
+    logger.debug('Checking for tasks in result', {
       hasAnalysis: !!resultData.analysis,
       hasTasks: !!resultData.analysis?.tasks,
       tasksCount: resultData.analysis?.tasks?.length || 0,
@@ -166,7 +167,7 @@ export async function POST(
         status: 'pending' as const,
       }));
 
-      console.log('Inserting tasks:', tasksToInsert.length, 'tasks');
+      logger.debug('Inserting tasks', { count: tasksToInsert.length });
 
       const { data: insertedTasks, error: tasksError } = await supabase
         .from('tasks')
@@ -174,14 +175,13 @@ export async function POST(
         .select();
 
       if (tasksError) {
-        console.error('Error creating tasks:', tasksError);
-        console.error('Tasks data:', JSON.stringify(tasksToInsert, null, 2));
+        logger.error('Error creating tasks', undefined, { error: tasksError, tasksCount: tasksToInsert.length });
         // Don't fail the whole request, just log the error
       } else {
-        console.log('Successfully created tasks:', insertedTasks?.length || 0);
+        logger.debug('Successfully created tasks', { count: insertedTasks?.length || 0 });
       }
     } else {
-      console.log('No tasks found in analysis result');
+      logger.debug('No tasks found in analysis result');
     }
 
     return NextResponse.json({ analysis }, { status: 201 });

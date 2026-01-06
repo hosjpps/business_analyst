@@ -12,6 +12,7 @@ import { detectGaps } from '@/lib/gaps/detector';
 import { generateTasks, deriveNextMilestone } from '@/lib/gaps/task-generator';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
 import { validateEnv, getMissingEnvVars } from '@/lib/utils/env';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Request Validation
@@ -91,10 +92,12 @@ export async function POST(request: NextRequest) {
         const path = e.path.length > 0 ? `${e.path.join('.')}: ` : '';
         return `${path}${e.message}`;
       }).join('; ');
-      console.error('Gap analysis validation failed:', errors);
-      console.error('Request body keys:', Object.keys(body));
-      console.error('Canvas type:', typeof body.canvas, Array.isArray(body.canvas) ? '(array)' : '');
-      console.error('Code analysis type:', typeof body.code_analysis, Array.isArray(body.code_analysis) ? '(array)' : '');
+      logger.error('Gap analysis validation failed', undefined, {
+        errors,
+        bodyKeys: Object.keys(body),
+        canvasType: typeof body.canvas,
+        codeAnalysisType: typeof body.code_analysis,
+      });
       return errorResponse(`Validation error: ${errors}`, 400);
     }
 
@@ -118,7 +121,7 @@ export async function POST(request: NextRequest) {
 
     if (!taskResult.success) {
       // Tasks are optional, continue without them
-      console.warn('Task generation failed:', taskResult.error);
+      logger.warn('Task generation failed', { error: taskResult.error });
     }
 
     totalTokensUsed += taskResult.tokens_used || 0;
@@ -159,7 +162,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response, { headers });
   } catch (error) {
-    console.error('Analyze gaps error:', error);
+    logger.error('Analyze gaps error', error instanceof Error ? error : undefined);
 
     return errorResponse(
       error instanceof Error ? error.message : 'Internal server error',

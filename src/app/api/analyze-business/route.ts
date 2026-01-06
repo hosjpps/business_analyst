@@ -9,6 +9,7 @@ import {
 import { buildCanvas } from '@/lib/business/canvas-builder';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
 import { validateEnv, getMissingEnvVars } from '@/lib/utils/env';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Request Validation (extends BusinessInputSchema)
@@ -110,13 +111,13 @@ export async function POST(request: NextRequest) {
 
     // Add parse errors to response if any
     if (result.parse_errors && result.parse_errors.length > 0) {
-      console.warn('Document parse errors:', result.parse_errors);
+      logger.warn('Document parse errors', { errors: result.parse_errors });
     }
 
     return NextResponse.json(response, { headers });
 
   } catch (error) {
-    console.error('Analyze business error:', error);
+    logger.error('Analyze business error', error instanceof Error ? error : undefined);
 
     return errorResponse(
       error instanceof Error ? error.message : 'Internal server error',

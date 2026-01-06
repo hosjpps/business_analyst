@@ -5,6 +5,7 @@ import type { ChatRequest, ChatResponse } from '@/types';
 import { buildChatPrompt } from '@/lib/llm/prompts';
 import { sendToLLM } from '@/lib/llm/client';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Request Validation
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error) {
-    console.error('Chat error:', error);
+    logger.error('Chat error', error instanceof Error ? error : undefined);
 
     return NextResponse.json(
       {

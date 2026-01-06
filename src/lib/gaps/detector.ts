@@ -4,6 +4,7 @@ import type { Gap, GapAnalysisResult, CompetitorInput } from '@/types/gaps';
 import { LLMGapDetectionResponseSchema } from '@/types/gaps';
 import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
 import { withLLMRetry } from '@/lib/utils/retry';
+import { logger } from '@/lib/utils/logger';
 import { buildFullGapAnalysisPrompt } from './prompts';
 import { validateGapResult } from './validator';
 
@@ -54,7 +55,7 @@ export async function detectGaps(
 
     if (!validation.success) {
       const errors = validation.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
-      console.warn('Gap detection response validation failed, using fallback:', errors);
+      logger.warn('Gap detection response validation failed, using fallback', { errors });
 
       // BUG-002 FIX: Create fallback response when LLM returns incomplete data
       const fallbackGaps = analyzeGapsQuick(canvas, codeAnalysis);
@@ -107,7 +108,7 @@ export async function detectGaps(
 
     // Log validation warnings for debugging
     if (validationResult.warnings.length > 0) {
-      console.log('Gap validation warnings:', validationResult.warnings);
+      logger.debug('Gap validation warnings', { warnings: validationResult.warnings });
     }
 
     // Enrich gap IDs
@@ -131,7 +132,7 @@ export async function detectGaps(
       tokens_used: response.tokens_used,
     };
   } catch (error) {
-    console.error('Gap detection error:', error);
+    logger.error('Gap detection error', error instanceof Error ? error : undefined);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during gap detection',

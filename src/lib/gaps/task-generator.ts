@@ -4,6 +4,7 @@ import type { Gap, GapTask } from '@/types/gaps';
 import { LLMTaskGenerationResponseSchema } from '@/types/gaps';
 import { sendToLLM, parseJSONResponse } from '@/lib/llm/client';
 import { withLLMRetry } from '@/lib/utils/retry';
+import { logger } from '@/lib/utils/logger';
 import { buildFullTaskGenerationPrompt } from './prompts';
 
 // ===========================================
@@ -75,7 +76,7 @@ export async function generateTasks(
 
     if (!validation.success) {
       const errors = validation.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
-      console.error('Task generation response validation failed:', errors);
+      logger.error('Task generation response validation failed', undefined, { errors });
       return {
         success: false,
         error: `Response validation failed: ${errors}`,
@@ -89,7 +90,7 @@ export async function generateTasks(
       tokens_used: response.tokens_used,
     };
   } catch (error) {
-    console.error('Task generation error:', error);
+    logger.error('Task generation error', error instanceof Error ? error : undefined);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error during task generation',

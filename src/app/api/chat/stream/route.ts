@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 
 import { buildChatPrompt, buildFullAnalysisChatPrompt } from '@/lib/llm/prompts';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Request Validation
