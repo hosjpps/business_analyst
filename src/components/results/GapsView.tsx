@@ -1030,11 +1030,12 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
         .agc-problem {
           display: flex;
           align-items: flex-start;
-          gap: 10px;
-          padding: 12px 16px;
+          gap: 12px;
+          padding: 12px 16px 12px 20px;
           background: rgba(248, 81, 73, 0.08);
           border-radius: 8px;
           margin-bottom: 16px;
+          margin-left: 8px;
         }
 
         .actionable-gap-card.severity-warning .agc-problem {
@@ -1247,21 +1248,21 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
         }
 
         .agc-collapse-toggle {
-          display: none; /* Hidden by default, shown on mobile */
-          background: transparent;
+          display: flex; /* Always visible */
+          background: var(--accent-green);
           border: none;
-          padding: 8px;
+          padding: 6px 10px;
           cursor: pointer;
           border-radius: 6px;
-          transition: background 0.2s ease;
-          min-width: 44px;
-          min-height: 44px;
+          transition: all 0.2s ease;
+          min-width: 32px;
+          min-height: 32px;
           justify-content: center;
           align-items: center;
         }
 
         .agc-collapse-toggle:hover {
-          background: var(--bg-tertiary);
+          background: #2ea043;
         }
 
         .agc-collapse-toggle:focus {
@@ -1272,7 +1273,8 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
         .agc-toggle-icon {
           display: inline-block;
           font-size: 12px;
-          color: var(--text-muted);
+          color: white;
+          font-weight: bold;
           transition: transform 0.25s ease;
         }
 
@@ -1286,6 +1288,7 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
           transition: max-height 0.3s ease, opacity 0.2s ease;
           max-height: 2000px; /* Large enough for any content */
           opacity: 1;
+          padding-left: 8px;
         }
 
         .agc-collapsible.collapsed {
@@ -1316,9 +1319,11 @@ export function GapsView({ gaps, tasks, nextMilestone, projectId, summary, stren
             font-size: 24px;
           }
 
-          /* Show collapse toggle on mobile */
+          /* Keep collapse toggle visible on mobile too */
           .agc-collapse-toggle {
             display: flex;
+            min-width: 44px;
+            min-height: 44px;
           }
 
           /* Actionable Gap Card mobile adjustments */

@@ -203,7 +203,17 @@ export function AnalysisTimeline({ projectId, onCompare, selectedVersions }: Ana
       params.set('limit', '50');
 
       const response = await fetch(`/api/projects/${projectId}/history?${params}`);
+
       if (!response.ok) {
+        // Handle specific error codes
+        if (response.status === 401) {
+          setError('Требуется авторизация для просмотра истории');
+          return;
+        }
+        if (response.status === 404) {
+          setError('Проект не найден');
+          return;
+        }
         throw new Error('Failed to fetch history');
       }
 
@@ -211,7 +221,7 @@ export function AnalysisTimeline({ projectId, onCompare, selectedVersions }: Ana
       setHistory(data.history || []);
     } catch (err) {
       console.error('Error fetching history:', err);
-      setError('Не удалось загрузить историю');
+      setError('Не удалось загрузить историю. Попробуйте обновить страницу.');
     } finally {
       setLoading(false);
     }
@@ -292,8 +302,9 @@ export function AnalysisTimeline({ projectId, onCompare, selectedVersions }: Ana
   if (error) {
     return (
       <div className="timeline-error">
+        <span className="error-icon">⚠️</span>
         <p>{error}</p>
-        <button onClick={fetchHistory}>Повторить</button>
+        <button onClick={fetchHistory} className="retry-btn">🔄 Попробовать снова</button>
       </div>
     );
   }
@@ -634,11 +645,31 @@ export function AnalysisTimeline({ projectId, onCompare, selectedVersions }: Ana
         }
 
         .timeline-loading,
-        .timeline-error,
         .timeline-empty {
           text-align: center;
           padding: 40px 20px;
           color: var(--text-tertiary);
+        }
+
+        .timeline-error {
+          text-align: center;
+          padding: 40px 20px;
+          color: var(--text-tertiary);
+          background: rgba(248, 81, 73, 0.05);
+          border: 1px solid rgba(248, 81, 73, 0.2);
+          border-radius: 8px;
+        }
+
+        .timeline-error .error-icon {
+          font-size: 32px;
+          display: block;
+          margin-bottom: 12px;
+        }
+
+        .timeline-error p {
+          color: #f85149;
+          font-size: 14px;
+          margin: 0;
         }
 
         .timeline-loading .spinner {
@@ -657,14 +688,21 @@ export function AnalysisTimeline({ projectId, onCompare, selectedVersions }: Ana
           }
         }
 
-        .timeline-error button {
-          margin-top: 12px;
-          padding: 8px 16px;
+        .timeline-error .retry-btn {
+          margin-top: 16px;
+          padding: 10px 20px;
           background: var(--accent-blue);
           color: white;
           border: none;
           border-radius: 6px;
           cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+          transition: background 0.2s ease;
+        }
+
+        .timeline-error .retry-btn:hover {
+          background: #4a9eff;
         }
 
         .timeline-hint {

@@ -775,15 +775,15 @@ function Home() {
     return keywords.slice(0, 3);
   }, []);
 
-  // Auto-fetch trends when business canvas is available
+  // Auto-fetch trends when business canvas is available (skip in demo mode - we use mock data)
   useEffect(() => {
-    if (businessResult?.canvas && trendsResults.length === 0 && !trendsLoading) {
+    if (businessResult?.canvas && trendsResults.length === 0 && !trendsLoading && !isDemo) {
       const keywords = extractKeywordsForTrends(businessResult.canvas);
       if (keywords.length > 0) {
         fetchTrends(keywords);
       }
     }
-  }, [businessResult?.canvas, trendsResults.length, trendsLoading, extractKeywordsForTrends, fetchTrends]);
+  }, [businessResult?.canvas, trendsResults.length, trendsLoading, extractKeywordsForTrends, fetchTrends, isDemo]);
 
   // ===========================================
   // Demo Mode Handlers
@@ -828,11 +828,29 @@ function Home() {
       // Set demo mode flag
       setIsDemo(true);
       setShowDemoSelector(false);
-      setDemoScenarioName(data.scenarioInfo?.name || null);
+      setDemoScenarioName(data.scenarioName || null);
 
       // Update remaining demos
       if (data.demoLimit) {
         setDemoRemaining(data.demoLimit.remaining);
+      }
+
+      // Pre-fill form fields with example data so user sees what input produced these results
+      if (data.inputExample) {
+        // Set business description
+        setBusinessInput(prev => ({
+          ...prev,
+          description: data.inputExample.businessDescription,
+        }));
+        setDescription(data.inputExample.businessDescription);
+
+        // Set repo URL
+        setRepoUrl(data.inputExample.repoUrl);
+
+        // Set competitors
+        if (data.inputExample.competitors && data.inputExample.competitors.length > 0) {
+          setCompetitors(data.inputExample.competitors);
+        }
       }
 
       // Set all results from demo data
@@ -840,6 +858,11 @@ function Home() {
       setPersistedResult(data.codeResult);
       setGapResult(data.gapResult);
       setCompetitorResult(data.competitorResult);
+
+      // Set mock Google Trends data
+      if (data.trendsResults && data.trendsResults.length > 0) {
+        setTrendsResults(data.trendsResults);
+      }
 
       // Set analysis mode to full to show all results
       setAnalysisMode('full');

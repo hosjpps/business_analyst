@@ -6,6 +6,47 @@
  */
 
 import type { DemoScenario, DemoScenarioInfo } from '@/types/demo';
+import type { TrendResult } from '@/types/trends';
+
+// ===========================================
+// Mock Trends Data Generator
+// ===========================================
+
+function generateMockTrendsData(keyword: string, trend: 'rising' | 'falling' | 'stable', baseValue: number): TrendResult {
+  const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const data = [];
+  let value = baseValue;
+
+  for (let i = 0; i < 12; i++) {
+    if (trend === 'rising') {
+      value = Math.min(100, value + Math.random() * 8 - 2);
+    } else if (trend === 'falling') {
+      value = Math.max(10, value - Math.random() * 8 + 2);
+    } else {
+      value = Math.max(10, Math.min(100, value + Math.random() * 10 - 5));
+    }
+
+    data.push({
+      date: `2025-${String(i + 1).padStart(2, '0')}-01`,
+      value: Math.round(value),
+      formattedDate: `${months[i]} 2025`,
+    });
+  }
+
+  const values = data.map(d => d.value);
+  return {
+    keyword,
+    data,
+    relatedQueries: [
+      { query: `${keyword} примеры`, value: 100, type: 'top' as const },
+      { query: `${keyword} обучение`, value: 85, type: 'top' as const },
+      { query: `${keyword} 2025`, value: '+250%', type: 'rising' as const },
+    ],
+    averageInterest: Math.round(values.reduce((a, b) => a + b, 0) / values.length),
+    peakInterest: Math.max(...values),
+    trend,
+  };
+}
 
 // ===========================================
 // Scenario Info (for selector)
@@ -49,6 +90,32 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
     description: 'B2B платформа для автоматизации маркетинга с подписной моделью',
     icon: '🚀',
     tags: ['B2B', 'Подписка', 'Next.js'],
+
+    inputExample: {
+      businessDescription: `Мы создаём SaaS-платформу для автоматизации маркетинга.
+
+Целевая аудитория: малый и средний бизнес (10-200 сотрудников), маркетинговые агентства.
+
+Основные функции:
+- Автоматизация email-рассылок
+- Публикация в социальных сетях
+- Единый интерфейс для всех каналов
+
+Модель монетизации: подписка $29-299/мес в зависимости от количества контактов.
+
+Текущий статус: MVP готов, ищем первых 50 платящих клиентов.`,
+      repoUrl: 'https://github.com/vercel/next.js',
+      competitors: [
+        { url: 'https://mailchimp.com', description: 'Email-маркетинг для малого бизнеса' },
+        { url: 'https://convertkit.com', description: 'Email-маркетинг для creators' },
+      ],
+    },
+
+    trendsResults: [
+      generateMockTrendsData('автоматизация маркетинга', 'rising', 45),
+      generateMockTrendsData('email рассылка', 'stable', 68),
+      generateMockTrendsData('SaaS платформа', 'rising', 52),
+    ],
 
     businessResult: {
       success: true,
@@ -443,6 +510,33 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
     icon: '🛒',
     tags: ['B2C', 'Retail', 'React'],
 
+    inputExample: {
+      businessDescription: `Онлайн-магазин базовой одежды российского производства.
+
+Целевая аудитория: женщины 25-40 лет со средним доходом, жители городов-миллионников.
+
+Продукт:
+- Базовая одежда (футболки, джинсы, платья)
+- Российское производство
+- Средний чек 4500 руб
+- Бесплатная доставка от 3000 руб
+
+Каналы продаж: Instagram (80%), собственный сайт, Яндекс.Маркет.
+
+Текущий статус: работаем 2 года, 12000+ email-подписчиков, 300-400 заказов/мес.`,
+      repoUrl: 'https://github.com/vercel/commerce',
+      competitors: [
+        { url: 'https://lamoda.ru', description: 'Крупнейший fashion-маркетплейс России' },
+        { url: 'https://12storeez.com', description: 'Российский бренд базовой одежды премиум-сегмента' },
+      ],
+    },
+
+    trendsResults: [
+      generateMockTrendsData('интернет магазин одежды', 'stable', 75),
+      generateMockTrendsData('базовая одежда', 'rising', 48),
+      generateMockTrendsData('российские бренды одежды', 'rising', 35),
+    ],
+
     businessResult: {
       success: true,
       needs_clarification: false,
@@ -782,6 +876,33 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
     description: 'Фитнес-приложение с персональными тренировками',
     icon: '📱',
     tags: ['B2C', 'Health', 'React Native'],
+
+    inputExample: {
+      businessDescription: `Фитнес-приложение для тренировок дома с AI-персонализацией.
+
+Целевая аудитория: новички в фитнесе 25-40 лет, люди без времени на спортзал.
+
+Функционал:
+- Персонализированные тренировки за 20 минут
+- AI-тренер адаптирует программу под уровень пользователя
+- 500+ видео тренировок
+- Gamification (streaks, badges)
+
+Модель монетизации: подписка Premium 299 руб/мес или 1990 руб/год.
+
+Текущий статус: 50K+ скачиваний, D7 retention 20%, конверсия в платных 2%.`,
+      repoUrl: 'https://github.com/expo/expo',
+      competitors: [
+        { url: 'https://apps.apple.com/app/nike-training-club', description: 'Бесплатное фитнес-приложение от Nike' },
+        { url: 'https://fitonapp.com', description: 'Бесплатное фитнес-приложение с celebrity-тренерами' },
+      ],
+    },
+
+    trendsResults: [
+      generateMockTrendsData('фитнес приложение', 'rising', 55),
+      generateMockTrendsData('тренировки дома', 'stable', 82),
+      generateMockTrendsData('персональные тренировки', 'rising', 40),
+    ],
 
     businessResult: {
       success: true,

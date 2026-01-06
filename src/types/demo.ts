@@ -3,6 +3,7 @@ import type { BusinessAnalyzeResponse } from './business';
 import type { AnalyzeResponse } from './index';
 import type { GapAnalyzeResponse } from './gaps';
 import type { CompetitorAnalyzeResponse } from './competitor';
+import type { TrendResult } from './trends';
 
 // ===========================================
 // Demo Scenario Types
@@ -18,7 +19,15 @@ export interface DemoScenarioInfo {
   tags: string[];
 }
 
+export interface DemoInputExample {
+  businessDescription: string;
+  repoUrl: string;
+  competitors: Array<{ url: string; description: string }>;
+}
+
 export interface DemoScenario extends DemoScenarioInfo {
+  inputExample: DemoInputExample;
+  trendsResults: TrendResult[];
   businessResult: BusinessAnalyzeResponse;
   codeResult: AnalyzeResponse;
   gapResult: GapAnalyzeResponse;
@@ -65,6 +74,8 @@ export interface DemoAnalyzeResponse {
   isDemo: true;
   scenarioId: DemoScenarioId;
   scenarioName: string;
+  inputExample: DemoInputExample;
+  trendsResults: TrendResult[];
   businessResult: BusinessAnalyzeResponse;
   codeResult: AnalyzeResponse;
   gapResult: GapAnalyzeResponse;

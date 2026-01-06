@@ -85,6 +85,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<DemoAnaly
       isDemo: true,
       scenarioId: scenario.id,
       scenarioName: scenario.name,
+      inputExample: scenario.inputExample,
+      trendsResults: scenario.trendsResults,
       businessResult: scenario.businessResult,
       codeResult: scenario.codeResult,
       gapResult: scenario.gapResult,

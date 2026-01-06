@@ -353,19 +353,26 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         }
 
         .description {
-          font-size: 13px;
+          font-size: 14px;
           color: var(--color-fg-muted);
-          margin: 12px 0;
-          line-height: 1.5;
+          margin: 16px 0;
+          line-height: 1.7;
+          padding: 12px 16px;
+          background: var(--color-canvas-inset);
+          border-radius: 8px;
+          border-left: 3px solid var(--color-border-default);
         }
 
         .value-prop {
           display: flex;
-          gap: 8px;
-          font-size: 13px;
-          padding: 8px 12px;
+          flex-direction: column;
+          gap: 6px;
+          font-size: 14px;
+          padding: 12px 16px;
           background: var(--color-accent-subtle);
-          border-radius: 6px;
+          border-radius: 8px;
+          margin-top: 12px;
+          border-left: 3px solid var(--color-accent-fg);
         }
 
         .value-prop .label {
@@ -378,16 +385,20 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         }
 
         .profile-details {
-          margin-top: 16px;
-          padding-top: 16px;
-          border-top: 1px solid var(--color-border-default);
+          margin-top: 20px;
+          padding-top: 20px;
+          border-top: 2px solid var(--color-border-default);
         }
 
         .detail-row {
           display: flex;
-          gap: 8px;
-          margin-bottom: 8px;
-          font-size: 13px;
+          flex-direction: column;
+          gap: 4px;
+          margin-bottom: 16px;
+          font-size: 14px;
+          padding: 10px 14px;
+          background: var(--color-canvas-subtle);
+          border-radius: 6px;
         }
 
         .detail-row .label {
@@ -400,33 +411,43 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
         }
 
         .detail-section {
-          margin-top: 12px;
+          margin-top: 20px;
+          padding: 14px;
+          background: var(--color-canvas-subtle);
+          border-radius: 8px;
         }
 
         .detail-section .label {
           display: block;
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 600;
           color: var(--color-fg-muted);
-          margin-bottom: 6px;
+          margin-bottom: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .detail-section ul {
           margin: 0;
-          padding-left: 18px;
+          padding-left: 20px;
         }
 
         .detail-section li {
-          font-size: 13px;
+          font-size: 14px;
           color: var(--color-fg-default);
-          margin-bottom: 4px;
+          margin-bottom: 10px;
+          line-height: 1.5;
+        }
+
+        .detail-section li:last-child {
+          margin-bottom: 0;
         }
 
         .strengths-weaknesses {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
-          margin-top: 12px;
+          gap: 20px;
+          margin-top: 20px;
         }
 
         @media (max-width: 600px) {
@@ -435,11 +456,19 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
           }
         }
 
+        .sw-column {
+          padding: 14px;
+          background: var(--color-canvas-subtle);
+          border-radius: 8px;
+        }
+
         .sw-column .label {
           display: block;
           font-size: 12px;
-          font-weight: 500;
-          margin-bottom: 6px;
+          font-weight: 600;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .sw-column .label.success {
@@ -452,13 +481,18 @@ function CompetitorProfileCard({ profile }: { profile: CompetitorProfile }) {
 
         .sw-column ul {
           margin: 0;
-          padding-left: 18px;
+          padding-left: 20px;
         }
 
         .sw-column li {
-          font-size: 12px;
+          font-size: 14px;
           color: var(--color-fg-default);
-          margin-bottom: 4px;
+          margin-bottom: 10px;
+          line-height: 1.5;
+        }
+
+        .sw-column li:last-child {
+          margin-bottom: 0;
         }
 
         .label.accent {
