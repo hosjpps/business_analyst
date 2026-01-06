@@ -2822,6 +2822,61 @@ function inferVerdict(score: number): 'ON_TRACK' | 'ITERATE' | 'PIVOT' {
 
 ---
 
+## Tier 2: Advanced Features (v0.8.2) ✅ DONE
+
+### T2-01: Progressive Analysis ✅ DONE
+
+**Приоритет:** 🟡 HIGH
+**Effort:** 4-6 часов
+**Статус:** ✅ Выполнено 2025-01-06
+
+**Описание:**
+Результаты анализа показываются по мере готовности, а не после завершения всего процесса.
+
+**Реализация:**
+- Последовательное выполнение: Business → Code → Gap → Competitor
+- Loading индикаторы между шагами с shimmer анимацией
+- CSS классы `.progressive-loading-section` в `globals.css:3940-3988`
+- State machine для отслеживания прогресса
+
+**Тесты:**
+- `src/__tests__/components/ProgressiveAnalysis.test.ts` — 35 тестов
+- State machine, loading indicators, timing estimation, error handling
+
+### T2-02: Version Comparison ✅ DONE
+
+**Приоритет:** 🟡 HIGH
+**Effort:** 8-12 часов
+**Статус:** ✅ Выполнено 2025-01-06
+
+**Описание:**
+Сравнение версий анализов для отслеживания прогресса проекта.
+
+**Реализация:**
+
+1. **Database Schema:**
+   - Migration: `supabase/migrations/002_analysis_versioning.sql`
+   - Новые колонки: `version`, `alignment_score`, `summary`, `label`
+   - Auto-increment триггер `increment_analysis_version` per-project
+   - Backfill существующих анализов
+
+2. **History API:**
+   - Endpoint: `/api/projects/[id]/history`
+   - GET: List history или compare two versions
+   - PATCH: Update analysis label
+
+3. **UI Components:**
+   - `AnalysisTimeline` — timeline с selection state для 2 версий
+   - `VersionDiff` — side-by-side и unified diff view
+   - Score delta визуализация (▲ green / ▼ red / = gray)
+
+**Тесты:**
+- `src/__tests__/api/history.test.ts` — 25 тестов
+- `src/__tests__/components/AnalysisTimeline.test.ts` — 28 тестов
+- `src/__tests__/components/VersionDiff.test.ts` — 34 тестов
+
+---
+
 ## Критерии успеха v2.0
 
 ### Функциональные

@@ -3408,6 +3408,81 @@ button.btn-loading::after {
   color: #888;
 }
 
+/* ===== PDF Export Modal Mobile Full-Screen ===== */
+@media (max-width: 768px) {
+  .pdf-export-modal-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .pdf-export-modal {
+    max-width: none;
+    border-radius: 0;
+    max-height: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .pdf-export-modal-header {
+    padding: 16px;
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+
+  .pdf-export-modal-content {
+    padding: 16px;
+    flex: 1;
+  }
+
+  .pdf-export-modal-footer {
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .pdf-export-modal-footer button {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .pdf-export-modal-close {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pdf-export-sections-list {
+    grid-template-columns: 1fr;
+  }
+
+  .pdf-export-section-item {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdf-export-modal-header h3 {
+    font-size: 15px;
+  }
+
+  .pdf-export-field label,
+  .pdf-export-sections > label {
+    font-size: 12px;
+  }
+
+  .pdf-export-field input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px;
+  }
+
+  .pdf-export-checkbox {
+    font-size: 14px;
+    min-height: 44px;
+  }
+}
+
 /* Export Format Selector */
 .export-format-selector {
   margin-bottom: 16px;
@@ -3862,6 +3937,56 @@ button.btn-loading::after {
   animation: progressWave 2s linear infinite;
 }
 
+/* ===== Progressive Loading Sections (for incremental analysis) ===== */
+.progressive-loading-section {
+  border: 1px dashed var(--border-secondary);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  background: var(--bg-tertiary);
+}
+
+.progressive-loading-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.progressive-loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-secondary);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile styles for progressive loading */
+@media (max-width: 768px) {
+  .progressive-loading-section {
+    padding: 16px;
+    margin: 12px 0;
+  }
+
+  .progressive-loading-header {
+    font-size: 14px;
+    gap: 10px;
+  }
+
+  .progressive-loading-spinner {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
@@ -3881,7 +4006,8 @@ button.btn-loading::after {
   .interactive-card,
   .btn-enhanced,
   .skeleton-enhanced,
-  .progress-animated::after {
+  .progress-animated::after,
+  .progressive-loading-spinner {
     animation: none !important;
     transition: none !important;
     opacity: 1;
@@ -4204,6 +4330,141 @@ button.btn-loading::after {
   font-size: 13px;
 }
 
+/* ===== Trends Mobile Responsive ===== */
+@media (max-width: 768px) {
+  .trends-container {
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .trends-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .trends-header h3 {
+    font-size: 16px;
+  }
+
+  .trends-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .trends-select {
+    flex: 1;
+    min-width: 100px;
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .trends-refresh-btn {
+    min-height: 44px;
+    flex: 1;
+  }
+
+  .trends-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .trend-card {
+    padding: 12px;
+  }
+
+  .trend-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .trend-keyword {
+    flex-wrap: wrap;
+  }
+
+  .trend-keyword h4 {
+    font-size: 15px;
+  }
+
+  .trend-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .trend-stats .stat {
+    align-items: flex-start;
+  }
+
+  .trend-stats .stat-value {
+    font-size: 16px;
+  }
+
+  /* Make SVG responsive */
+  .trends-line-chart {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .related-queries {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .expand-btn {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .trends-container {
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .trends-header h3 {
+    font-size: 15px;
+  }
+
+  .trends-controls {
+    gap: 8px;
+  }
+
+  .trends-select {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .trend-card {
+    padding: 10px;
+  }
+
+  .trend-keyword h4 {
+    font-size: 14px;
+  }
+
+  .trend-badge {
+    font-size: 11px;
+  }
+
+  .trend-stats .stat-label {
+    font-size: 10px;
+  }
+
+  .trend-stats .stat-value {
+    font-size: 14px;
+  }
+
+  .queries-section h5 {
+    font-size: 12px;
+  }
+
+  .queries-section li {
+    font-size: 12px;
+  }
+}
+
 /* ===========================================
    QuickStart Onboarding Popup (Portal)
    =========================================== */
@@ -4407,9 +4668,58 @@ button.btn-loading::after {
   color: var(--text-primary);
 }
 
+/* ===== MOBILE FULL-SCREEN MODALS ===== */
+@media (max-width: 768px) {
+  .quickstart-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .quickstart-card {
+    max-width: none;
+    border-radius: 0;
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    padding-top: max(24px, env(safe-area-inset-top));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  .quickstart-header {
+    margin-bottom: 20px;
+  }
+
+  .quickstart-features {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quickstart-features-list {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .quickstart-close {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .quickstart-cta {
+    min-height: 48px;
+    padding: 16px 24px;
+  }
+}
+
 @media (max-width: 480px) {
   .quickstart-card {
-    padding: 24px;
+    padding: 20px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 
   .quickstart-title {
@@ -4418,5 +4728,31 @@ button.btn-loading::after {
 
   .quickstart-wave {
     font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .quickstart-subtitle {
+    font-size: 14px;
+  }
+
+  .quickstart-feature {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .quickstart-feature .feature-icon {
+    font-size: 20px;
+  }
+
+  .quickstart-feature .feature-title {
+    font-size: 13px;
+  }
+
+  .quickstart-feature .feature-description {
+    font-size: 12px;
+  }
+
+  .quickstart-cta {
+    font-size: 15px;
   }
 }

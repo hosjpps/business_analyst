@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.8.1
+## Текущий статус: v0.8.2
 
 ### Готово
 
@@ -214,11 +214,26 @@
   - 3-колоночная сетка для сценариев
   - Карточки с иконками, описанием и тегами
 
+**Tier 2: Advanced Features (v0.8.2):**
+- [x] Progressive Analysis — результаты показываются по мере готовности
+  - Последовательное выполнение: Business → Code → Gap → Competitor
+  - Loading индикаторы между шагами с анимацией
+  - CSS классы `.progressive-loading-section` с shimmer эффектом
+  - 35 тестов для state machine и UI логики
+- [x] Version Comparison — сравнение версий анализов
+  - Database migration `002_analysis_versioning.sql` (version, alignment_score, summary, label)
+  - Auto-increment триггер для версий per-project
+  - History API `/api/projects/[id]/history` (GET list, GET compare, PATCH label)
+  - `AnalysisTimeline` — timeline UI с selection state для 2 версий
+  - `VersionDiff` — side-by-side и unified diff view
+  - Score delta визуализация (▲ green / ▼ red / = gray)
+  - 87 тестов для History API, Timeline, VersionDiff
+
 **Инфраструктура:**
 - [x] Rate limiting (5 req/min)
 - [x] Client-side + server-side кэширование
 - [x] Upstash Redis для продакшена (с fallback на memory)
-- [x] 1177 unit + integration тестов (полное покрытие API + UI)
+- [x] 1309 unit + integration тестов (полное покрытие API + UI)
 
 ---
 

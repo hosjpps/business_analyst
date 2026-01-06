@@ -465,47 +465,57 @@ function Home() {
     setBusinessResult(null);
     setPersistedResult(null);
     setGapResult(null);
+    setCompetitorResult(null);
     setAnalysisStep('uploading');
 
     try {
-      // Step 1: Run both analyses in parallel
+      // ===========================================
+      // PROGRESSIVE ANALYSIS: Show results as they complete
+      // ===========================================
+
+      // Step 1: Start Business Analysis first (shows Canvas immediately)
       setAnalysisStep('analyzing');
 
-      const [businessResponse, codeResponse] = await Promise.all([
-        fetch('/api/analyze-business', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bInput),
-        }),
-        fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            repo_url: rUrl || undefined,
-            files: uFiles.length > 0 ? uFiles : undefined,
-            // Use business description for code analysis in Full Analysis mode
-            project_description: bInput.description,
-          }),
-        }),
-      ]);
+      const businessResponse = await fetch('/api/analyze-business', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bInput),
+      });
 
       const businessData: BusinessAnalyzeResponse = await businessResponse.json();
-      const codeData: AnalyzeResponse = await codeResponse.json();
 
-      // Check for errors
       if (!businessData.success) {
         setError(businessData.error || 'Ошибка анализа бизнеса');
         setAnalysisStep('error');
         return;
       }
+
+      // PROGRESSIVE: Show Business Canvas immediately
+      setBusinessResult(businessData);
+
+      // Step 2: Start Code Analysis (parallel with Trends if any)
+      setAnalysisStep('fetching');
+
+      const codeResponse = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          repo_url: rUrl || undefined,
+          files: uFiles.length > 0 ? uFiles : undefined,
+          // Use business description for code analysis in Full Analysis mode
+          project_description: bInput.description,
+        }),
+      });
+
+      const codeData: AnalyzeResponse = await codeResponse.json();
+
       if (!codeData.success) {
         setError(codeData.error || 'Ошибка анализа кода');
         setAnalysisStep('error');
         return;
       }
 
-      // Save intermediate results
-      setBusinessResult(businessData);
+      // PROGRESSIVE: Show Code Analysis immediately
       setPersistedResult(codeData);
 
       // Step 2: Run gap detection if we have both canvas and analysis
@@ -1715,6 +1725,17 @@ function Home() {
             </details>
           )}
 
+          {/* PROGRESSIVE: Loading indicator for Code Analysis (shows while code is being analyzed) */}
+          {loading && businessResult && !codeResult && (
+            <div className="progressive-loading-section animate-fade-in">
+              <div className="progressive-loading-header">
+                <div className="progressive-loading-spinner" />
+                <span>💻 Анализируем код...</span>
+              </div>
+              <SkeletonGaps />
+            </div>
+          )}
+
           {/* Google Trends (S3-01) - collapsible in full mode */}
           {(trendsResults.length > 0 || trendsLoading) && (
             <details className="results-section">
@@ -1733,6 +1754,17 @@ function Home() {
               <summary>💻 Анализ кода</summary>
               <AnalysisView analysis={codeResult.analysis} />
             </details>
+          )}
+
+          {/* PROGRESSIVE: Loading indicator for Gap Detection (shows while gaps are being analyzed) */}
+          {loading && codeResult?.analysis && !gapResult && (
+            <div className="progressive-loading-section animate-fade-in">
+              <div className="progressive-loading-header">
+                <div className="progressive-loading-spinner" />
+                <span>🎯 Ищем разрывы между бизнесом и кодом...</span>
+              </div>
+              <SkeletonScore />
+            </div>
           )}
 
           {/* Competitor Analysis (collapsible) - only if competitors were analyzed */}

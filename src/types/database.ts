@@ -101,6 +101,11 @@ export interface Database {
           result: Json;
           metadata: Json | null;
           created_at: string;
+          // New columns for version comparison (migration 002)
+          version: number | null;
+          alignment_score: number | null;
+          summary: string | null;
+          label: string | null;
         };
         Insert: {
           id?: string;
@@ -109,6 +114,11 @@ export interface Database {
           result: Json;
           metadata?: Json | null;
           created_at?: string;
+          // New columns (auto-populated by trigger)
+          version?: number | null;
+          alignment_score?: number | null;
+          summary?: string | null;
+          label?: string | null;
         };
         Update: {
           id?: string;
@@ -116,6 +126,8 @@ export interface Database {
           type?: 'code' | 'business' | 'competitor' | 'full';
           result?: Json;
           metadata?: Json | null;
+          // Updateable columns
+          label?: string | null;
         };
         Relationships: [
           {
