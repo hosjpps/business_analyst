@@ -68,68 +68,68 @@ export const TIMEOUTS = {
   animation: 1000,
 };
 
-// Селекторы (data-testid)
+// Селекторы (CSS classes и структура)
 export const SELECTORS = {
-  // Главная страница
-  modeSelector: '[data-testid="mode-selector"]',
-  modeCode: '[data-testid="mode-code"]',
-  modeBusiness: '[data-testid="mode-business"]',
-  modeFull: '[data-testid="mode-full"]',
-  modeCompetitor: '[data-testid="mode-competitor"]',
+  // Главная страница - режимы
+  modeSelector: '.mode-selector, .mode-selected',
+  modeCode: '.mode-card:has-text("Проверка кода"), button:has-text("Проверка кода")',
+  modeBusiness: '.mode-card:has-text("Разбор бизнеса"), button:has-text("Разбор бизнеса")',
+  modeFull: '.mode-card:has-text("Полный анализ"), button:has-text("Полный анализ")',
+  modeCompetitor: '.mode-card:has-text("Анализ конкурентов"), button:has-text("Анализ конкурентов")',
 
   // Форма
-  businessDescription: '[data-testid="business-description"]',
-  githubUrl: '[data-testid="github-url"]',
-  fileUpload: '[data-testid="file-upload"]',
-  submitButton: '[data-testid="submit-analysis"]',
+  businessDescription: 'textarea[placeholder*="Опишите"], textarea[name="description"], .business-textarea',
+  githubUrl: 'input[placeholder*="github.com"], input[name="repoUrl"], input[type="url"]',
+  fileUpload: 'input[type="file"]',
+  submitButton: 'button[type="submit"], button:has-text("Анализировать"), button:has-text("Запустить")',
 
   // Результаты
-  progressIndicator: '[data-testid="progress-indicator"]',
-  businessCanvas: '[data-testid="business-canvas"]',
-  codeAnalysis: '[data-testid="code-analysis"]',
-  gapDetection: '[data-testid="gap-detection"]',
-  alignmentScore: '[data-testid="alignment-score"]',
-  tasksList: '[data-testid="tasks-list"]',
+  progressIndicator: '.progress-indicator, .analysis-progress, [class*="progress"]',
+  businessCanvas: '.business-canvas, .canvas-view, [class*="canvas"]',
+  codeAnalysis: '.code-analysis, .analysis-view, [class*="analysis"]',
+  gapDetection: '.gaps-view, .gap-detection, [class*="gaps"]',
+  alignmentScore: '.alignment-score, .score-circle, [class*="score"]',
+  tasksList: '.tasks-list, .task-item, [class*="tasks"]',
 
   // Clarification
-  clarificationSection: '[data-testid="clarification-section"]',
-  clarificationQuestions: '[data-testid="clarification-questions"]',
-  clarificationInput: '[data-testid="clarification-input"]',
-  clarificationSubmit: '[data-testid="clarification-submit"]',
+  clarificationSection: '.clarification-section, .clarification-questions',
+  clarificationQuestions: '.clarification-questions, .question-item',
+  clarificationInput: '.clarification-input textarea, textarea[placeholder*="Ответ"]',
+  clarificationSubmit: 'button:has-text("Отправить ответ"), button:has-text("Продолжить")',
 
   // Chat
-  chatSection: '[data-testid="chat-section"]',
-  chatInput: '[data-testid="chat-input"]',
-  chatSubmit: '[data-testid="chat-submit"]',
-  chatMessages: '[data-testid="chat-messages"]',
+  chatSection: '.chat-section, [class*="chat"]',
+  chatInput: '.chat-input textarea, textarea[placeholder*="Спросите"], textarea[placeholder*="вопрос"]',
+  chatSubmit: '.chat-submit, button:has-text("Отправить")',
+  chatMessages: '.chat-messages, .message-list',
 
   // Export
-  exportJson: '[data-testid="export-json"]',
-  exportMarkdown: '[data-testid="export-markdown"]',
-  exportGithubIssues: '[data-testid="export-github-issues"]',
+  exportJson: 'button:has-text("JSON"), button:has-text("📥")',
+  exportMarkdown: 'button:has-text("Markdown"), button:has-text("📄")',
+  exportGithubIssues: 'button:has-text("GitHub"), button:has-text("Issues")',
 
   // Demo
-  demoButton: '[data-testid="demo-button"]',
-  demoScenarioSelector: '[data-testid="demo-scenario-selector"]',
-  demoScenarioCard: '[data-testid="demo-scenario-card"]',
+  demoButton: '.demo-button, button:has-text("Демо"), button:has-text("Demo")',
+  demoScenarioSelector: '.demo-modal, .demo-scenario-selector, [class*="demo-modal"]',
+  demoScenarioCard: '.demo-scenario-card, .scenario-card',
 
   // Auth
-  loginForm: '[data-testid="login-form"]',
-  signupForm: '[data-testid="signup-form"]',
-  emailInput: '[data-testid="email-input"]',
-  passwordInput: '[data-testid="password-input"]',
-  authSubmit: '[data-testid="auth-submit"]',
-  logoutButton: '[data-testid="logout-button"]',
+  loginForm: 'form[action*="login"], .login-form, form:has(input[type="email"])',
+  signupForm: 'form[action*="signup"], .signup-form',
+  emailInput: 'input[type="email"], input[name="email"]',
+  passwordInput: 'input[type="password"], input[name="password"]',
+  authSubmit: 'button[type="submit"]',
+  logoutButton: 'button:has-text("Выйти"), button:has-text("Logout")',
 
   // Dashboard
-  projectsList: '[data-testid="projects-list"]',
-  projectCard: '[data-testid="project-card"]',
-  createProjectButton: '[data-testid="create-project"]',
-  deleteProjectButton: '[data-testid="delete-project"]',
+  projectsList: '.projects-list, .project-grid, [class*="projects"]',
+  projectCard: '.project-card, [class*="project-item"]',
+  createProjectButton: 'button:has-text("Создать"), button:has-text("Новый проект")',
+  deleteProjectButton: 'button:has-text("Удалить")',
 
   // Navigation
-  topNav: '[data-testid="top-nav"]',
-  navHome: '[data-testid="nav-home"]',
-  navDashboard: '[data-testid="nav-dashboard"]',
-  userMenu: '[data-testid="user-menu"]',
+  topNav: '.top-nav, header, nav',
+  navHome: 'a[href="/"], a:has-text("Анализ")',
+  navDashboard: 'a[href="/dashboard"], a:has-text("Проекты")',
+  userMenu: '.user-nav, .user-menu, [class*="user"]',
 };

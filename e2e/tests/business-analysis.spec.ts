@@ -12,9 +12,7 @@ test.describe('Business Analysis Flow', () => {
 
   test('should display business analysis mode option', async ({ page }) => {
     // Проверяем наличие режима "Разбор бизнеса"
-    const businessMode = page.locator(
-      '[data-testid="mode-business"], button:has-text("Разбор бизнеса"), button:has-text("Business"), .mode-business'
-    );
+    const businessMode = page.locator('.mode-card').filter({ hasText: 'Разбор бизнеса' });
 
     await expect(businessMode.first()).toBeVisible();
   });
@@ -23,30 +21,22 @@ test.describe('Business Analysis Flow', () => {
     page,
   }) => {
     // Выбираем режим Business
-    const businessMode = page.locator(
-      '[data-testid="mode-business"], button:has-text("Разбор бизнеса"), .mode-business'
-    );
+    const businessMode = page.locator('.mode-card').filter({ hasText: 'Разбор бизнеса' });
     await businessMode.first().click();
 
     // Должно появиться поле для описания бизнеса
-    const textarea = page.locator(
-      '[data-testid="business-description"], textarea[name="business"], #business-description, textarea[placeholder*="бизнес"]'
-    );
+    const textarea = page.locator('textarea').first();
 
     await expect(textarea).toBeVisible();
   });
 
   test('should disable submit when description too short', async ({ page }) => {
     // Выбираем режим Business
-    const businessMode = page.locator(
-      '[data-testid="mode-business"], button:has-text("Разбор бизнеса"), .mode-business'
-    );
+    const businessMode = page.locator('.mode-card').filter({ hasText: 'Разбор бизнеса' });
     await businessMode.first().click();
 
     // Вводим короткое описание
-    const textarea = page.locator(
-      '[data-testid="business-description"], textarea[name="business"], textarea'
-    );
+    const textarea = page.locator('textarea').first();
     await textarea.fill(BUSINESS_DESCRIPTIONS.short);
 
     // Кнопка submit должна быть заблокирована

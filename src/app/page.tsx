@@ -9,33 +9,38 @@ import type { CompetitorInput, CompetitorAnalyzeResponse } from '@/types/competi
 import { UploadForm } from '@/components/UploadForm';
 import { ProgressIndicator, type AnalysisStep } from '@/components/ProgressIndicator';
 import { AnalysisView } from '@/components/AnalysisView';
-import { ChatSection } from '@/components/ChatSection';
 import { ExportButtons } from '@/components/ExportButtons';
-import { GitHubExportButton } from '@/components/export/GitHubExportButton';
 import type { ExportTask } from '@/types/github-issues';
 import { AnalysisModeSelector, type AnalysisMode } from '@/components/forms/AnalysisModeSelector';
 import { BusinessInputForm } from '@/components/forms/BusinessInputForm';
-import { CompetitorInputForm } from '@/components/forms/CompetitorInputForm';
-import { AnalysisWizard, type AnalysisWizardData } from '@/components/forms/AnalysisWizard';
-import { CanvasView } from '@/components/results/CanvasView';
-import { TrendsChart } from '@/components/results/TrendsChart';
+import type { AnalysisWizardData } from '@/components/forms/AnalysisWizard';
 import type { TrendResult } from '@/types/trends';
 import { ClarificationQuestions } from '@/components/forms/ClarificationQuestions';
-import { GapsView } from '@/components/results/GapsView';
 import { AlignmentScore } from '@/components/results/AlignmentScore';
-import { MultiMetricScore } from '@/components/results/MultiMetricScore';
 import { VerdictBadge } from '@/components/results/VerdictBadge';
-import { CompetitorComparisonView } from '@/components/results/CompetitorComparisonView';
 import { UserNav } from '@/components/UserNav';
-import { QuickStart } from '@/components/onboarding/QuickStart';
-import { FAQList } from '@/components/ui/FAQ';
+// Lazy-loaded components for better performance
+import {
+  LazyChatSection as ChatSection,
+  LazyCanvasView as CanvasView,
+  LazyTrendsChart as TrendsChart,
+  LazyGapsView as GapsView,
+  LazyCompetitorComparisonView as CompetitorComparisonView,
+  LazyMultiMetricScore as MultiMetricScore,
+  LazyAnalysisWizard as AnalysisWizard,
+  LazyCompetitorInputForm as CompetitorInputForm,
+  LazyFAQList as FAQList,
+  LazyQuickStart as QuickStart,
+  LazyGitHubExportButton as GitHubExportButton,
+  LazyDemoScenarioSelector as DemoScenarioSelector,
+} from '@/components/lazy';
 import {
   SkeletonScore,
   SkeletonCanvas,
   SkeletonGaps,
   SkeletonAnalysisResults,
 } from '@/components/ui/Skeleton';
-import { DemoButton, DemoScenarioSelector, DemoBadge } from '@/components/demo';
+import { DemoButton, DemoBadge } from '@/components/demo';
 import type { DemoScenarioInfo, DemoScenarioId, DemoLimitResult } from '@/types/demo';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
