@@ -26,7 +26,7 @@ export function DemoScenarioSelector({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} data-testid="demo-modal">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>✨ Попробуйте демо-анализ</h2>
@@ -52,6 +52,7 @@ export function DemoScenarioSelector({
               onClick={() => handleSelect(scenario.id)}
               disabled={isLoading}
               type="button"
+              data-testid="demo-scenario-card"
             >
               <span className="scenario-icon">{scenario.icon}</span>
               <h3 className="scenario-name">{scenario.name}</h3>

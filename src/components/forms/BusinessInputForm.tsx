@@ -171,7 +171,7 @@ export function BusinessInputForm({
   };
 
   return (
-    <div className="business-input-form">
+    <div className="business-input-form" data-testid="business-input-form">
       {/* Description */}
       <div className="form-section">
         <label htmlFor="business-description" className="form-label">
@@ -188,6 +188,7 @@ export function BusinessInputForm({
           onChange={handleDescriptionChange}
           disabled={disabled}
           rows={6}
+          data-testid="business-description"
         />
         <div className="char-counter" style={{ color: charCountColor }}>
           {charCount} / {MAX_DESCRIPTION_LENGTH}
@@ -238,6 +239,7 @@ export function BusinessInputForm({
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={() => !disabled && fileInputRef.current?.click()}
+          data-testid="document-upload"
         >
           <div className="drop-zone-content">
             <span className="drop-icon">📄</span>

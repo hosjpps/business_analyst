@@ -91,7 +91,7 @@ export function ProgressIndicator({
   // Minimal variant (original behavior)
   if (variant === 'minimal') {
     return (
-      <div className="progress-indicator-minimal">
+      <div className="progress-indicator-minimal" data-testid="progress-indicator">
         {STEPS.map((step, index) => {
           let status: 'pending' | 'active' | 'done' = 'pending';
 
@@ -180,7 +180,7 @@ export function ProgressIndicator({
 
   // Detailed variant (new)
   return (
-    <div className="progress-indicator-detailed animate-scale-in">
+    <div className="progress-indicator-detailed animate-scale-in" data-testid="progress-indicator">
       <div className="progress-header">
         <div className="progress-title">
           <span className="progress-icon">🔬</span>

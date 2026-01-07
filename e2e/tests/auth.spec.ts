@@ -8,9 +8,7 @@ test.describe('Authentication Flow', () => {
     await authPage.gotoLogin();
 
     // Должна быть форма входа
-    const loginForm = page.locator(
-      '[data-testid="login-form"], form, .login-form, .auth-form'
-    );
+    const loginForm = page.locator('[data-testid="auth-form"]');
 
     await expect(loginForm).toBeVisible();
   });
@@ -20,9 +18,7 @@ test.describe('Authentication Flow', () => {
     await authPage.gotoSignup();
 
     // Должна быть форма регистрации
-    const signupForm = page.locator(
-      '[data-testid="signup-form"], form, .signup-form, .auth-form'
-    );
+    const signupForm = page.locator('[data-testid="auth-form"]');
 
     await expect(signupForm).toBeVisible();
   });
@@ -31,12 +27,8 @@ test.describe('Authentication Flow', () => {
     const authPage = new AuthPage(page);
     await authPage.gotoLogin();
 
-    const emailInput = page.locator(
-      '[data-testid="email-input"], input[type="email"], input[name="email"]'
-    );
-    const passwordInput = page.locator(
-      '[data-testid="password-input"], input[type="password"], input[name="password"]'
-    );
+    const emailInput = page.locator('[data-testid="email-input"]');
+    const passwordInput = page.locator('[data-testid="password-input"]');
 
     await expect(emailInput).toBeVisible();
     await expect(passwordInput).toBeVisible();
@@ -46,9 +38,7 @@ test.describe('Authentication Flow', () => {
     const authPage = new AuthPage(page);
     await authPage.gotoLogin();
 
-    const submitButton = page.locator(
-      '[data-testid="auth-submit"], button[type="submit"], button:has-text("Войти"), button:has-text("Login")'
-    );
+    const submitButton = page.locator('[data-testid="submit-button"]');
 
     // Кнопка может быть disabled или показать ошибку при клике
     const isDisabled = await submitButton.isDisabled().catch(() => false);
@@ -56,7 +46,7 @@ test.describe('Authentication Flow', () => {
     // Если не disabled, пробуем кликнуть и проверить ошибку
     if (!isDisabled) {
       await submitButton.click();
-      const errorMessage = page.locator('[role="alert"], .error-message, .form-error');
+      const errorMessage = page.locator('[data-testid="auth-error"], [role="alert"], .error-message');
       const hasError = await errorMessage.isVisible().catch(() => false);
       // Либо disabled, либо показывает ошибку
       expect(isDisabled || hasError).toBeTruthy();
@@ -69,26 +59,20 @@ test.describe('Authentication Flow', () => {
     const authPage = new AuthPage(page);
     await authPage.gotoLogin();
 
-    const emailInput = page.locator(
-      '[data-testid="email-input"], input[type="email"], input[name="email"]'
-    );
+    const emailInput = page.locator('[data-testid="email-input"]');
     await emailInput.fill('invalid-email');
 
-    const passwordInput = page.locator(
-      '[data-testid="password-input"], input[type="password"]'
-    );
+    const passwordInput = page.locator('[data-testid="password-input"]');
     await passwordInput.fill('somepassword');
 
-    const submitButton = page.locator(
-      '[data-testid="auth-submit"], button[type="submit"]'
-    );
+    const submitButton = page.locator('[data-testid="submit-button"]');
 
     // Пытаемся отправить
     if (!(await submitButton.isDisabled())) {
       await submitButton.click();
 
       // Должна появиться ошибка
-      const errorMessage = page.locator('[role="alert"], .error-message, .validation-error');
+      const errorMessage = page.locator('[data-testid="auth-error"], [role="alert"], .error-message');
       await expect(errorMessage).toBeVisible({ timeout: TIMEOUTS.uiInteraction });
     }
   });
@@ -185,9 +169,7 @@ test.describe('Authentication Flow', () => {
     await expect(page).not.toHaveURL(/\/login/);
 
     // Форма анализа должна быть видна
-    const analysisForm = page.locator(
-      'form, .analysis-form, [data-testid="mode-selector"], textarea'
-    );
+    const analysisForm = page.locator('[data-testid="mode-selector"], [data-testid="mode-business"]');
     await expect(analysisForm.first()).toBeVisible();
   });
 });

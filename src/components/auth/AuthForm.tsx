@@ -58,7 +58,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           </p>
         </div>
 
-        <form action={handleSubmit} className="auth-form">
+        <form action={handleSubmit} className="auth-form" data-testid="auth-form">
           {mode === 'signup' && (
             <div className="form-group">
               <label htmlFor="fullName">Имя</label>
@@ -81,6 +81,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               placeholder="you@example.com"
               required
               disabled={loading}
+              data-testid="email-input"
             />
           </div>
 
@@ -94,12 +95,13 @@ export function AuthForm({ mode }: AuthFormProps) {
               required
               minLength={6}
               disabled={loading}
+              data-testid="password-input"
             />
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message" data-testid="auth-error">{error}</div>}
 
-          <button type="submit" disabled={loading} className="submit-btn">
+          <button type="submit" disabled={loading} className="submit-btn" data-testid="submit-button">
             {loading
               ? mode === 'login'
                 ? 'Входим...'

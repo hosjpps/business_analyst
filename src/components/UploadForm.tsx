@@ -163,7 +163,7 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
   };
 
   return (
-    <div className="upload-form">
+    <div className="upload-form" data-testid="upload-form">
       <label className="upload-label">Загрузить файлы или ZIP-архив</label>
       <div
         className={`upload-zone ${dragOver ? 'drag-over' : ''} ${disabled ? 'disabled' : ''}`}
@@ -171,6 +171,7 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
+        data-testid="file-upload-zone"
       >
         <span className="upload-icon">📁</span>
         <p className="upload-text">Перетащите файлы или ZIP-архив сюда</p>
@@ -187,6 +188,7 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
           className="upload-input"
           onChange={e => e.target.files && handleFiles(e.target.files)}
           disabled={disabled}
+          data-testid="file-upload"
         />
       </div>
 

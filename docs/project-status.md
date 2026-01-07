@@ -2,8 +2,9 @@
 
 ## Current Phase: Tier 2 Complete ✅
 
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-07
 **Version:** 0.8.3
+**Production:** https://business-analyst-beige.vercel.app/
 
 ---
 
@@ -12,8 +13,10 @@
 ### Summary
 Tier 2 Quality & Infrastructure improvements completed:
 - **1364 unit + integration tests** passing
+- **66 E2E tests** passing (Playwright, 5 browsers)
 - **Build successful**
-- All Sprints (S0-S4) ✅
+- **Auto-deploy** to Vercel from GitHub
+- All Sprints (S0-S5) ✅
 - Tier 1 Post-MVP Features ✅
 - Tier 2 Advanced Features ✅
 
@@ -234,15 +237,16 @@ Tier 2 Quality & Infrastructure improvements completed:
 | Custom scrollbar | ✅ Done | Matches theme |
 
 ### Milestone 5: Testing & Deploy
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 
 | Task | Status | Notes |
 |------|--------|-------|
 | Build passes | ✅ Done | npm run build successful |
 | Test with sample repos | ✅ Done | Tested with shadcn/ui |
 | Error handling | ✅ Done | API errors, validation |
-| Deploy to Vercel | ⏳ Pending | |
-| Test production | ⏳ Pending | |
+| Deploy to Vercel | ✅ Done | Auto-deploy from GitHub main branch |
+| Test production | ✅ Done | https://business-analyst-beige.vercel.app/ |
+| E2E Tests | ✅ Done | 66 tests across 5 browsers |
 
 ### Milestone 6: API Security & Reliability (v0.3.0)
 **Status:** ✅ Complete

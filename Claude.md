@@ -279,7 +279,7 @@
 - [x] E2E testing с Playwright (multi-browser)
 - [x] Bundle analyzer для мониторинга размера
 - [x] Web Vitals для мониторинга производительности
-- [x] ~1400 unit + integration + E2E тестов (полное покрытие)
+- [x] 1364 unit + integration тестов + 66 E2E тестов (полное покрытие)
 
 ---
 
@@ -319,11 +319,12 @@
 | Компонент | Статус | Примечание |
 |-----------|--------|------------|
 | TopNav | ✅ Интегрирован | Добавлен в `src/app/layout.tsx` |
-| Deploy на Vercel | ✅ Настроен | Auto-deploy из GitHub (main branch) |
+| Deploy на Vercel | ✅ Настроен | Auto-deploy из GitHub → https://business-analyst-beige.vercel.app/ |
 | AnalysisTimeline | ✅ Интегрирован | Добавлен в страницу проекта (v0.8.3) |
 | VersionDiff | ✅ Интегрирован | Добавлен в страницу проекта (v0.8.3) |
 | Console cleanup | ✅ Выполнено | Заменено на logger utility |
 | Error Boundaries | ✅ Созданы | error.tsx, global-error.tsx, dashboard/error.tsx, projects/[id]/error.tsx |
+| E2E Tests | ✅ Настроены | 66 тестов, 5 браузеров (Chromium, Firefox, WebKit, Mobile) |
 
 ### Sprint 0: Тест-чеклист (для тестировщика)
 
@@ -961,9 +962,9 @@ newcomer   — новичок
 - **Репозиторий**: `hosjpps/business_analyst`
 
 ```
-GitHub Push → Vercel Build → Production Deploy
+GitHub Push → Vercel Build → Production Deploy (~2 мин)
      ↓
-  [main branch] → https://business-analyst-*.vercel.app
+  [main branch] → https://business-analyst-beige.vercel.app/
 ```
 
 ### Ручной деплой (при необходимости)

@@ -17,6 +17,7 @@ export function DemoButton({ onClick, remaining = 3 }: DemoButtonProps) {
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      data-testid="demo-button"
     >
       <span className="demo-icon">✨</span>
       <span className="demo-text">Попробовать бесплатно</span>

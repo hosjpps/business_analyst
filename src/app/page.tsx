@@ -1194,6 +1194,7 @@ function Home() {
                     value={repoUrl}
                     onChange={(e) => setRepoUrl(e.target.value)}
                     disabled={uploadedFiles.length > 0 || loading}
+                    data-testid="github-url"
                   />
                 </div>
 
@@ -1294,6 +1295,7 @@ function Home() {
                           value={repoUrl}
                           onChange={(e) => setRepoUrl(e.target.value)}
                           disabled={uploadedFiles.length > 0 || loading}
+                          data-testid="github-url-full"
                         />
                       </div>
 

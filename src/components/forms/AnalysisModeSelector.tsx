@@ -105,7 +105,7 @@ export function AnalysisModeSelector({
   // Collapsed view - show current selection
   if (!isExpanded && selectedModeConfig) {
     return (
-      <div className="mode-selected">
+      <div className="mode-selected" data-testid="mode-selected">
         <div className="mode-selected-info">
           <span className="mode-selected-icon">{selectedModeConfig.icon}</span>
           <div className="mode-selected-text">
@@ -208,7 +208,7 @@ export function AnalysisModeSelector({
 
   // Expanded view - show all modes
   return (
-    <div className="mode-selector">
+    <div className="mode-selector" data-testid="mode-selector">
       <h2 className="mode-selector-title">Выберите режим анализа</h2>
 
       <div className="mode-cards">
@@ -217,6 +217,7 @@ export function AnalysisModeSelector({
             key={mode.id}
             className={`mode-card ${selectedMode === mode.id ? 'selected' : ''}`}
             onClick={() => handleSelect(mode.id)}
+            data-testid={`mode-${mode.id}`}
           >
             <div className="mode-card-header">
               <span className="mode-icon">{mode.icon}</span>

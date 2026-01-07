@@ -230,7 +230,7 @@ export function ChatSection({
     : 'Задать вопрос';
 
   return (
-    <div className="chat-section">
+    <div className="chat-section" data-testid="chat-section">
       <div className="chat-header">
         <h3>{chatTitle}</h3>
         {chatHistory.length > 1 && (
@@ -308,8 +308,9 @@ export function ChatSection({
           onChange={e => setChatMessage(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !chatLoading && handleChat()}
           disabled={chatLoading}
+          data-testid="chat-input"
         />
-        <button onClick={handleChat} disabled={chatLoading || !chatMessage.trim()}>
+        <button onClick={handleChat} disabled={chatLoading || !chatMessage.trim()} data-testid="chat-send">
           {chatLoading ? '...' : 'Отправить'}
         </button>
       </div>

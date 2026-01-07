@@ -68,28 +68,30 @@ export const TIMEOUTS = {
   animation: 1000,
 };
 
-// Селекторы (CSS classes и структура)
+// Селекторы (data-testid + CSS fallbacks)
 export const SELECTORS = {
   // Главная страница - режимы
-  modeSelector: '.mode-selector, .mode-selected',
-  modeCode: '.mode-card:has-text("Проверка кода"), button:has-text("Проверка кода")',
-  modeBusiness: '.mode-card:has-text("Разбор бизнеса"), button:has-text("Разбор бизнеса")',
-  modeFull: '.mode-card:has-text("Полный анализ"), button:has-text("Полный анализ")',
-  modeCompetitor: '.mode-card:has-text("Анализ конкурентов"), button:has-text("Анализ конкурентов")',
+  modeSelector: '[data-testid="mode-selector"], [data-testid="mode-selected"]',
+  modeCode: '[data-testid="mode-code"]',
+  modeBusiness: '[data-testid="mode-business"]',
+  modeFull: '[data-testid="mode-full"]',
+  modeCompetitor: '[data-testid="mode-competitor"]',
 
   // Форма
-  businessDescription: 'textarea[placeholder*="Опишите"], textarea[name="description"], .business-textarea',
-  githubUrl: 'input[placeholder*="github.com"], input[name="repoUrl"], input[type="url"]',
-  fileUpload: 'input[type="file"]',
-  submitButton: 'button[type="submit"], button:has-text("Анализировать"), button:has-text("Запустить")',
+  businessDescription: '[data-testid="business-description"]',
+  githubUrl: '[data-testid="github-url"], [data-testid="github-url-full"]',
+  fileUpload: '[data-testid="file-upload"]',
+  fileUploadZone: '[data-testid="file-upload-zone"]',
+  documentUpload: '[data-testid="document-upload"]',
+  submitButton: '[data-testid="submit-analysis"], button[type="submit"]:has-text("Анализировать")',
 
   // Результаты
-  progressIndicator: '.progress-indicator, .analysis-progress, [class*="progress"]',
-  businessCanvas: '.business-canvas, .canvas-view, [class*="canvas"]',
-  codeAnalysis: '.code-analysis, .analysis-view, [class*="analysis"]',
-  gapDetection: '.gaps-view, .gap-detection, [class*="gaps"]',
-  alignmentScore: '.alignment-score, .score-circle, [class*="score"]',
-  tasksList: '.tasks-list, .task-item, [class*="tasks"]',
+  progressIndicator: '[data-testid="progress-indicator"]',
+  businessCanvas: '[data-testid="business-canvas"], .business-canvas',
+  codeAnalysis: '.code-analysis, .analysis-view',
+  gapDetection: '.gaps-view, .gap-detection',
+  alignmentScore: '.alignment-score, .score-circle',
+  tasksList: '.tasks-list, .task-item',
 
   // Clarification
   clarificationSection: '.clarification-section, .clarification-questions',
@@ -98,10 +100,10 @@ export const SELECTORS = {
   clarificationSubmit: 'button:has-text("Отправить ответ"), button:has-text("Продолжить")',
 
   // Chat
-  chatSection: '.chat-section, [class*="chat"]',
-  chatInput: '.chat-input textarea, textarea[placeholder*="Спросите"], textarea[placeholder*="вопрос"]',
-  chatSubmit: '.chat-submit, button:has-text("Отправить")',
-  chatMessages: '.chat-messages, .message-list',
+  chatSection: '[data-testid="chat-section"]',
+  chatInput: '[data-testid="chat-input"]',
+  chatSubmit: '[data-testid="chat-send"]',
+  chatMessages: '.chat-messages, .chat-history',
 
   // Export
   exportJson: 'button:has-text("JSON"), button:has-text("📥")',
@@ -109,21 +111,22 @@ export const SELECTORS = {
   exportGithubIssues: 'button:has-text("GitHub"), button:has-text("Issues")',
 
   // Demo
-  demoButton: '.demo-button, button:has-text("Демо"), button:has-text("Demo")',
-  demoScenarioSelector: '.demo-modal, .demo-scenario-selector, [class*="demo-modal"]',
-  demoScenarioCard: '.demo-scenario-card, .scenario-card',
+  demoButton: '[data-testid="demo-button"]',
+  demoScenarioSelector: '[data-testid="demo-modal"]',
+  demoScenarioCard: '[data-testid="demo-scenario-card"]',
 
   // Auth
-  loginForm: 'form[action*="login"], .login-form, form:has(input[type="email"])',
-  signupForm: 'form[action*="signup"], .signup-form',
-  emailInput: 'input[type="email"], input[name="email"]',
-  passwordInput: 'input[type="password"], input[name="password"]',
-  authSubmit: 'button[type="submit"]',
+  loginForm: '[data-testid="auth-form"]',
+  signupForm: '[data-testid="auth-form"]',
+  emailInput: '[data-testid="email-input"]',
+  passwordInput: '[data-testid="password-input"]',
+  authSubmit: '[data-testid="submit-button"]',
+  authError: '[data-testid="auth-error"]',
   logoutButton: 'button:has-text("Выйти"), button:has-text("Logout")',
 
   // Dashboard
-  projectsList: '.projects-list, .project-grid, [class*="projects"]',
-  projectCard: '.project-card, [class*="project-item"]',
+  projectsList: '.projects-list, .project-grid',
+  projectCard: '.project-card',
   createProjectButton: 'button:has-text("Создать"), button:has-text("Новый проект")',
   deleteProjectButton: 'button:has-text("Удалить")',
 
@@ -131,5 +134,5 @@ export const SELECTORS = {
   topNav: '.top-nav, header, nav',
   navHome: 'a[href="/"], a:has-text("Анализ")',
   navDashboard: 'a[href="/dashboard"], a:has-text("Проекты")',
-  userMenu: '.user-nav, .user-menu, [class*="user"]',
+  userMenu: '.user-nav, .user-menu',
 };

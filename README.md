@@ -2,6 +2,8 @@
 
 > Ультимативная платформа для улучшения бизнеса: анализ бизнес-модели + код + gap detection + конкуренты
 
+**🌐 Production:** https://business-analyst-beige.vercel.app/
+
 ## Что это?
 
 Платформа помогает предпринимателям и разработчикам:
@@ -54,10 +56,10 @@
 - **RLS политики** — безопасность на уровне строк
 
 ### Общее
-- **Кэширование** — клиентский + серверный кэш
-- **Экспорт** — JSON, Markdown, PDF
+- **Кэширование** — клиентский + серверный кэш (Upstash Redis)
+- **Экспорт** — JSON, Markdown, PDF, GitHub Issues
 - **GitHub Dark тема** — современный UI
-- **609 unit тестов** — Vitest (полное покрытие)
+- **1364 unit тестов + 66 E2E тестов** — Vitest + Playwright
 
 ## Быстрый старт
 
@@ -202,14 +204,16 @@ curl -X POST http://localhost:3000/api/analyze-gaps \
 ## Технологии
 
 - **Framework:** Next.js 14 (App Router)
-- **LLM:** Claude через OpenRouter
+- **LLM:** Claude Opus 4.5 / Sonnet 4 через OpenRouter
 - **Auth & DB:** Supabase (PostgreSQL + RLS)
+- **Cache:** Upstash Redis (с fallback на memory)
 - **Validation:** Zod
 - **GitHub API:** Octokit
 - **PDF parsing:** pdf-parse
 - **DOCX parsing:** mammoth
-- **Testing:** Vitest (609 тестов)
+- **Testing:** Vitest (1364 тестов) + Playwright E2E (66 тестов)
 - **UI:** GitHub Dark theme
+- **Deploy:** Vercel (auto-deploy from GitHub)
 
 ## Структура проекта
 
@@ -255,31 +259,54 @@ src/
 ## Тестирование
 
 ```bash
-# Все тесты
+# Unit тесты (1364)
 npm test
+npm run test:run       # CI mode
+npm run test:coverage  # С покрытием
 
-# Один раз (CI)
-npm run test:run
-
-# С покрытием
-npm run test:coverage
+# E2E тесты (66)
+npm run test:e2e              # Все браузеры
+npm run test:e2e:chromium     # Только Chromium
 
 # Build check
 npm run build
 ```
 
+## Деплой
+
+Проект автоматически деплоится на Vercel при push в `main` branch:
+
+```
+GitHub Push → Vercel Build → Production
+     ↓
+  [main branch] → https://business-analyst-beige.vercel.app/
+```
+
+**Время деплоя:** ~2 минуты после push
+
+**Environment Variables (Vercel Dashboard):**
+- `OPENROUTER_API_KEY` — обязательно
+- `NEXT_PUBLIC_SUPABASE_URL` — для auth
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — для auth
+- `UPSTASH_REDIS_REST_URL` — для кэша (опционально)
+- `UPSTASH_REDIS_REST_TOKEN` — для кэша
+
 ## Roadmap
 
 - [x] Анализ репозиториев (GitHub URL, файлы, ZIP)
 - [x] Follow-up чат с streaming
-- [x] Кэширование (клиент + сервер)
+- [x] Кэширование (клиент + Upstash Redis)
 - [x] Business Canvas AI
 - [x] Gap Detector (бизнес vs код)
 - [x] Full Analysis mode
 - [x] Competitor Analysis
 - [x] Auth + Dashboard (Supabase)
-- [x] PDF Export
-- [x] 609 unit тестов
+- [x] PDF Export + GitHub Issues Export
+- [x] Demo Mode (без API cost)
+- [x] Progressive Analysis (результаты по мере готовности)
+- [x] Version Comparison (сравнение версий анализов)
+- [x] 1364 unit тестов + 66 E2E тестов
+- [x] Auto-deploy на Vercel
 - [ ] Weekly Reports
 - [ ] AI Competitor Agent (автопоиск)
 
