@@ -9,7 +9,169 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Planned
-- Integration tests for API endpoints
+- Weekly Reports
+- AI Competitor Agent (auto-discovery)
+
+---
+
+## [0.8.3] - 2025-01-07
+
+### Added
+- **History Tab Integration** — таб "История" на странице проекта
+- **Error Boundaries** — graceful error handling для всех страниц
+- **Logger Utility** — production-ready логирование с уровнями
+- **Accessibility** — WCAG 2.1 compliance (ARIA, keyboard nav, focus management)
+- **E2E Tests** — 66 тестов (Playwright, 5 браузеров)
+- **Auto-deploy** — Vercel auto-deploy from GitHub
+
+### Fixed
+- Middleware graceful handling для E2E без Supabase
+
+---
+
+## [0.8.2] - 2025-01-06
+
+### Added
+- **Progressive Analysis** — результаты показываются по мере готовности
+- **Version Comparison** — сравнение версий анализов
+  - Timeline UI с selection state
+  - Side-by-side и unified diff view
+  - Score delta визуализация
+- 87 тестов для History API, Timeline, VersionDiff
+
+---
+
+## [0.8.1] - 2025-01-05
+
+### Added
+- **Demo Button** — заметная кнопка на всю ширину
+- **Demo Scenario Selector** — 3-колоночный модал с карточками
+
+---
+
+## [0.8.0] - 2025-01-04
+
+### Added
+- **Demo Mode** — режим демонстрации без API вызовов ($0 cost)
+- **Upstash Redis Cache** — распределённый кэш для продакшена
+- **GitHub Issues Export** — экспорт задач в GitHub Issues
+  - Автоматические labels (priority + category)
+  - Форматирование body с чеклистами
+- 123 теста для cache, demo, GitHub Issues
+
+---
+
+## [0.7.4] - 2025-01-03
+
+### Added
+- Упрощённая терминология для нетехнической аудитории
+- 50 интеграционных тестов для критических API endpoints
+
+### Fixed
+- BUG-010: Пустые badges на странице проекта
+- BUG-011: Ложное предупреждение "AI анализ не выполнен"
+- BUG-014: Уточняющие вопросы в Full Analysis
+
+---
+
+## [0.7.0] - 2025-01-01
+
+### Added
+- **Claude Opus 4.5** — миграция для глубокого анализа
+- **AI Result Validation** — валидация и санитизация ответов LLM
+- 118 новых тестов для validator, prompts, model-config
+
+### Fixed
+- BUG-003: Модель Opus 4 → Opus 4.5
+- BUG-004: Competitor Analysis не запускался в Full Analysis
+- BUG-005: Gap Detection validation с fundamental_mismatch
+- BUG-006: Google Trends возвращал HTML вместо JSON
+
+---
+
+## [0.6.6] - 2024-12-31
+
+### Added
+- **Google Trends интеграция** — рыночный спрос, графики
+- **Расширенный экспорт** — Markdown + JSON с выбором секций
+- **Full Analysis Chat** — чат с полным контекстом
+
+---
+
+## [0.6.5] - 2024-12-30
+
+### Added
+- **Wizard форма** — пошаговый ввод для Full Analysis
+- **Редизайн Gap Cards** — actionable дизайн с инструкциями
+- **QuickStart Onboarding** — welcome модал для новых пользователей
+- **TopNav** — компонент верхней навигации
+
+---
+
+## [0.6.4] - 2024-12-29
+
+### Fixed
+- BUG-001: Gap Detection с пустыми URL конкурентов
+- BUG-002: Gap Detection LLM validation failure
+
+---
+
+## [0.6.3] - 2024-12-29
+
+### Added
+- **Multi-Metric Score** — 4 метрики вместо одного Alignment Score
+- **Skeleton Loading** — загрузочные скелетоны с анимациями
+- **CSS Animations** — fadeIn, fadeInUp, scaleIn, stagger
+- **Detailed Progress** — индикатор с таймером и прогресс-баром
+
+---
+
+## [0.6.2] - 2024-12-28
+
+### Fixed
+- Full Analysis clarification — показ уточняющих вопросов
+- Form validation feedback — объяснение блокировки кнопки
+
+---
+
+## [0.6.0] - 2024-12-28
+
+### Added
+- **Auth & Dashboard** — Supabase интеграция
+  - Email аутентификация (login/signup)
+  - Dashboard с проектами
+  - CRUD операции
+  - RLS политики безопасности
+- Табы анализов на странице проекта
+- Задачи сгруппированы по проектам
+
+---
+
+## [0.5.0] - 2024-12-28
+
+### Added
+- **Competitor Analysis** — анализ конкурентов
+  - Парсинг сайтов (Cheerio)
+  - Матрица сравнения фич
+  - Market Position detection
+  - Динамические соцсети (15+ платформ)
+
+---
+
+## [0.4.0] - 2024-12-27
+
+### Added
+- **Business Model Canvas AI** — 9 блоков BMC
+  - Загрузка документов (PDF, DOCX)
+  - Уточняющие вопросы
+  - Определение стадии бизнеса
+- **Gap Detection** — поиск разрывов
+  - Alignment Score (0-100)
+  - Verdict (ON_TRACK/ITERATE/PIVOT)
+  - 9 категорий gaps
+- **Full Analysis Mode** — объединение всех анализов
+
+---
 
 ## [0.3.5] - 2024-12-27
 

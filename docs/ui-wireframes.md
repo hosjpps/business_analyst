@@ -34,10 +34,13 @@
 │      ├── Questions List                                         │
 │      └── Submit Answers                                         │
 │                                                                 │
-│   [Future]                                                      │
-│   5. Dashboard (Фаза 5)                                         │
-│   6. Project Detail (Фаза 5)                                    │
-│   7. Weekly Report (Фаза 6)                                     │
+│   [Implemented]                                                 │
+│   5. Dashboard (/dashboard) ✅                                  │
+│   6. Project Detail (/projects/[id]) ✅                         │
+│   7. History Tab ✅                                             │
+│                                                                 │
+│   [Planned]                                                     │
+│   8. Weekly Report (Future)                                     │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -473,7 +476,7 @@
 
 ---
 
-## 6. Dashboard (Фаза 5)
+## 6. Dashboard (/dashboard) ✅
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -527,7 +530,7 @@
 App
 ├── Header
 │   ├── Logo
-│   └── UserMenu (Фаза 5)
+│   └── UserMenu ✅
 │
 ├── ModeSelector
 │   ├── ModeCard (business)

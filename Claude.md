@@ -301,7 +301,7 @@
 
 ## Текущий план разработки: UX Improvements
 
-> Детальный план: [docs/MASTER_PLAN.md](./docs/MASTER_PLAN.md)
+> Все спринты завершены. Архитектура: [docs/ARCHITECTURE_DETAILED.md](./docs/ARCHITECTURE_DETAILED.md)
 
 ### Статус спринтов
 
@@ -663,23 +663,20 @@ npm run test:e2e:ui    # Playwright UI режим
 npm run test:e2e:debug # Debug mode
 ```
 
-Детальный план с задачами: [ROADMAP.md](./ROADMAP.md)
-
 ---
 
 ## Документация
 
 | Документ | Описание |
 |----------|----------|
-| [docs/MASTER_PLAN.md](./docs/MASTER_PLAN.md) | **ГЛАВНЫЙ ПЛАН** — спринты, задачи, тест-чеклисты |
-| [ROADMAP.md](./ROADMAP.md) | План разработки фич (устаревший) |
-| [docs/UX_FEEDBACK_AND_FIXES.md](./docs/UX_FEEDBACK_AND_FIXES.md) | UX анализ и улучшения |
 | [docs/README.md](./docs/README.md) | Навигация по документации |
-| [docs/ARCHITECTURE_DETAILED.md](./docs/ARCHITECTURE_DETAILED.md) | User journey, data flow, edge cases |
+| [docs/ARCHITECTURE_DETAILED.md](./docs/ARCHITECTURE_DETAILED.md) | Архитектура: user journeys, data flow, edge cases |
 | [docs/api-spec.md](./docs/api-spec.md) | API endpoints, примеры, лимиты |
 | [docs/data-models.md](./docs/data-models.md) | TypeScript типы, Zod схемы |
 | [docs/prompts.md](./docs/prompts.md) | LLM промпты |
 | [docs/ui-wireframes.md](./docs/ui-wireframes.md) | UI структура, wireframes |
+| [docs/changelog.md](./docs/changelog.md) | История изменений |
+| [docs/testing.md](./docs/testing.md) | Тестирование (1364 unit + 66 E2E) |
 
 ---
 

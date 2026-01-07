@@ -9,15 +9,15 @@
 ```
 docs/
 ├── README.md                 ← Вы здесь
-├── MASTER_PLAN.md            # Главный план разработки
-├── ARCHITECTURE_DETAILED.md  # Детальная архитектура
+├── ARCHITECTURE_DETAILED.md  # Архитектура (user journeys, data flow)
 ├── api-spec.md               # Спецификация API
 ├── data-models.md            # Модели данных + Zod схемы
 ├── prompts.md                # LLM промпты
 ├── ui-wireframes.md          # Структура UI
-├── testing.md                # Тестирование (1364 теста)
+├── testing.md                # Тестирование (1364 unit + 66 E2E)
+├── changelog.md              # История изменений
 ├── project-status.md         # Текущий статус
-└── TIER1_IMPLEMENTATION_PLAN.md  # Tier 1 фичи
+└── archive/                  # Архив (исторические документы)
 ```
 
 ---
@@ -80,13 +80,6 @@ docs/
 
 ## Ключевые документы
 
-### ROADMAP.md (корень проекта)
-
-Детальный план разработки:
-- 8 фаз с задачами
-- Критерии готовности
-- Чеклисты
-
 ### CLAUDE.md (корень проекта)
 
 Главный README проекта:
@@ -95,6 +88,14 @@ docs/
 - API reference
 - Quick Start
 - Deployment
+
+### README.md (корень проекта)
+
+Публичный README:
+- Production URL
+- Установка
+- API endpoints
+- Технологии
 
 ---
 
@@ -259,5 +260,5 @@ projects          # Проекты
 ## Links
 
 - [GitHub Repository](../)
-- [ROADMAP](../ROADMAP.md)
 - [CLAUDE.md](../CLAUDE.md)
+- [Production](https://business-analyst-beige.vercel.app/)
