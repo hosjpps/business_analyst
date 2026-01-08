@@ -65,7 +65,7 @@
 
 ---
 
-## Текущий статус: v0.9.0
+## Текущий статус: v0.9.1
 
 ### Готово
 
@@ -259,6 +259,17 @@
 **Bug Fixes (v0.9.0):**
 - [x] BUG-015: E2E тесты падали из-за неправильных селекторов — обновлены селекторы для matching с реальной DOM
 - [x] BUG-016: React warning в DemoBadge component — исправлено
+
+**Security & Quality Fixes (v0.9.1):**
+- [x] SEC-001: XSS prevention в clipboard fallback — безопасная реализация копирования
+- [x] SEC-002: Zip bomb protection — лимит распаковки, ratio check, блок nested zip
+- [x] PERF-001: window.location.reload() → React state management (page.tsx)
+- [x] QUAL-001: Cache key iteration bug — fix для модификации Map во время итерации
+- [x] QUAL-002: Type guard для безопасного приведения типов (hasAlignmentScore)
+- [x] QUAL-003: Token tracking в competitor analysis (_meta.tokens_used)
+- [x] QUAL-004: Centralized localStorage error logging (logStorageError)
+- [x] QUAL-005: Silent catch blocks → debug logging (UploadForm)
+- [x] UI-001: PageLoader компонент — consistent Suspense fallbacks
 
 **Logger Migration (v0.9.0):**
 - [x] Замена всех console.* на logger utility в production коде
