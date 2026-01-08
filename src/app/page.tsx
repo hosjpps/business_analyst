@@ -124,7 +124,7 @@ function Home() {
   // Project saving state (saveToProject defaults to true when authenticated with projects)
   const [userProjects, setUserProjects] = useState<SimpleProject[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [saveToProject, setSaveToProject] = useState(true); // Default ON - user must choose project or disable
+  const [saveToProject, setSaveToProject] = useState(false); // Default OFF - enabled after auth check if user has projects
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [savingToProject, setSavingToProject] = useState(false);
   const [savedToProjectMessage, setSavedToProjectMessage] = useState<string | null>(null);
@@ -158,13 +158,15 @@ function Home() {
             if (projects.length === 1 && !projectParam) {
               setSelectedProjectId(projects[0].id);
             }
+
+            // Enable save to project if user has projects
+            if (projects.length > 0) {
+              setSaveToProject(true);
+            }
           }
         } catch (err) {
           logger.error('Failed to load projects', err instanceof Error ? err : undefined);
         }
-      } else {
-        // Not authenticated - disable save by default
-        setSaveToProject(false);
       }
     };
 
@@ -1425,9 +1427,11 @@ function Home() {
           {!(analysisMode === 'full' && useWizardMode) && (
           <div className="submit-section">
             <button
+              type="submit"
               className="submit-btn"
               onClick={handleAnalyze}
               disabled={loading || !canSubmit || (saveToProject && !selectedProjectId) || isDemo}
+              data-testid="submit-analysis"
             >
               {loading
                 ? analysisMode === 'full'

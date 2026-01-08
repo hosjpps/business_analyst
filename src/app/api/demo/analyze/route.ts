@@ -13,6 +13,7 @@ import { checkDemoLimit, recordDemoUsage } from '@/lib/demo/demo-limiter';
 import { getClientIP } from '@/lib/utils/rate-limiter';
 import { DemoAnalyzeRequestSchema } from '@/types/demo';
 import type { DemoScenariosResponse, DemoAnalyzeResponse } from '@/types/demo';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // GET: List available scenarios
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<DemoAnaly
       demoLimit,
     });
   } catch (error) {
-    console.error('Demo API error:', error);
+    logger.error('Demo API error', error);
 
     return NextResponse.json(
       {

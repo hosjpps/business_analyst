@@ -50,6 +50,10 @@ export class HomePage {
   readonly demoButton: Locator;
   readonly demoScenarioSelector: Locator;
 
+  // QuickStart modal
+  readonly quickStartOverlay: Locator;
+  readonly quickStartCloseButton: Locator;
+
   constructor(page: Page) {
     this.page = page;
 
@@ -95,20 +99,52 @@ export class HomePage {
     // Demo
     this.demoButton = page.locator(SELECTORS.demoButton);
     this.demoScenarioSelector = page.locator(SELECTORS.demoScenarioSelector);
+
+    // QuickStart modal
+    this.quickStartOverlay = page.locator('.quickstart-overlay');
+    this.quickStartCloseButton = page.locator('.quickstart-close');
   }
 
   /**
    * Навигация на главную страницу
+   * Автоматически закрывает QuickStart модал если он появился
    */
   async goto() {
+    // Устанавливаем localStorage ПЕРЕД загрузкой страницы чтобы QuickStart не показывался
+    await this.page.addInitScript(() => {
+      localStorage.setItem('quickstart-dismissed', 'true');
+    });
+
     await this.page.goto('/');
     await this.page.waitForLoadState('networkidle');
+
+    // На случай если localStorage не сработал - закрываем модал вручную
+    await this.dismissQuickStart();
+  }
+
+  /**
+   * Закрытие QuickStart модала если он показан
+   */
+  async dismissQuickStart() {
+    try {
+      // Ждём немного чтобы модал успел появиться
+      await this.page.waitForTimeout(500);
+
+      if (await this.quickStartOverlay.isVisible()) {
+        await this.quickStartCloseButton.click();
+        // Ждём пока модал закроется
+        await this.quickStartOverlay.waitFor({ state: 'hidden', timeout: 2000 });
+      }
+    } catch {
+      // Модал не показался - это нормально
+    }
   }
 
   /**
    * Выбор режима анализа
+   * @param useClassicMode - для Full Analysis: переключиться на classic mode (все поля сразу)
    */
-  async selectMode(mode: 'code' | 'business' | 'full' | 'competitor') {
+  async selectMode(mode: 'code' | 'business' | 'full' | 'competitor', useClassicMode = false) {
     const modeMap = {
       code: this.modeCode,
       business: this.modeBusiness,
@@ -119,6 +155,22 @@ export class HomePage {
     await modeMap[mode].click();
     // Подождать анимацию переключения
     await this.page.waitForTimeout(300);
+
+    // Для Full Analysis: переключиться на classic mode если нужно
+    if (mode === 'full' && useClassicMode) {
+      await this.switchToClassicMode();
+    }
+  }
+
+  /**
+   * Переключение Full Analysis на classic mode (все поля сразу)
+   */
+  async switchToClassicMode() {
+    const classicModeBtn = this.page.locator('button:has-text("Все поля сразу")');
+    if (await classicModeBtn.isVisible()) {
+      await classicModeBtn.click();
+      await this.page.waitForTimeout(300);
+    }
   }
 
   /**

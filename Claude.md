@@ -256,14 +256,25 @@
   - CSS: sr-only, focus-visible, prefers-reduced-motion, prefers-contrast
   - 55 тестов для accessibility
 
+**Bug Fixes (v0.9.0):**
+- [x] BUG-015: E2E тесты падали из-за неправильных селекторов — обновлены селекторы для matching с реальной DOM
+- [x] BUG-016: React warning в DemoBadge component — исправлено
+
+**Logger Migration (v0.9.0):**
+- [x] Замена всех console.* на logger utility в production коде
+  - API routes: analyze-competitors, projects, demo/analyze, chat/stream
+  - Lib: redis-client.ts, rate-limiter.ts, retry.ts, env.ts, document-parser.ts
+  - Components: AuthForm.tsx, UploadForm.tsx
+
 **Tier 3: Testing & Performance (v0.9.0):**
 - [x] E2E Testing with Playwright — полноценное end-to-end тестирование
   - Multi-browser support: Chromium, Firefox, WebKit, Mobile Chrome/Safari
   - Page Object Model: HomePage, AuthPage, DashboardPage
   - Test suites: demo-mode, code-analysis, business-analysis, full-analysis, auth
   - CI/CD workflow: `.github/workflows/e2e.yml`
-  - Timeouts: 120s для LLM операций, 60s для UI
-  - 47 E2E тестов (5 test suites)
+  - Timeouts: 120s для LLM операций, 15s для UI actions
+  - BYPASS_DEMO_LIMIT env для тестов (обход rate limiting)
+  - 51 E2E тестов (46 passed, 5 skipped)
 - [x] Performance Optimizations — оптимизация производительности
   - Bundle Analyzer (`npm run analyze`) для анализа размера бандла
   - Code Splitting с `next/dynamic` — 10 lazy-loaded компонентов
@@ -279,7 +290,7 @@
 - [x] E2E testing с Playwright (multi-browser)
 - [x] Bundle analyzer для мониторинга размера
 - [x] Web Vitals для мониторинга производительности
-- [x] 1364 unit + integration тестов + 66 E2E тестов (полное покрытие)
+- [x] 1364 unit + integration тестов + 51 E2E тестов (полное покрытие)
 
 ---
 
@@ -324,7 +335,7 @@
 | VersionDiff | ✅ Интегрирован | Добавлен в страницу проекта (v0.8.3) |
 | Console cleanup | ✅ Выполнено | Заменено на logger utility |
 | Error Boundaries | ✅ Созданы | error.tsx, global-error.tsx, dashboard/error.tsx, projects/[id]/error.tsx |
-| E2E Tests | ✅ Настроены | 66 тестов, 5 браузеров (Chromium, Firefox, WebKit, Mobile) |
+| E2E Tests | ✅ Настроены | 51 тестов (46 passed, 5 skipped), 5 браузеров |
 
 ### Sprint 0: Тест-чеклист (для тестировщика)
 

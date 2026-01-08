@@ -79,7 +79,18 @@
       "Bash(src/__tests__/utils/logger.test.ts )",
       "Bash(src/components/export/GitHubExportButton.tsx )",
       "Bash(src/components/results/GapsView.tsx )",
-      "Bash(src/components/results/TrendsChart.tsx)"
+      "Bash(src/components/results/TrendsChart.tsx)",
+      "Bash(git -C /Users/mac/Git_checker_v2/git_reps_checker status)",
+      "Bash(git -C /Users/mac/Git_checker_v2/git_reps_checker diff .claude/settings.local.json)",
+      "Bash(git -C /Users/mac/Git_checker_v2/git_reps_checker diff --stat)",
+      "Bash(git -C /Users/mac/Git_checker_v2/git_reps_checker diff src/app/api/analyze/route.ts)",
+      "Bash(git -C /Users/mac/Git_checker_v2/git_reps_checker diff src/app/page.tsx)",
+      "Bash(npm run analyze:*)",
+      "Bash(open:*)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(npm run test:e2e:chromium:*)",
+      "Bash(BYPASS_DEMO_LIMIT=true npm run test:e2e:chromium:*)"
     ]
   }
 }

@@ -11,6 +11,7 @@ import { createGitHubIssuesService } from '@/lib/github/issues-service';
 import { ExportIssuesRequestSchema } from '@/types/github-issues';
 import type { ExportIssuesResponse, ExportTask } from '@/types/github-issues';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Verify Access Schema
@@ -141,7 +142,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Export to GitHub Issues error:', error);
+    logger.error('Export to GitHub Issues error', error);
 
     return NextResponse.json(
       {
@@ -199,7 +200,7 @@ export async function GET(request: NextRequest) {
       message: result.message,
     });
   } catch (error) {
-    console.error('Verify GitHub access error:', error);
+    logger.error('Verify GitHub access error', error);
 
     return NextResponse.json(
       {

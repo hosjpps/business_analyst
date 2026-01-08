@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Schemas
@@ -84,7 +85,7 @@ export async function GET(
         { status: 404 }
       );
     }
-    console.error('Error fetching project:', error);
+    logger.error('Error fetching project', error);
     return NextResponse.json(
       { error: 'Failed to fetch project' },
       { status: 500 }
@@ -140,7 +141,7 @@ export async function PATCH(
           { status: 404 }
         );
       }
-      console.error('Error updating project:', error);
+      logger.error('Error updating project', error);
       return NextResponse.json(
         { error: 'Failed to update project' },
         { status: 500 }
@@ -183,7 +184,7 @@ export async function DELETE(
     .eq('id', id);
 
   if (error) {
-    console.error('Error deleting project:', error);
+    logger.error('Error deleting project', error);
     return NextResponse.json(
       { error: 'Failed to delete project' },
       { status: 500 }

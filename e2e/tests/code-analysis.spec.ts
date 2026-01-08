@@ -70,10 +70,14 @@ test.describe('Code Analysis Flow', () => {
     const githubInput = page.locator('[data-testid="github-url"]');
     await githubInput.fill(GITHUB_REPOS.shadcnUi);
 
-    // Кнопка submit должна быть активна
-    const submitButton = page.locator('button[type="submit"]:has-text("Анализировать")');
+    // Также нужно заполнить описание проекта (обязательное поле)
+    const descriptionInput = page.locator('textarea[placeholder*="проект"], textarea[id="description"]');
+    await descriptionInput.fill('UI библиотека компонентов для React');
 
-    await expect(submitButton).toBeEnabled();
+    // Кнопка submit должна быть активна
+    const submitButton = page.locator('[data-testid="submit-analysis"], button[type="submit"]:has-text("Анализировать")');
+
+    await expect(submitButton.first()).toBeEnabled();
   });
 
   test('should show progress indicator when analysis starts', async ({
@@ -86,9 +90,13 @@ test.describe('Code Analysis Flow', () => {
     const githubInput = page.locator('[data-testid="github-url"]');
     await githubInput.fill(GITHUB_REPOS.shadcnUi);
 
+    // Заполняем описание (обязательное поле)
+    const descriptionInput = page.locator('textarea[placeholder*="проект"], textarea[id="description"]');
+    await descriptionInput.fill('UI библиотека компонентов для React');
+
     // Отправляем
-    const submitButton = page.locator('button[type="submit"]:has-text("Анализировать")');
-    await submitButton.click();
+    const submitButton = page.locator('[data-testid="submit-analysis"], button[type="submit"]:has-text("Анализировать")');
+    await submitButton.first().click();
 
     // Должен появиться индикатор прогресса
     const progressIndicator = page.locator('[data-testid="progress-indicator"]');

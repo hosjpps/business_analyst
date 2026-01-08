@@ -8,6 +8,7 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { getRedisClient, isRedisAvailable } from './redis-client';
 import type { RateLimitConfig, RateLimitResult } from './types';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Types
@@ -132,7 +133,7 @@ export async function checkRateLimit(
         resetInSeconds: Math.ceil((result.reset - Date.now()) / 1000),
       };
     } catch (error) {
-      console.error('[RateLimiter] Redis error, falling back to memory:', error);
+      logger.error('RateLimiter Redis error, falling back to memory', error);
       // Fall through to memory limiter
     }
   }

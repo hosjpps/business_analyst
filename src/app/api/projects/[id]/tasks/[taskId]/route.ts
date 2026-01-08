@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Schemas
@@ -71,7 +72,7 @@ export async function PATCH(
       .single();
 
     if (updateError) {
-      console.error('Error updating task:', updateError);
+      logger.error('Error updating task', updateError);
       return NextResponse.json(
         { error: 'Failed to update task' },
         { status: 500 }
@@ -129,7 +130,7 @@ export async function DELETE(
     .eq('id', taskId);
 
   if (deleteError) {
-    console.error('Error deleting task:', deleteError);
+    logger.error('Error deleting task', deleteError);
     return NextResponse.json(
       { error: 'Failed to delete task' },
       { status: 500 }

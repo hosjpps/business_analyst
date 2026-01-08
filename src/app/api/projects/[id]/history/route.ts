@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Types for History API
@@ -106,7 +107,7 @@ export async function GET(
       .order('version', { ascending: true });
 
     if (error) {
-      console.error('Error fetching versions for compare:', error);
+      logger.error('Error fetching versions for compare', error);
       return NextResponse.json(
         { error: 'Failed to fetch versions' },
         { status: 500 }
@@ -143,7 +144,7 @@ export async function GET(
   const { data: history, count, error } = await query;
 
   if (error) {
-    console.error('Error fetching history:', error);
+    logger.error('Error fetching history', error);
     return NextResponse.json(
       { error: 'Failed to fetch history' },
       { status: 500 }
@@ -213,7 +214,7 @@ export async function PATCH(
       .single();
 
     if (updateError) {
-      console.error('Error updating label:', updateError);
+      logger.error('Error updating label', updateError);
       return NextResponse.json(
         { error: 'Failed to update label' },
         { status: 500 }

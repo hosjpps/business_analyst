@@ -7,6 +7,7 @@ import { CompetitorInputSchema } from '@/types/competitor';
 import { analyzeCompetitors, analyzeCompetitorsQuick } from '@/lib/competitor/analyzer';
 import { parseMultipleWebsites } from '@/lib/competitor/website-parser';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Request Schema
@@ -140,7 +141,7 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
-    console.error('Competitor analysis error:', error);
+    logger.error('Competitor analysis error', error);
 
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';

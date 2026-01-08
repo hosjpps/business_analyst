@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { checkRateLimit, getClientIP, RATE_LIMIT_CONFIG } from '@/lib/utils/rate-limiter';
+import { logger } from '@/lib/utils/logger';
 
 // Dynamic import for google-trends-api (CommonJS module)
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -219,7 +220,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<TrendsRes
           ];
         } catch {
           // Related queries might fail, continue without them
-          console.warn(`Failed to fetch related queries for "${keyword}"`);
+          logger.warn(`Failed to fetch related queries for "${keyword}"`);
         }
 
         // Calculate statistics
@@ -236,7 +237,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<TrendsRes
           trend: calculateTrend(data),
         });
       } catch (error) {
-        console.error(`Failed to fetch trends for "${keyword}":`, error);
+        logger.error(`Failed to fetch trends for "${keyword}"`, error);
         // Add empty result for failed keyword
         results.push({
           keyword,
@@ -259,7 +260,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<TrendsRes
       },
     });
   } catch (error) {
-    console.error('Trends API error:', error);
+    logger.error('Trends API error', error);
     return NextResponse.json(
       {
         success: false,

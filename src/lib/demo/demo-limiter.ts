@@ -38,6 +38,16 @@ if (typeof setInterval !== 'undefined') {
  * Check if demo is allowed for given identifier (IP address)
  */
 export function checkDemoLimit(identifier: string): DemoLimitResult {
+  // Bypass limit in test/CI environment
+  if (process.env.BYPASS_DEMO_LIMIT === 'true' || process.env.CI === 'true') {
+    return {
+      allowed: true,
+      remaining: DEMO_LIMITS.maxDemos,
+      resetIn: 0,
+      total: DEMO_LIMITS.maxDemos,
+    };
+  }
+
   const now = Date.now();
   const entry = demoUsageStore.get(identifier);
 
@@ -76,6 +86,16 @@ export function checkDemoLimit(identifier: string): DemoLimitResult {
  * Record a demo usage
  */
 export function recordDemoUsage(identifier: string, scenarioId: DemoScenarioId): DemoLimitResult {
+  // Bypass limit in test/CI environment
+  if (process.env.BYPASS_DEMO_LIMIT === 'true' || process.env.CI === 'true') {
+    return {
+      allowed: true,
+      remaining: DEMO_LIMITS.maxDemos,
+      resetIn: 0,
+      total: DEMO_LIMITS.maxDemos,
+    };
+  }
+
   const now = Date.now();
   const entry = demoUsageStore.get(identifier);
 

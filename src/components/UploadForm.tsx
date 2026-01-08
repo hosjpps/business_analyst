@@ -109,16 +109,14 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
           const zipFiles = await handleZipFile(file);
           newFiles.push(...zipFiles);
           setUploadStatus(`Извлечено ${zipFiles.length} файлов из ${file.name}`);
-        } catch (err) {
+        } catch {
           onError(`Не удалось распаковать ${file.name}`);
-          console.error(err);
         }
         continue;
       }
 
-      // Regular files
+      // Regular files - skip large files silently
       if (file.size > MAX_FILE_SIZE) {
-        console.log(`Пропущен ${file.name}: слишком большой`);
         continue;
       }
 

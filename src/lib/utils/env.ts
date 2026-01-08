@@ -2,6 +2,8 @@
 // Environment Variables Validation
 // ===========================================
 
+import { logger } from './logger';
+
 interface EnvConfig {
   OPENROUTER_API_KEY: string;
   GITHUB_TOKEN?: string;
@@ -52,7 +54,7 @@ export function validateEnv(): EnvConfig {
 
   if (errors.length > 0) {
     const message = `Environment validation failed:\n${errors.map(e => `  - ${e}`).join('\n')}`;
-    console.error(message);
+    logger.error(message);
     throw new Error(message);
   }
 
@@ -65,7 +67,7 @@ export function validateEnv(): EnvConfig {
   };
 
   _validated = true;
-  console.log('Environment validated successfully');
+  logger.debug('Environment validated successfully');
 
   return _config;
 }

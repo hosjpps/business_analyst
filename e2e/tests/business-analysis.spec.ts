@@ -127,8 +127,9 @@ test.describe('Business Analysis Flow', () => {
     // Ждём результаты
     await page.waitForTimeout(2000);
 
-    // Trends может быть collapsed или не показан в демо - проверяем что страница загрузилась
-    const pageLoaded = await page.locator('.analysis-results, [data-testid="business-canvas"], .business-canvas').isVisible();
+    // Demo mode shows full analysis results with multi-metric-score, gaps-view, canvas-view
+    // Trends may be collapsed or not shown in demo - check that results page loaded
+    const pageLoaded = await page.locator('.multi-metric-score, .gaps-view, .canvas-view, .full-results-header').first().isVisible();
     expect(pageLoaded).toBeTruthy();
   });
 

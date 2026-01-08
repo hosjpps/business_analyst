@@ -14,6 +14,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.9.0] - 2025-01-08
+
+### Added
+- **BYPASS_DEMO_LIMIT** — environment variable для тестов (обход лимита демо)
+- **E2E Tests** — 46 passed, 5 skipped (из 51)
+  - Обновлены селекторы для matching с реальной DOM структурой
+  - Добавлен BYPASS_DEMO_LIMIT в playwright.config.ts webServer env
+
+### Changed
+- **Logger Migration** — замена всех console.* вызовов на logger utility
+  - API routes: analyze-competitors, projects, demo/analyze, chat/stream
+  - Lib: redis-client.ts, rate-limiter.ts, retry.ts, env.ts, document-parser.ts
+  - Components: AuthForm.tsx, UploadForm.tsx
+- **Demo Rate Limiter** — добавлена проверка BYPASS_DEMO_LIMIT и CI environment
+
+### Fixed
+- BUG-015: E2E тесты падали из-за неправильных селекторов (32→0 failed)
+- BUG-016: React warning в DemoBadge component
+
+---
+
 ## [0.8.3] - 2025-01-07
 
 ### Added

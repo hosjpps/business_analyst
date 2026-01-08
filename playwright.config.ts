@@ -114,6 +114,7 @@ export default defineConfig({
     timeout: 120000,
     env: {
       NODE_ENV: 'test',
+      BYPASS_DEMO_LIMIT: 'true',
     },
   },
 

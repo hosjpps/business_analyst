@@ -1,4 +1,5 @@
 import type { DocumentInput, DocumentType } from '@/types/business';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Constants
@@ -57,7 +58,7 @@ async function parsePDF(buffer: Buffer, name: string): Promise<ParsedDocument> {
       truncated,
     };
   } catch (error) {
-    console.error(`Error parsing PDF ${name}:`, error);
+    logger.error(`Error parsing PDF ${name}`, error);
     throw new Error(`Failed to parse PDF: ${name}`);
   }
 }
@@ -83,7 +84,7 @@ async function parseDOCX(buffer: Buffer, name: string): Promise<ParsedDocument> 
 
     // Log warnings if any
     if (result.messages && result.messages.length > 0) {
-      console.warn(`Warnings parsing DOCX ${name}:`, result.messages);
+      logger.warn(`Warnings parsing DOCX ${name}`, { messages: result.messages });
     }
 
     return {
@@ -93,7 +94,7 @@ async function parseDOCX(buffer: Buffer, name: string): Promise<ParsedDocument> 
       truncated,
     };
   } catch (error) {
-    console.error(`Error parsing DOCX ${name}:`, error);
+    logger.error(`Error parsing DOCX ${name}`, error);
     throw new Error(`Failed to parse DOCX: ${name}`);
   }
 }
@@ -171,7 +172,7 @@ export async function parseDocuments(inputs: DocumentInput[]): Promise<ParseResu
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       errors.push(`${input.name}: ${message}`);
-      console.error(`Failed to parse document ${input.name}:`, error);
+      logger.error(`Failed to parse document ${input.name}`, error);
     }
   }
 

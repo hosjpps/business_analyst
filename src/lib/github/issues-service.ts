@@ -17,6 +17,7 @@ import {
   PRIORITY_LABELS,
   CATEGORY_LABELS,
 } from '@/types/github-issues';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Types
@@ -135,7 +136,7 @@ export class GitHubIssuesService {
         });
       } catch (createError) {
         // Ignore label creation errors (might already exist or no permission)
-        console.warn(`Could not create label "${name}":`, createError);
+        logger.warn(`Could not create label "${name}"`, { error: createError });
       }
     }
   }

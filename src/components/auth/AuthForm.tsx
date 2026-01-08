@@ -38,9 +38,8 @@ export function AuthForm({ mode }: AuthFormProps) {
       if (result?.error) {
         setError(result.error);
       }
-    } catch (err) {
+    } catch {
       // Redirect happened, this is expected
-      console.log('Redirect successful');
     } finally {
       setLoading(false);
     }

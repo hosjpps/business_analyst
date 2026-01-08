@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Schemas
@@ -53,7 +54,7 @@ export async function GET() {
     .order('updated_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching projects:', error);
+    logger.error('Error fetching projects', error);
     return NextResponse.json(
       { error: 'Failed to fetch projects' },
       { status: 500 }
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating project:', error);
+      logger.error('Error creating project', error);
       return NextResponse.json(
         { error: 'Failed to create project' },
         { status: 500 }

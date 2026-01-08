@@ -6,6 +6,7 @@
  */
 
 import { Redis } from '@upstash/redis';
+import { logger } from '@/lib/utils/logger';
 
 // ===========================================
 // Redis Client Singleton
@@ -29,7 +30,7 @@ export function getRedisClient(): Redis | null {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
-    console.log('[Cache] Redis not configured, using in-memory fallback');
+    logger.debug('Redis not configured, using in-memory fallback');
     redisAvailable = false;
     return null;
   }
@@ -40,10 +41,10 @@ export function getRedisClient(): Redis | null {
       token,
     });
     redisAvailable = true;
-    console.log('[Cache] Redis client initialized');
+    logger.debug('Redis client initialized');
     return redisClient;
   } catch (error) {
-    console.error('[Cache] Failed to initialize Redis client:', error);
+    logger.error('Failed to initialize Redis client', error);
     redisAvailable = false;
     return null;
   }
@@ -85,7 +86,7 @@ export async function safeRedisGet<T>(key: string): Promise<T | null> {
     const value = await client.get<T>(key);
     return value;
   } catch (error) {
-    console.error(`[Cache] Redis GET error for key ${key}:`, error);
+    logger.error(`Redis GET error for key ${key}`, error);
     return null;
   }
 }
@@ -109,7 +110,7 @@ export async function safeRedisSet<T>(
     }
     return true;
   } catch (error) {
-    console.error(`[Cache] Redis SET error for key ${key}:`, error);
+    logger.error(`Redis SET error for key ${key}`, error);
     return false;
   }
 }
@@ -125,7 +126,7 @@ export async function safeRedisDel(key: string): Promise<boolean> {
     await client.del(key);
     return true;
   } catch (error) {
-    console.error(`[Cache] Redis DEL error for key ${key}:`, error);
+    logger.error(`Redis DEL error for key ${key}`, error);
     return false;
   }
 }
@@ -141,7 +142,7 @@ export async function safeRedisExists(key: string): Promise<boolean> {
     const exists = await client.exists(key);
     return exists === 1;
   } catch (error) {
-    console.error(`[Cache] Redis EXISTS error for key ${key}:`, error);
+    logger.error(`Redis EXISTS error for key ${key}`, error);
     return false;
   }
 }
@@ -156,7 +157,7 @@ export async function safeRedisIncr(key: string): Promise<number | null> {
   try {
     return await client.incr(key);
   } catch (error) {
-    console.error(`[Cache] Redis INCR error for key ${key}:`, error);
+    logger.error(`Redis INCR error for key ${key}`, error);
     return null;
   }
 }
@@ -171,7 +172,7 @@ export async function safeRedisTtl(key: string): Promise<number> {
   try {
     return await client.ttl(key);
   } catch (error) {
-    console.error(`[Cache] Redis TTL error for key ${key}:`, error);
+    logger.error(`Redis TTL error for key ${key}`, error);
     return -2;
   }
 }
@@ -187,7 +188,7 @@ export async function safeRedisExpire(key: string, seconds: number): Promise<boo
     const result = await client.expire(key, seconds);
     return result === 1;
   } catch (error) {
-    console.error(`[Cache] Redis EXPIRE error for key ${key}:`, error);
+    logger.error(`Redis EXPIRE error for key ${key}`, error);
     return false;
   }
 }
@@ -211,7 +212,7 @@ export async function safeRedisScan(pattern: string): Promise<string[]> {
 
     return keys;
   } catch (error) {
-    console.error(`[Cache] Redis SCAN error for pattern ${pattern}:`, error);
+    logger.error(`Redis SCAN error for pattern ${pattern}`, error);
     return [];
   }
 }
@@ -236,7 +237,7 @@ export async function safeRedisDelPattern(pattern: string): Promise<number> {
 
     return deleted;
   } catch (error) {
-    console.error(`[Cache] Redis DEL pattern error for ${pattern}:`, error);
+    logger.error(`Redis DEL pattern error for ${pattern}`, error);
     return 0;
   }
 }

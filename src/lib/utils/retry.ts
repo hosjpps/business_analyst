@@ -2,6 +2,8 @@
 // Retry Utility with Exponential Backoff
 // ===========================================
 
+import { logger } from './logger';
+
 export interface RetryOptions {
   maxRetries?: number;
   initialDelayMs?: number;
@@ -52,18 +54,18 @@ export async function withRetry<T>(
 
       // Check if this is the last attempt
       if (attempt === opts.maxRetries) {
-        console.error(`All ${opts.maxRetries + 1} attempts failed:`, lastError.message);
+        logger.error(`All ${opts.maxRetries + 1} attempts failed`, lastError);
         throw lastError;
       }
 
       // Check if error is retryable
       if (!opts.retryableErrors(lastError)) {
-        console.error('Non-retryable error:', lastError.message);
+        logger.error('Non-retryable error', lastError);
         throw lastError;
       }
 
       // Log retry attempt
-      console.log(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`, lastError.message);
+      logger.debug(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`, { error: lastError.message });
 
       // Wait before retry
       await sleep(delay);
