@@ -172,7 +172,7 @@ describe('Code Analysis - Response Structure', () => {
   });
 
   it('should validate task categories', () => {
-    const validCategories = ['documentation', 'technical', 'product', 'marketing', 'business'];
+    const validCategories = ['documentation', 'technical', 'product', 'marketing', 'business', 'monetization', 'growth', 'security'];
 
     validCategories.forEach(category => {
       const task = {

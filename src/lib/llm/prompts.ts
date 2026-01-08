@@ -80,7 +80,7 @@ ${filesSection}
 4. **Сгенерируй задачи на неделю** (3-5 задач)
    - Конкретные, выполнимые за 15 мин - 3 часа
    - priority: high | medium | low
-   - category: documentation | technical | product | marketing | business
+   - category: documentation | technical | product | marketing | business | monetization | growth | security
    - depends_on: название задачи-зависимости или null
 
 5. **Если данных недостаточно** — задай 2-3 уточняющих вопроса

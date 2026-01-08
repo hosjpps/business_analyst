@@ -302,7 +302,7 @@ describe('Full Analysis Flow - Data Validation', () => {
       expect(task).toHaveProperty('depends_on');
 
       expect(['high', 'medium', 'low']).toContain(task.priority);
-      expect(['documentation', 'technical', 'product', 'marketing', 'business']).toContain(task.category);
+      expect(['documentation', 'technical', 'product', 'marketing', 'business', 'monetization', 'growth', 'security']).toContain(task.category);
       expect(typeof task.estimated_minutes).toBe('number');
     }
   });

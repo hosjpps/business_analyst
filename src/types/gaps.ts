@@ -188,7 +188,7 @@ export const GapTaskSchema = z.object({
   title: z.string().min(5),
   description: z.string().min(20),
   priority: z.enum(['high', 'medium', 'low']),
-  category: z.enum(['documentation', 'technical', 'product', 'marketing', 'business']),
+  category: z.enum(['documentation', 'technical', 'product', 'marketing', 'business', 'monetization', 'growth', 'security']),
   estimated_minutes: z.number().min(15).max(480), // 15 min to 8 hours
   depends_on: z.string().nullable(),
   addresses_gap: z.string().optional(),

@@ -268,7 +268,7 @@ describe('buildTaskGenerationSystemPrompt', () => {
   });
 
   it('should include task categories', () => {
-    const categories = ['documentation', 'technical', 'product', 'marketing', 'business'];
+    const categories = ['documentation', 'technical', 'product', 'marketing', 'business', 'monetization', 'growth', 'security'];
     categories.forEach(cat => {
       expect(prompt).toContain(cat);
     });

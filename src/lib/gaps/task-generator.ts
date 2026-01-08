@@ -127,11 +127,11 @@ export function generateTasksQuick(gaps: Gap[]): GapTask[] {
 // ===========================================
 
 function gapToTask(gap: Gap): GapTask | null {
-  // Map gap category to task category
+  // Map gap category to task category (now with direct mapping for monetization, growth, security)
   const categoryMap: Record<string, GapTask['category']> = {
-    monetization: 'business',
-    growth: 'marketing',
-    security: 'technical',
+    monetization: 'monetization',
+    growth: 'growth',
+    security: 'security',
     ux: 'product',
     infrastructure: 'technical',
     marketing: 'marketing',

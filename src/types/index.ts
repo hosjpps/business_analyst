@@ -36,7 +36,7 @@ export interface ChatRequest {
 export type ProjectStage = 'documentation' | 'mvp' | 'launched' | 'growing' | 'unknown';
 export type Priority = 'high' | 'medium' | 'low';
 export type Severity = 'high' | 'medium' | 'low';
-export type TaskCategory = 'documentation' | 'technical' | 'product' | 'marketing' | 'business';
+export type TaskCategory = 'documentation' | 'technical' | 'product' | 'marketing' | 'business' | 'monetization' | 'growth' | 'security';
 
 export interface Strength {
   area: string;
@@ -143,7 +143,7 @@ export interface RepoInfo {
 export const ProjectStageSchema = z.enum(['documentation', 'mvp', 'launched', 'growing', 'unknown']);
 export const PrioritySchema = z.enum(['high', 'medium', 'low']);
 export const SeveritySchema = z.enum(['high', 'medium', 'low']);
-export const TaskCategorySchema = z.enum(['documentation', 'technical', 'product', 'marketing', 'business']);
+export const TaskCategorySchema = z.enum(['documentation', 'technical', 'product', 'marketing', 'business', 'monetization', 'growth', 'security']);
 
 export const StrengthSchema = z.object({
   area: z.string(),

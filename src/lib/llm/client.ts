@@ -188,7 +188,7 @@ const TaskSchema = z.object({
   title: z.string(),
   description: z.string(),
   priority: z.enum(['high', 'medium', 'low']),
-  category: z.enum(['documentation', 'technical', 'product', 'marketing', 'business']),
+  category: z.enum(['documentation', 'technical', 'product', 'marketing', 'business', 'monetization', 'growth', 'security']),
   estimated_minutes: z.number(),
   depends_on: z.string().nullable()
 });
