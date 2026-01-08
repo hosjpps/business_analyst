@@ -9,6 +9,10 @@ const MAX_FILE_SIZE = 1024 * 1024; // 1MB для отдельных файлов
 const MAX_ZIP_SIZE = 5 * 1024 * 1024; // 5MB для zip-архивов
 const MAX_TOTAL_FILES = 200;
 
+// Zip bomb protection
+const MAX_EXTRACTED_SIZE = 50 * 1024 * 1024; // 50MB total extracted content
+const MAX_DECOMPRESSION_RATIO = 100; // Max 100x expansion (5MB zip -> 500MB max)
+
 // Паттерны для игнорирования
 const IGNORE_PATTERNS = [
   /^node_modules\//,
@@ -57,7 +61,7 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Обработка zip-архива
+  // Обработка zip-архива с защитой от zip bomb
   const handleZipFile = useCallback(async (file: File): Promise<FileInput[]> => {
     const zip = new JSZip();
     const contents = await zip.loadAsync(file);
@@ -65,18 +69,47 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
 
     const entries = Object.entries(contents.files);
     let processed = 0;
+    let totalExtractedSize = 0;
+
+    // Calculate max allowed extracted size based on compression ratio
+    const maxAllowedSize = Math.min(
+      MAX_EXTRACTED_SIZE,
+      file.size * MAX_DECOMPRESSION_RATIO
+    );
 
     for (const [path, zipEntry] of entries) {
       if (zipEntry.dir) continue;
       if (!shouldIncludeFile(path)) continue;
+
+      // Block nested zip files (potential zip bomb vector)
+      if (path.endsWith('.zip')) {
+        console.debug(`[UploadForm] Skipped nested zip: ${path}`);
+        continue;
+      }
 
       if (extractedFiles.length >= MAX_TOTAL_FILES) {
         setUploadStatus(`Достигнут лимит ${MAX_TOTAL_FILES} файлов`);
         break;
       }
 
+      // Check uncompressed size before extraction (zip bomb protection)
+      // JSZip internal _data contains uncompressed size (not in public types)
+      const zipEntryData = zipEntry as unknown as { _data?: { uncompressedSize?: number } };
+      const uncompressedSize = zipEntryData._data?.uncompressedSize;
+      if (uncompressedSize && uncompressedSize > MAX_FILE_SIZE) {
+        continue; // Skip files that would be too large
+      }
+
       try {
         const content = await zipEntry.async('string');
+
+        // Zip bomb protection: check total extracted size
+        totalExtractedSize += content.length;
+        if (totalExtractedSize > maxAllowedSize) {
+          onError(`Подозрительный архив: превышен лимит распаковки (${Math.round(maxAllowedSize / 1024 / 1024)}MB)`);
+          break;
+        }
+
         if (content.length > MAX_FILE_SIZE) continue;
         if (/[\x00-\x08\x0E-\x1F]/.test(content.slice(0, 1000))) continue;
 
@@ -93,7 +126,7 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
     }
 
     return extractedFiles;
-  }, []);
+  }, [onError]);
 
   // File handling
   const handleFiles = useCallback(async (fileList: FileList) => {

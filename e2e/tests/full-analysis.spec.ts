@@ -173,7 +173,12 @@ test.describe('Full Analysis Flow', () => {
     const demoButton = page.locator('[data-testid="demo-button"], button:has-text("Демо")');
     await demoButton.first().click();
 
+    // Wait for the demo modal to appear
+    const demoModal = page.locator('[data-testid="demo-modal"], .modal-overlay:has-text("демо")');
+    await expect(demoModal.first()).toBeVisible({ timeout: 10000 });
+
     const scenarios = page.locator('[data-testid="demo-scenario-card"], .demo-scenario-card');
+    await expect(scenarios.first()).toBeVisible({ timeout: 5000 });
     await scenarios.first().click();
 
     // Ждём список задач - tasks are shown in .tasks-section or .checklist components

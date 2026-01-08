@@ -228,16 +228,21 @@ class AnalysisCache<T> {
    */
   cleanup(): number {
     const now = Date.now();
-    let cleaned = 0;
 
+    // Collect keys to delete first (avoid modifying Map while iterating)
+    const keysToDelete: string[] = [];
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.config.ttlMs) {
-        this.cache.delete(key);
-        cleaned++;
+        keysToDelete.push(key);
       }
     }
 
-    return cleaned;
+    // Delete collected keys
+    for (const key of keysToDelete) {
+      this.cache.delete(key);
+    }
+
+    return keysToDelete.length;
   }
 }
 
