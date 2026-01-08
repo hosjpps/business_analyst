@@ -116,6 +116,9 @@ export async function POST(request: NextRequest) {
       competitors
     );
 
+    // Extract token usage from result metadata
+    const tokensUsed = result._meta?.tokens_used || 0;
+
     return NextResponse.json(
       {
         success: true,
@@ -129,7 +132,7 @@ export async function POST(request: NextRequest) {
         metadata: {
           competitors_analyzed: competitors.length,
           websites_parsed: websitesParsedSuccessfully,
-          tokens_used: 0, // TODO: track actual tokens
+          tokens_used: tokensUsed,
           analysis_duration_ms: Date.now() - startTime,
         },
       } as CompetitorAnalyzeResponse,

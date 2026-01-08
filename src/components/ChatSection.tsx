@@ -33,7 +33,7 @@ export function ChatSection({
   const [chatLoading, setChatLoading] = useState(false);
   const [streamingAnswer, setStreamingAnswer] = useState('');
   const [currentStreamingQuestion, setCurrentStreamingQuestion] = useState('');
-  const [useStreaming] = useState(true); // Toggle for streaming mode
+  // Streaming mode is always enabled (no toggle needed)
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
 
   // When chat history changes, expand only the last item
@@ -65,16 +65,33 @@ export function ChatSection({
     }
   };
 
-  // Copy to clipboard
+  // Copy to clipboard with modern API and safe fallback
   const copyToClipboard = useCallback(async (text: string) => {
+    // Modern Clipboard API (preferred)
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch {
+        // Fall through to fallback
+      }
+    }
+
+    // Safe fallback for older browsers / non-secure contexts
+    // Using a hidden, accessible textarea with proper cleanup
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;';
+    textarea.setAttribute('aria-hidden', 'true');
+    textarea.setAttribute('readonly', ''); // Prevent mobile keyboard
+    document.body.appendChild(textarea);
+
     try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
       textarea.select();
+      textarea.setSelectionRange(0, text.length); // iOS support
       document.execCommand('copy');
+    } finally {
+      // Always cleanup, even on error
       document.body.removeChild(textarea);
     }
   }, []);
@@ -222,7 +239,8 @@ export function ChatSection({
     }
   }, [chatMessage, analysis, onError]);
 
-  const handleChat = useStreaming ? handleChatStream : handleChatRegular;
+  // Always use streaming mode (handleChatRegular is legacy fallback)
+  const handleChat = handleChatStream;
 
   // Get appropriate header based on mode
   const chatTitle = mode === 'full'

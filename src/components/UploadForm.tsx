@@ -83,8 +83,12 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
         extractedFiles.push({ path, content });
         processed++;
         setUploadStatus(`Распаковка: ${processed} файлов...`);
-      } catch {
-        // Skip files that can't be read as text
+      } catch (error) {
+        // Skip binary files that can't be read as text (expected behavior)
+        // Only log if it's an unexpected error type
+        if (error instanceof Error && !error.message.includes('binary')) {
+          console.debug(`[UploadForm] Skipped file ${path}:`, error.message);
+        }
       }
     }
 
@@ -127,8 +131,9 @@ export function UploadForm({ files, onFilesChange, onError, disabled }: UploadFo
         const content = await file.text();
         if (/[\x00-\x08\x0E-\x1F]/.test(content.slice(0, 1000))) continue;
         newFiles.push({ path, content });
-      } catch {
-        // Skip files that can't be read
+      } catch (error) {
+        // Skip files that can't be read as text (binary files, encoding issues)
+        console.debug(`[UploadForm] Skipped file ${path}:`, error instanceof Error ? error.message : 'unknown error');
       }
     }
 

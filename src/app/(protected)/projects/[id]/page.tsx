@@ -24,6 +24,25 @@ type ProjectWithRelations = Tables<'projects'> & {
 // Типы анализов для табов
 type AnalysisTabType = 'all' | 'code' | 'business' | 'full' | 'competitor' | 'progress' | 'history';
 
+// Type guard for analysis result with alignment_score
+interface AnalysisResultWithScore {
+  alignment_score?: number;
+  analysis?: { alignment_score?: number };
+}
+
+function hasAlignmentScore(result: unknown): result is AnalysisResultWithScore {
+  if (!result || typeof result !== 'object') return false;
+  const r = result as Record<string, unknown>;
+  // Check direct alignment_score
+  if (typeof r.alignment_score === 'number') return true;
+  // Check nested analysis.alignment_score
+  if (r.analysis && typeof r.analysis === 'object') {
+    const analysis = r.analysis as Record<string, unknown>;
+    if (typeof analysis.alignment_score === 'number') return true;
+  }
+  return false;
+}
+
 // Определения терминов для нетехнических пользователей
 const TERM_DEFINITIONS: Record<string, TooltipTerm> = {
   'alignment_score': {
@@ -82,11 +101,8 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
   const analysisCounts = useMemo(() => {
     if (!project?.analyses) return { all: 0, code: 0, business: 0, full: 0, competitor: 0, progress: 0, history: 0 };
 
-    // Count analyses with alignment_score for progress tracking
-    const progressCount = project.analyses.filter(a => {
-      const result = a.result as { alignment_score?: number; analysis?: { alignment_score?: number } };
-      return result?.alignment_score !== undefined || result?.analysis?.alignment_score !== undefined;
-    }).length;
+    // Count analyses with alignment_score for progress tracking (using type guard)
+    const progressCount = project.analyses.filter(a => hasAlignmentScore(a.result)).length;
 
     const counts = { all: project.analyses.length, code: 0, business: 0, full: 0, competitor: 0, progress: progressCount, history: project.analyses.length };
     project.analyses.forEach(a => {

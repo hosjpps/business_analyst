@@ -9,6 +9,14 @@ const STORAGE_KEYS = {
   CHAT_HISTORY: 'analyzer_chat_history',
 } as const;
 
+// Client-side logging for localStorage errors (expected in private browsing, etc.)
+const logStorageError = (action: string, key: string, error: unknown) => {
+  // Use debug level since these are often expected errors (private browsing, quota exceeded)
+  if (process.env.NODE_ENV === 'development') {
+    console.debug(`[localStorage] ${action} failed for key "${key}":`, error);
+  }
+};
+
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
@@ -25,7 +33,7 @@ export function useLocalStorage<T>(
         setStoredValue(JSON.parse(item));
       }
     } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+      logStorageError('read', key, error);
     }
     setIsHydrated(true);
   }, [key]);
@@ -36,7 +44,7 @@ export function useLocalStorage<T>(
     try {
       localStorage.setItem(key, JSON.stringify(storedValue));
     } catch (error) {
-      console.warn(`Error saving to localStorage key "${key}":`, error);
+      logStorageError('write', key, error);
     }
   }, [key, storedValue, isHydrated]);
 
@@ -54,7 +62,7 @@ export function useLocalStorage<T>(
       localStorage.removeItem(key);
       setStoredValue(initialValue);
     } catch (error) {
-      console.warn(`Error clearing localStorage key "${key}":`, error);
+      logStorageError('clear', key, error);
     }
   }, [key, initialValue]);
 
@@ -88,6 +96,6 @@ export function clearAllAnalyzerData() {
       localStorage.removeItem(key);
     });
   } catch (error) {
-    console.warn('Error clearing analyzer data:', error);
+    logStorageError('clearAll', 'all', error);
   }
 }

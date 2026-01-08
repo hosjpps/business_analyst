@@ -215,25 +215,34 @@ function Home() {
   // Cast persisted result to proper type
   const codeResult = persistedResult as AnalyzeResponse | null;
 
-  // Clear all saved data
+  // Clear all saved data (React state reset without page reload)
   const handleClearAll = useCallback(() => {
+    // Clear persisted data
     clearAllAnalyzerData();
     clearAllCaches();
+
+    // Clear form state
     setUploadedFiles([]);
     setBusinessInput({ description: '', social_links: {}, documents: [] });
+    setCompetitors([]);
+
+    // Clear results
     setBusinessResult(null);
     setGapResult(null);
-    setCompetitors([]);
     setCompetitorResult(null);
     setTrendsResults([]);
+
+    // Clear UI state
     setError(null);
     setAnalysisStep('idle');
     setAnalysisMode(null);
+
     // Clear demo state
     setIsDemo(false);
     setDemoScenarioName(null);
     setShowDemoSelector(false);
-    window.location.reload();
+
+    // Note: No window.location.reload() - all state is managed via React
   }, [clearAllCaches]);
 
   // ===========================================

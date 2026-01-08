@@ -17,11 +17,18 @@ import { buildFullCompetitorAnalysisPrompt } from './prompts';
 // Main Analysis Function
 // ===========================================
 
+// Extended result type with token tracking
+export interface CompetitorAnalysisResultWithMeta extends CompetitorAnalysisResult {
+  _meta?: {
+    tokens_used: number;
+  };
+}
+
 export async function analyzeCompetitors(
   canvas: BusinessCanvas | null,
   productDescription: string,
   competitors: CompetitorInput[]
-): Promise<CompetitorAnalysisResult> {
+): Promise<CompetitorAnalysisResultWithMeta> {
   // Parse competitor websites
   const urls = competitors
     .map((c) => c.url)
@@ -57,7 +64,13 @@ export async function analyzeCompetitors(
     throw new Error(`Response validation failed: ${errors}`);
   }
 
-  return validation.data;
+  // Return result with token metadata
+  return {
+    ...validation.data,
+    _meta: {
+      tokens_used: response.tokens_used,
+    },
+  };
 }
 
 // ===========================================
