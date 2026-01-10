@@ -17,10 +17,14 @@ describe('Demo Limiter', () => {
     clearDemoStore();
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2024-01-15T12:00:00Z'));
+    // Disable CI bypass for testing actual limiter logic
+    vi.stubEnv('CI', '');
+    vi.stubEnv('BYPASS_DEMO_LIMIT', '');
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllEnvs();
   });
 
   describe('checkDemoLimit', () => {

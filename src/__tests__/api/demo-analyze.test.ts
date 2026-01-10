@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Import real modules
@@ -9,6 +9,13 @@ describe('Demo Analyze API', () => {
   beforeEach(() => {
     // Clear demo store between tests
     clearDemoStore();
+    // Disable CI bypass for testing actual limiter logic
+    vi.stubEnv('CI', '');
+    vi.stubEnv('BYPASS_DEMO_LIMIT', '');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   describe('GET /api/demo/analyze', () => {
