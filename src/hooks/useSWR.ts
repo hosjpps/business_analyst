@@ -24,10 +24,8 @@ const fetcher = async <T>(url: string): Promise<T> => {
   const res = await fetch(url);
 
   if (!res.ok) {
-    const error = new Error('API request failed');
-    // @ts-ignore - добавляем info для отладки
+    const error = new Error('API request failed') as Error & { info?: unknown; status?: number };
     error.info = await res.json().catch(() => ({}));
-    // @ts-ignore
     error.status = res.status;
     throw error;
   }
@@ -51,10 +49,8 @@ const postFetcher = async <T>(
   });
 
   if (!res.ok) {
-    const error = new Error('API request failed');
-    // @ts-ignore
+    const error = new Error('API request failed') as Error & { info?: unknown; status?: number };
     error.info = await res.json().catch(() => ({}));
-    // @ts-ignore
     error.status = res.status;
     throw error;
   }

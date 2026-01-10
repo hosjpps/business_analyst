@@ -14,6 +14,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.9.1] - 2026-01-10
+
+### Added
+- **ESLint Config** — `.eslintrc.json` для CI pipeline
+
+### Security
+- **SEC-001**: XSS prevention в clipboard fallback — безопасная реализация копирования
+- **SEC-002**: Zip bomb protection — лимит распаковки, ratio check, блок nested zip
+
+### Fixed
+- **PERF-001**: window.location.reload() → React state management (page.tsx)
+- **QUAL-001**: Cache key iteration bug — fix для модификации Map во время итерации
+- **QUAL-002**: Type guard для безопасного приведения типов (hasAlignmentScore)
+- **QUAL-003**: Token tracking в competitor analysis (_meta.tokens_used)
+- **QUAL-004**: Centralized localStorage error logging (logStorageError)
+- **QUAL-005**: Silent catch blocks → debug logging (UploadForm)
+- **UI-001**: PageLoader компонент — consistent Suspense fallbacks
+
+---
+
 ## [0.9.0] - 2025-01-08
 
 ### Added

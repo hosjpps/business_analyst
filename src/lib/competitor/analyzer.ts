@@ -137,7 +137,7 @@ export function generateComparisonMatrix(
 
   topFeatures.forEach((feature) => {
     const competitorValues: Record<string, string> = {};
-    let hasFeature = yourFeatures.some(
+    const hasFeature = yourFeatures.some(
       (f) => f.toLowerCase().includes(feature) || feature.includes(f.toLowerCase())
     );
 

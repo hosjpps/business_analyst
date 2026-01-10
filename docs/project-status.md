@@ -1,24 +1,55 @@
 # Project Status
 
-## Current Phase: Tier 2 Complete ✅
+## Current Phase: Tier 3 Complete ✅
 
-**Last Updated:** 2026-01-07
-**Version:** 0.8.3
+**Last Updated:** 2026-01-10
+**Version:** 0.9.1
 **Production:** https://business-analyst-beige.vercel.app/
 
 ---
 
-## Recent Changes (v0.8.3)
+## Recent Changes (v0.9.1)
 
 ### Summary
-Tier 2 Quality & Infrastructure improvements completed:
+Security & Quality fixes completed:
 - **1364 unit + integration tests** passing
-- **66 E2E tests** passing (Playwright, 5 browsers)
+- **51 E2E tests** (46 passed, 5 skipped)
 - **Build successful**
 - **Auto-deploy** to Vercel from GitHub
 - All Sprints (S0-S5) ✅
-- Tier 1 Post-MVP Features ✅
-- Tier 2 Advanced Features ✅
+- Tier 1, 2, 3 Features ✅
+- Security hardening ✅
+
+### v0.9.1 Changes
+
+**Security Fixes:**
+- SEC-001: XSS prevention в clipboard fallback — безопасная реализация копирования
+- SEC-002: Zip bomb protection — лимит распаковки, ratio check, блок nested zip
+
+**Performance:**
+- PERF-001: window.location.reload() → React state management (page.tsx)
+
+**Quality:**
+- QUAL-001: Cache key iteration bug — fix для модификации Map во время итерации
+- QUAL-002: Type guard для безопасного приведения типов (hasAlignmentScore)
+- QUAL-003: Token tracking в competitor analysis (_meta.tokens_used)
+- QUAL-004: Centralized localStorage error logging (logStorageError)
+- QUAL-005: Silent catch blocks → debug logging (UploadForm)
+- UI-001: PageLoader компонент — consistent Suspense fallbacks
+- ESLint config для CI
+
+---
+
+## Previous Changes (v0.9.0)
+
+### Summary
+- E2E тесты исправлены (46 passed, 5 skipped)
+- Logger migration — замена console.* на logger utility
+- BYPASS_DEMO_LIMIT для тестов
+
+---
+
+## Previous Changes (v0.8.3)
 
 ### v0.8.3 Changes
 

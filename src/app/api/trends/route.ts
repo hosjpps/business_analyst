@@ -59,7 +59,7 @@ interface TrendsResponse {
 
 function getTimeRange(range: string): { startTime: Date; endTime: Date } {
   const endTime = new Date();
-  let startTime = new Date();
+  const startTime = new Date();
 
   switch (range) {
     case 'past_hour':
